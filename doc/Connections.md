@@ -7,7 +7,7 @@ There are two main types of connections:
 
 ---
 
-## 1. DataConnection
+## DataConnection
 
 **Purpose:**  
 Transfers **data values** (string, number, boolean, etc.) from the output of one Node to the input of another.
@@ -43,7 +43,7 @@ conn.propagate()
 ```
 Effect: The PrintNode now has "Hello World!" in its value input.
 
-## 2. ExecutionConnection
+## ExecutionConnection
 
 Transfers execution flow from one Node to another (like the white execution wires in UE5). Determines the order in which Nodes run.
 
