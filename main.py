@@ -25,7 +25,8 @@ doubleVal.updateValueOutput("value", 3.14)
 boolVal = BooleanValueNode()
 boolVal.updateValueOutput("value", True)
 
-exec = ExecutionConnection(eventStart, print1)
+
+
 conn = DataConnection(stringVal, "value", print1, "value")
 conn.propagate()
 conn = DataConnection(intVal, "value", print2, "value")
@@ -35,11 +36,11 @@ conn.propagate()
 conn = DataConnection(boolVal, "value", print4, "value")
 conn.propagate()
 
-engine.addNode(eventStart)
-engine.addNode(print1)
-engine.addNode(print2)
-engine.addNode(print3)
-engine.addNode(print4)
+
+engine.addExecutionConnection(ExecutionConnection(eventStart, print1))
+engine.addExecutionConnection(ExecutionConnection(print1, print2))
+engine.addExecutionConnection(ExecutionConnection(print2, print3))
+engine.addExecutionConnection(ExecutionConnection(print3, print4))
 
 #engine.generateFile("main.lua")
 print(engine)
