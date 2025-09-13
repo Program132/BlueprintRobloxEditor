@@ -10,7 +10,7 @@ Some developers prefer to work in a graphical environment rather than a traditio
 
 Install & Run the projet:
 - Install python: https://www.python.org/downloads/
-- Clone the repository: ...
+- Clone the repository: `git clone https://github.com/Program132/BlueprintRobloxEditor.git`
 - If you're on Linux, you should use env lib:
 `source env/bin/activate`
 - Install packages:
