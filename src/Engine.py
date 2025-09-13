@@ -1,22 +1,40 @@
 # src/Engine.py
 class Engine:
     def __init__(self):
-        self.nodes = []
+        self.execution_connections = []
+        self.data_connections = []
 
-    def addNode(self, node):
-        self.nodes.append(node)
+    def addExecutionConnection(self, exec_conn):
+        self.execution_connections.append(exec_conn)
 
-    def generateFile(self, filename: str):
-        if not filename.endswith(".lua"):
-            raise ValueError("Le fichier doit avoir l'extension .lua")
+    def _find_next_nodes(self, node):
+        return [conn.to_node for conn in self.execution_connections if conn.from_node == node]
 
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(str(self))
+    def _traverse_exec(self, node, visited):
+        if node in visited:
+            return []
+        visited.add(node)
+
+        lines = []
+        luau_code = node.toLuau()
+        if luau_code:
+            lines.append(luau_code)
+
+        for next_node in self._find_next_nodes(node):
+            lines.extend(self._traverse_exec(next_node, visited))
+
+        return lines
 
     def __str__(self):
+        for data_conn in self.data_connections:
+            data_conn.propagate()
+
+        start_nodes = [conn.from_node for conn in self.execution_connections
+                       if conn.from_node.__class__.__name__ == "EventStartNode"]
+
+        visited = set()
         lines = []
-        for node in self.nodes:
-            luau_code = node.toLuau()
-            if luau_code is not None:
-                lines.append(luau_code)
+        for start in start_nodes:
+            lines.extend(self._traverse_exec(start, visited))
+
         return "\n".join(lines)
