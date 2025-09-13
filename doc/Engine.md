@@ -10,7 +10,7 @@ It stores all the Nodes in your project, maintains their order, and generates th
 - Keep track of all Nodes in the graph.
 - Maintain execution order (currently based on the order Nodes are added).
 - Generate Luau code for the entire project.
-- Optionally write the generated code to a `.luau` file.
+- Optionally write the generated code to a `.lua` file.
 
 ---
 
@@ -24,7 +24,7 @@ It stores all the Nodes in your project, maintains their order, and generates th
 |--------|-------------|
 | `addNode(node)` | Adds a Node to the Engine's list. |
 | `__str__()` | Returns the generated Luau code for all Nodes in order. |
-| `generateFile(filename)` | Writes the generated Luau code to a `.luau` file. |
+| `generateFile(filename)` | Writes the generated Luau code to a `.lua` file. |
 
 ---
 
