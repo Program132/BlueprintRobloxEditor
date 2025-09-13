@@ -16,8 +16,7 @@ It stores all the Nodes in your project, maintains their order, and generates th
 
 ## Class Overview
 
-**Location:**  
-`src/Engine.py`
+**Location:** `src/Engine.py`
 
 **Key Methods:**
 
