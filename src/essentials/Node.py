@@ -64,3 +64,11 @@ class Node(ABC):
 
     def __str__(self):
         return f"{self.nodeName}: {self.toLuau()} [inputs: {self._getInputNames()}] [outputs: {self._getOutputNames()}]"
+
+    addi = addInput
+    addo = addOutput
+    geti = getValueInput
+    geto = getValueOutput
+    updatei = updateValueInput
+    updateo = updateValueOutput
+    getv = getValue

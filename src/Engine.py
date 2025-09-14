@@ -13,10 +13,6 @@ class Engine:
     def addDataConnection(self, data_conn):
         self.data_connections.append(data_conn)
 
-    exec = addExecutionConnection
-    data = addDataConnection
-
-
     def _find_next_nodes(self, node):
         return [conn.to_node for conn in self.execution_connections if conn.from_node == node]
 
@@ -53,3 +49,6 @@ class Engine:
             lines.extend(self._traverse_exec(start, visited))
 
         return "\n".join(lines)
+
+    exec = addExecutionConnection
+    data = addDataConnection
