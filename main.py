@@ -10,7 +10,6 @@ from src.essentials.ExecutionConnection import ExecutionConnection
 
 engine = Engine()
 
-# Declaration: "score"
 myVar = VariableNode("score")
 myVar.updateValue(10)
 
@@ -38,5 +37,4 @@ engine.addExecutionConnection(ExecutionConnection(start, setNode))
 engine.addExecutionConnection(ExecutionConnection(setNode, get2Node))
 engine.addExecutionConnection(ExecutionConnection(get2Node, print2Node))
 
-# Génération
 print(engine)
