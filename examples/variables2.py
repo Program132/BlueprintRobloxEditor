@@ -11,7 +11,6 @@ from src.essentials.ExecutionConnection import ExecutionConnection
 engine = Engine()
 
 myVar = VariableNode("score")
-myVar.updateValue(10)
 
 getNode = GetVariableNode()
 printNode = PrintNode()
@@ -20,14 +19,16 @@ get2Node = GetVariableNode()
 print2Node = PrintNode()
 
 intValue = IntValueNode()
-intValue.updateValueOutput("value", 42)
+intValue.updateValueOutput("value", 10)
+intValue2 = IntValueNode()
+intValue2.updateValueOutput("value", 42)
 
 
-
+engine.addDataConnection(DataConnection(intValue, "value", myVar, "value"))
 engine.addDataConnection(DataConnection(myVar, "ref", getNode, "ref"))
 engine.addDataConnection(DataConnection(getNode, "value", printNode, "value"))
 engine.addDataConnection(DataConnection(myVar, "ref", setNode, "ref"))
-engine.addDataConnection(DataConnection(intValue, "value", setNode, "value"))
+engine.addDataConnection(DataConnection(intValue2, "value", setNode, "value"))
 engine.addDataConnection(DataConnection(myVar, "ref", get2Node, "ref"))
 engine.addDataConnection(DataConnection(get2Node, "value", print2Node, "value"))
 
