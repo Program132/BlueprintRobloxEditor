@@ -8,4 +8,6 @@ class DataConnection:
 
     def propagate(self):
         value = self.output_node.getValueOutput(self.output_name)
+        if value is None:
+            value = self.output_node
         self.input_node.updateValueInput(self.input_name, value)
