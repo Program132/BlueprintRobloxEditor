@@ -1,4 +1,3 @@
-# main.py
 from src.nodes.Variable import VariableNode
 from src.nodes.GetVariable import GetVariableNode
 from src.nodes.SetVariable import SetVariableNode

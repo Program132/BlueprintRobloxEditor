@@ -1,4 +1,3 @@
-# main.py
 from src.nodes.IntValue import IntValueNode
 from src.nodes.Variable import VariableNode
 from src.nodes.GetVariable import GetVariableNode
