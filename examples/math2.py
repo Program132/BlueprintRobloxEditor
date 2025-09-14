@@ -1,4 +1,3 @@
-#main.py
 from src.nodes.IntValue import IntValueNode
 from src.nodes.Math.Cos import CosNode
 from src.nodes.Math.Sin import SinNode
