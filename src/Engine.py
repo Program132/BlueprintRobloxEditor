@@ -1,4 +1,7 @@
 # src/Engine.py
+from src.essentials.NodeType import NodeType
+
+
 class Engine:
     def __init__(self):
         self.execution_connections = []
@@ -25,7 +28,7 @@ class Engine:
 
         lines = []
         luau_code = node.toLuau()
-        if luau_code:
+        if luau_code and node.nodeType != NodeType.METHOD:
             lines.append(luau_code)
 
         for next_node in self._find_next_nodes(node):
