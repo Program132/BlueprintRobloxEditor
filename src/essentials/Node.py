@@ -71,4 +71,3 @@ class Node(ABC):
     geto = getValueOutput
     updatei = updateValueInput
     updateo = updateValueOutput
-    getv = getValue

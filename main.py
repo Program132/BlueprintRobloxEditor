@@ -55,90 +55,90 @@ printPi = PrintNode()
 
 # --- DATA CONNECTIONS ---
 # Addition
-engine.addDataConnection(DataConnection(val1, "value", addNode, "number1"))
-engine.addDataConnection(DataConnection(val2, "value", addNode, "number2"))
-engine.addDataConnection(DataConnection(addNode, "result", printAdd, "value"))
+engine.data(DataConnection(val1, "value", addNode, "number1"))
+engine.data(DataConnection(val2, "value", addNode, "number2"))
+engine.data(DataConnection(addNode, "result", printAdd, "value"))
 
 # Subtraction
-engine.addDataConnection(DataConnection(val1, "value", subNode, "number1"))
-engine.addDataConnection(DataConnection(val2, "value", subNode, "number2"))
-engine.addDataConnection(DataConnection(subNode, "result", printSub, "value"))
+engine.data(DataConnection(val1, "value", subNode, "number1"))
+engine.data(DataConnection(val2, "value", subNode, "number2"))
+engine.data(DataConnection(subNode, "result", printSub, "value"))
 
 # Multiplication
-engine.addDataConnection(DataConnection(val1, "value", mulNode, "number1"))
-engine.addDataConnection(DataConnection(val2, "value", mulNode, "number2"))
-engine.addDataConnection(DataConnection(mulNode, "result", printMul, "value"))
+engine.data(DataConnection(val1, "value", mulNode, "number1"))
+engine.data(DataConnection(val2, "value", mulNode, "number2"))
+engine.data(DataConnection(mulNode, "result", printMul, "value"))
 
 # Division
-engine.addDataConnection(DataConnection(val1, "value", divNode, "number1"))
-engine.addDataConnection(DataConnection(val2, "value", divNode, "number2"))
-engine.addDataConnection(DataConnection(divNode, "result", printDiv, "value"))
+engine.data(DataConnection(val1, "value", divNode, "number1"))
+engine.data(DataConnection(val2, "value", divNode, "number2"))
+engine.data(DataConnection(divNode, "result", printDiv, "value"))
 
 # Modulo
-engine.addDataConnection(DataConnection(val1, "value", modNode, "number1"))
-engine.addDataConnection(DataConnection(val2, "value", modNode, "number2"))
-engine.addDataConnection(DataConnection(modNode, "result", printMod, "value"))
+engine.data(DataConnection(val1, "value", modNode, "number1"))
+engine.data(DataConnection(val2, "value", modNode, "number2"))
+engine.data(DataConnection(modNode, "result", printMod, "value"))
 
 # Floor Division
-engine.addDataConnection(DataConnection(val1, "value", floorDivNode, "number1"))
-engine.addDataConnection(DataConnection(val2, "value", floorDivNode, "number2"))
-engine.addDataConnection(DataConnection(floorDivNode, "result", printFloorDiv, "value"))
+engine.data(DataConnection(val1, "value", floorDivNode, "number1"))
+engine.data(DataConnection(val2, "value", floorDivNode, "number2"))
+engine.data(DataConnection(floorDivNode, "result", printFloorDiv, "value"))
 
 # Power
-engine.addDataConnection(DataConnection(val1, "value", powNode, "number1"))
-engine.addDataConnection(DataConnection(val2, "value", powNode, "number2"))
-engine.addDataConnection(DataConnection(powNode, "result", printPow, "value"))
+engine.data(DataConnection(val1, "value", powNode, "number1"))
+engine.data(DataConnection(val2, "value", powNode, "number2"))
+engine.data(DataConnection(powNode, "result", printPow, "value"))
 
 # Exponential (math.exp)
-engine.addDataConnection(DataConnection(val1, "value", expNode, "number"))
-engine.addDataConnection(DataConnection(expNode, "result", printExp, "value"))
+engine.data(DataConnection(val1, "value", expNode, "number"))
+engine.data(DataConnection(expNode, "result", printExp, "value"))
 
 # Logarithm (math.log)
-engine.addDataConnection(DataConnection(val1, "value", logNode, "number"))
-engine.addDataConnection(DataConnection(logNode, "result", printLog, "value"))
+engine.data(DataConnection(val1, "value", logNode, "number"))
+engine.data(DataConnection(logNode, "result", printLog, "value"))
 
 # Square root (math.sqrt)
-engine.addDataConnection(DataConnection(val1, "value", sqrtNode, "number"))
-engine.addDataConnection(DataConnection(sqrtNode, "result", printSqrt, "value"))
+engine.data(DataConnection(val1, "value", sqrtNode, "number"))
+engine.data(DataConnection(sqrtNode, "result", printSqrt, "value"))
 
 # Pi (math.pi)
-engine.addDataConnection(DataConnection(piNode, "value", printPi, "value"))
+engine.data(DataConnection(piNode, "value", printPi, "value"))
 
 # --- EXECUTION CONNECTIONS ---
 start = EventStartNode()
 
-engine.addExecutionConnection(ExecutionConnection(start, addNode))
-engine.addExecutionConnection(ExecutionConnection(addNode, printAdd))
+engine.exec(ExecutionConnection(start, addNode))
+engine.exec(ExecutionConnection(addNode, printAdd))
 
-engine.addExecutionConnection(ExecutionConnection(printAdd, subNode))
-engine.addExecutionConnection(ExecutionConnection(subNode, printSub))
+engine.exec(ExecutionConnection(printAdd, subNode))
+engine.exec(ExecutionConnection(subNode, printSub))
 
-engine.addExecutionConnection(ExecutionConnection(printSub, mulNode))
-engine.addExecutionConnection(ExecutionConnection(mulNode, printMul))
+engine.exec(ExecutionConnection(printSub, mulNode))
+engine.exec(ExecutionConnection(mulNode, printMul))
 
-engine.addExecutionConnection(ExecutionConnection(printMul, divNode))
-engine.addExecutionConnection(ExecutionConnection(divNode, printDiv))
+engine.exec(ExecutionConnection(printMul, divNode))
+engine.exec(ExecutionConnection(divNode, printDiv))
 
-engine.addExecutionConnection(ExecutionConnection(printDiv, modNode))
-engine.addExecutionConnection(ExecutionConnection(modNode, printMod))
+engine.exec(ExecutionConnection(printDiv, modNode))
+engine.exec(ExecutionConnection(modNode, printMod))
 
-engine.addExecutionConnection(ExecutionConnection(printMod, floorDivNode))
-engine.addExecutionConnection(ExecutionConnection(floorDivNode, printFloorDiv))
+engine.exec(ExecutionConnection(printMod, floorDivNode))
+engine.exec(ExecutionConnection(floorDivNode, printFloorDiv))
 
-engine.addExecutionConnection(ExecutionConnection(printFloorDiv, powNode))
-engine.addExecutionConnection(ExecutionConnection(powNode, printPow))
+engine.exec(ExecutionConnection(printFloorDiv, powNode))
+engine.exec(ExecutionConnection(powNode, printPow))
 
-engine.addExecutionConnection(ExecutionConnection(printPow, expNode))
-engine.addExecutionConnection(ExecutionConnection(expNode, printExp))
+engine.exec(ExecutionConnection(printPow, expNode))
+engine.exec(ExecutionConnection(expNode, printExp))
 
-engine.addExecutionConnection(ExecutionConnection(printExp, logNode))
-engine.addExecutionConnection(ExecutionConnection(logNode, printLog))
+engine.exec(ExecutionConnection(printExp, logNode))
+engine.exec(ExecutionConnection(logNode, printLog))
 
-engine.addExecutionConnection(ExecutionConnection(printLog, sqrtNode))
-engine.addExecutionConnection(ExecutionConnection(sqrtNode, printSqrt))
+engine.exec(ExecutionConnection(printLog, sqrtNode))
+engine.exec(ExecutionConnection(sqrtNode, printSqrt))
 
-engine.addExecutionConnection(ExecutionConnection(printSqrt, piNode))
-engine.addExecutionConnection(ExecutionConnection(piNode, printPi))
+engine.exec(ExecutionConnection(printSqrt, piNode))
+engine.exec(ExecutionConnection(piNode, printPi))
 
 # --- GENERATE OUTPUT ---
 print(engine)
