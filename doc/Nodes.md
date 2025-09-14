@@ -113,6 +113,64 @@ true
 false
 ```
 
+
+### `VariableNode`
+
+Purpose: Declares a local variable and assigns it an initial value.
+
+| Inputs | Type | Description |
+|--------|------|-------------|
+| (none) |------|-------------|
+
+| Outputs | Type           | Description    |
+|-------|----------------|----------------|
+| `ref` | Node Reference | Reference to this variable node (used by Get/Set Variable nodes) |
+| `value` | Any            |  Current value of the variable |
+
+Example Luau output:
+```lua
+local score = 10
+```
+
+### `GetVariableNode`
+
+Purpose: Retrieves a reference to a declared variable for use in expressions or other nodes. Does not generate a standalone line of code — instead, it returns the variable name when used inside another node (e.g., print(score)).
+
+| Inputs | Type | Description |
+|--------|------|-------------|
+| `ref` | Node Reference | Reference to a VariableNode |
+
+| Outputs | Type           | Description                            |
+|-------|----------------|----------------------------------------|
+| `value` | Any            | Reference to the targeted VariableNode |
+
+
+Example Luau usage:
+```lua
+print(score)
+```
+
+### `SetVariableNode`
+
+Purpose: Assigns a new value to an existing variable.
+
+| Inputs | Type | Description |
+|--------|------|-------------|
+| `ref` | Node Reference | Reference to a VariableNode |
+| `value` | Any            | New value to assign |
+
+| Outputs | Type           | Description                            |
+|-------|----------------|----------------------------------------|
+| `value` | Any            | Updated value |
+
+
+Example Luau output:
+```lua
+score = 42
+```
+
+
+
 # Create your own Node
 
 To create a new Node:
