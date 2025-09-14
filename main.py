@@ -17,11 +17,11 @@ from src.Engine import Engine
 engine = Engine()
 
 # --- VALUE NODES ---
-val1 = IntValueNode();   val1.updateValueOutput("value", 1)     # cos(1)
-val0 = IntValueNode();   val0.updateValueOutput("value", 0)     # sin(0)
-val5 = IntValueNode();   val5.updateValueOutput("value", 5)     # 5 % 2
-val2 = IntValueNode();   val2.updateValueOutput("value", 2)
-val300 = IntValueNode(); val300.updateValueOutput("value", 300) # / 300
+val1 = IntValueNode();   val1.updateo("value", 1)     # cos(1)
+val0 = IntValueNode();   val0.updateo("value", 0)     # sin(0)
+val5 = IntValueNode();   val5.updateo("value", 5)     # 5 % 2
+val2 = IntValueNode();   val2.updateo("value", 2)
+val300 = IntValueNode(); val300.updateo("value", 300) # / 300
 
 # --- EXPRESSION NODES ---
 cosNode = CosNode()                # math.cos(1)
