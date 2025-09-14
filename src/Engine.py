@@ -7,6 +7,9 @@ class Engine:
     def addExecutionConnection(self, exec_conn):
         self.execution_connections.append(exec_conn)
 
+    def addDataConnection(self, data_conn):
+        self.data_connections.append(data_conn)
+
     def _find_next_nodes(self, node):
         return [conn.to_node for conn in self.execution_connections if conn.from_node == node]
 
@@ -14,6 +17,11 @@ class Engine:
         if node in visited:
             return []
         visited.add(node)
+
+        try:
+            node.getValue()
+        except Exception:
+            pass
 
         lines = []
         luau_code = node.toLuau()
