@@ -11,6 +11,13 @@ class PrintNode(Node):
 
     def getValue(self):
         v = self.getValueInput("value")
+
+        if isinstance(v, Node):
+            luau_code = v.toLuau()
+            if luau_code is not None:
+                return luau_code
+            return str(v.getValue())
+
         if isinstance(v, VariableNode):
             return v.var_name
 
