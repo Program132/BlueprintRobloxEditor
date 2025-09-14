@@ -13,6 +13,8 @@ class PowerNode(Node):
         n1 = self.getValueInput("number1")
         n2 = self.getValueInput("number2")
 
+        if isinstance(n1, Node): n1 = n1.getValue()
+        if isinstance(n2, Node): n2 = n2.getValue()
         if n1 is None: n1 = 0
         if n2 is None: n2 = 0
 

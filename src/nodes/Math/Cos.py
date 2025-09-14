@@ -11,6 +11,7 @@ class CosNode(Node):
     def getValue(self):
         n1 = self.getValueInput("number")
 
+        if isinstance(n1, Node): n1 = n1.getValue()
         if n1 is None: n1 = 0
 
         result = f"math.cos({n1})"

@@ -7,18 +7,19 @@ class VariableNode(Node):
         super().__init__(NodeType.FUNCTION, f"Variable {var_name}")
         self.var_name = var_name
         self.addOutput("ref", self)  # self-reference
+        self.addInput("value", None)
         self.addOutput("value", None)
 
     def updateValue(self, value):
         self.updateValueOutput("value", value)
 
     def getValue(self):
-        return self.getValueOutput("value")
+        v = self.getValueInput("value")
+        if isinstance(v, Node):
+            v = v.getValue()
+        self.updateValueOutput("value", v)
+        return v
 
     def toLuau(self):
         value = self.getValue()
-        if isinstance(value, str):
-            value = f'"{value}"'
-        elif isinstance(value, bool):
-            value = "true" if value else "false"
-        return f'local {self.var_name} = {value}'
+        return f"local {self.var_name} = {value}"

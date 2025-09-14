@@ -10,11 +10,9 @@ class GetVariableNode(Node):
         self.addOutput("value", None)
 
     def getValue(self):
-        var_node = self.getValueInput("ref")
-        if isinstance(var_node, VariableNode):
-            self.updateValueOutput("value", var_node)
-            return var_node
-        self.updateValueOutput("value", None)
+        ref = self.getValueInput("ref")
+        if isinstance(ref, VariableNode):
+            return ref.var_name
         return None
 
     def toLuau(self):
