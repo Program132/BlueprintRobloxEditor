@@ -169,9 +169,6 @@ Example Luau output:
 score = 42
 ```
 
-
-
-
 ## Math Nodes
 
 ### `AbsoluteValueNode`
@@ -652,6 +649,231 @@ Returns the hyperbolic tangent of a number.
 ```lua
 math.tanh(0)
 -- 0
+```
+
+## String Nodes
+
+### `ByteNode`
+**Purpose:**  
+Returns the internal numeric codes of the characters in a string.
+
+| Inputs  | Type   | Description              |
+|---------|--------|--------------------------|
+| `value` | String | The input string         |
+
+| Outputs | Type   | Description                |
+|---------|--------|----------------------------|
+| `result` | Number | ASCII code of first character |
+
+**Example Luau output:**
+```lua
+string.byte("A")
+-- 65
+```
+
+---
+
+### `CharNode`
+**Purpose:**  
+Converts one or more integers to their corresponding characters.
+
+| Inputs  | Type   | Description             |
+|---------|--------|-------------------------|
+| `value` | Number | Numeric character code  |
+
+| Outputs | Type   | Description                 |
+|---------|--------|-----------------------------|
+| `result` | String | Character for the given code |
+
+**Example Luau output:**
+```lua
+string.char(65)
+-- "A"
+```
+
+---
+
+### `EndsNode`
+**Purpose:**  
+Checks if a string ends with a given suffix.
+
+| Inputs   | Type   | Description              |
+|----------|--------|--------------------------|
+| `value`  | String | The string to check      |
+| `suffix` | String | The suffix to match      |
+
+| Outputs | Type    | Description                      |
+|---------|---------|----------------------------------|
+| `result` | Boolean | True if string ends with suffix |
+
+**Example Luau output:**
+```lua
+string.ends("HelloWorld", "World")
+-- true
+```
+
+---
+
+### `FindNode`
+**Purpose:**  
+Finds the first occurrence of a pattern in a string.
+
+| Inputs    | Type   | Description                |
+|-----------|--------|----------------------------|
+| `value`   | String | The string to search in    |
+| `pattern` | String | The pattern to search for  |
+
+| Outputs | Type   | Description                        |
+|---------|--------|------------------------------------|
+| `result` | Number | Position of the first occurrence   |
+
+**Example Luau output:**
+```lua
+string.find("Hello World", "World")
+-- 7
+```
+
+---
+
+### `LenNode`
+**Purpose:**  
+Returns the length of a string.
+
+| Inputs  | Type   | Description       |
+|---------|--------|-------------------|
+| `value` | String | The string input  |
+
+| Outputs | Type   | Description         |
+|---------|--------|---------------------|
+| `result` | Number | Length of the string |
+
+**Example Luau output:**
+```lua
+string.len("Hello")
+-- 5
+```
+
+---
+
+### `ConcatNode`
+**Purpose:**  
+Concatenates two strings together.
+
+| Inputs  | Type   | Description        |
+|---------|--------|--------------------|
+| `str1`  | String | First string       |
+| `str2`  | String | Second string      |
+
+| Outputs | Type   | Description         |
+|---------|--------|---------------------|
+| `result` | String | Concatenated string |
+
+**Example Luau output:**
+```lua
+"Hello " .. "World"
+-- "Hello World"
+```
+
+---
+
+### `LowerNode`
+**Purpose:**  
+Converts all characters in a string to lowercase.
+
+| Inputs  | Type   | Description       |
+|---------|--------|-------------------|
+| `value` | String | Input string      |
+
+| Outputs | Type   | Description                 |
+|---------|--------|-----------------------------|
+| `result` | String | String in lowercase letters |
+
+**Example Luau output:**
+```lua
+string.lower("HELLO")
+-- "hello"
+```
+
+---
+
+### `UpperNode`
+**Purpose:**  
+Converts all characters in a string to uppercase.
+
+| Inputs  | Type   | Description       |
+|---------|--------|-------------------|
+| `value` | String | Input string      |
+
+| Outputs | Type   | Description                 |
+|---------|--------|-----------------------------|
+| `result` | String | String in uppercase letters |
+
+**Example Luau output:**
+```lua
+string.upper("hello")
+-- "HELLO"
+```
+
+---
+
+### `RepNode`
+**Purpose:**  
+Repeats a string a given number of times.
+
+| Inputs   | Type   | Description            |
+|----------|--------|------------------------|
+| `value`  | String | The string to repeat   |
+| `number` | Number | Number of repetitions  |
+
+| Outputs | Type   | Description         |
+|---------|--------|---------------------|
+| `result` | String | Repeated string     |
+
+**Example Luau output:**
+```lua
+string.rep("ha", 3)
+-- "hahaha"
+```
+
+---
+
+### `ReverseNode`
+**Purpose:**  
+Reverses the characters of a string.
+
+| Inputs  | Type   | Description      |
+|---------|--------|------------------|
+| `value` | String | Input string     |
+
+| Outputs | Type   | Description             |
+|---------|--------|-------------------------|
+| `result` | String | Reversed string result |
+
+**Example Luau output:**
+```lua
+string.reverse("Hello")
+-- "olleH"
+```
+
+---
+
+### `StartsNode`
+**Purpose:**  
+Checks if a string starts with a given prefix.
+
+| Inputs   | Type   | Description             |
+|----------|--------|-------------------------|
+| `value`  | String | The string to check     |
+| `prefix` | String | The prefix to match     |
+
+| Outputs | Type    | Description                       |
+|---------|---------|-----------------------------------|
+| `result` | Boolean | True if string starts with prefix |
+
+**Example Luau output:**
+```lua
+string.starts("HelloWorld", "Hello")
+-- true
 ```
 
 
