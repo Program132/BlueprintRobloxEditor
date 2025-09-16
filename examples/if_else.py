@@ -23,15 +23,18 @@ printFail = PrintNode()
 start = EventStartNode()
 
 ifNode = IfStatementNode()
-opNode = EqualNode()
+opNode = StringValueNode()
 failMsg = StringValueNode()
+opNode.updateValueOutput("value", "==")
 failMsg.updateValueOutput("value", "NOT GOOD")
 
-engine.data(DataConnection(varA, "value", opNode, "value1"))
-engine.data(DataConnection(varB, "value", opNode, "value2"))
-engine.data(DataConnection(opNode, "result", ifNode, "operator"))
+opNode2 = EqualNode
+
+
 engine.data(DataConnection(opNode, "value", ifNode, "operator"))
 engine.data(DataConnection(failMsg, "value", printFail, "value"))
+engine.data(DataConnection(varA, "value", ifNode, "value1"))
+engine.data(DataConnection(varB, "value", ifNode, "value2"))
 engine.data(DataConnection(opNode, "value", ifNode, "operator"))
 engine.data(DataConnection(varA, "value", printA, "value"))
 engine.data(DataConnection(varB, "value", printB, "value"))
