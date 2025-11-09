@@ -1,5 +1,6 @@
-.idea
-.venv
 src/__pycache__
-src/nodes/Math/__pycache__
-src/essentials/__pycache__
+src/Engine/__pycache__
+src/Nodes/__pycache__
+src/Nodes/Models/__pycache__
+src/Nodes/Models/math/__pycache__
+src/Nodes/Events/__pycache__
