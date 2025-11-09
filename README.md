@@ -10,13 +10,13 @@ The goal is to replicate the same programming system as Unreal Engine 5’s Blue
 
 BRE can be customized using block definitions that you can create yourself! Read the documentation to learn more.
 
-## Version actuelle
+## Current Version
 
 BRE includes 3 basic blocks: a start event which corresponds to the base event and is essential to begin coding if you are not using Roblox events (such as PlayerAdded, PlayerRemoved, etc.).
 
 Bugs may be present, please report them.
 
-## Contribuer
+## Contribute
 
 To help the project evolve, you can report vulnerabilities/bugs, whether on the site or in the backend (API).
 
