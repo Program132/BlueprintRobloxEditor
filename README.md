@@ -77,3 +77,5 @@ Now move to http://127.0.0.1:80/
 ##  Documentation
 
 Read [README](doc/README.md).
+
+You can read as well the post from the devforum: [Roblox DevForum Post](https://devforum.roblox.com/t/blueprint-roblox-editor-visual-programming-tools-for-luau-flow-based/4058664)
