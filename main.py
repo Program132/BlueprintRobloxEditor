@@ -1,47 +1,39 @@
-from src.nodes.CO.Equal import EqualNode
-from src.nodes.StringValue import StringValueNode
-from src.nodes.Variable import VariableNode
-from src.nodes.Print import PrintNode
-from src.nodes.EventStart import EventStartNode
-from src.nodes.IfStatement import IfStatementNode
-from src.essentials.DataConnection import DataConnection
-from src.essentials.ExecutionConnection import ExecutionConnection
-from src.Engine import Engine
+from src.Engine.Engine import Engine
+from src.Nodes.Models.Print import Print
+from src.Nodes.Models.math.Add import Add
+from src.Nodes.Transition import Transition
+from src.Nodes.TransitionType import TransitionType
+from src.Nodes.Events.Start import Start
+
+START = Start()
+
+add_node = Add()
+add_2_node = Add()
+add_3_node = Add()
+print_node = Print()
+
+add_node.setInputValue("a", 5)
+add_node.setInputValue("b", 7)
+
+add_2_node.setInputValue("a", 20)
+
+add_3_node.setInputValue("a", 100)
+
+exec_link = Transition(START, print_node, TransitionType.EXEC) # START -> print
+date_link_add = Transition(add_node, add_2_node, TransitionType.DATA, add_2_node.getInput("b"), add_node.getOutput("result")) # add result -> add_2 b
+date_link2_add = Transition(add_2_node, add_3_node, TransitionType.DATA, add_3_node.getInput("b"), add_2_node.getOutput("result")) # add_2 result -> add_3 b
+date_link_print = Transition(add_3_node, print_node, TransitionType.DATA, print_node.getInput("value"), add_3_node.getOutput("result")) # add_3 result -> print
 
 engine = Engine()
+engine.addNode(START)
+engine.addNode(add_node)
+engine.addNode(add_2_node)
+engine.addNode(add_3_node)
+engine.addNode(print_node)
+engine.addTransition(exec_link)
+engine.addTransition(date_link_add)
+engine.addTransition(date_link2_add)
+engine.addTransition(date_link_print)
 
-varA = VariableNode("a")
-varA.updateValueOutput("value", 5)
-
-varB = VariableNode("b")
-varB.updateValueOutput("value", 5465)
-
-printA = PrintNode()
-printB = PrintNode()
-printFail = PrintNode()
-
-start = EventStartNode()
-
-ifNode = IfStatementNode()
-opNode = EqualNode()
-failMsg = StringValueNode()
-failMsg.updateValueOutput("value", "NOT GOOD")
-
-engine.data(DataConnection(varA, "value", opNode, "value1"))
-engine.data(DataConnection(varB, "value", opNode, "value2"))
-engine.data(DataConnection(opNode, "result", ifNode, "operator"))
-engine.data(DataConnection(opNode, "value", ifNode, "operator"))
-engine.data(DataConnection(failMsg, "value", printFail, "value"))
-engine.data(DataConnection(opNode, "value", ifNode, "operator"))
-engine.data(DataConnection(varA, "value", printA, "value"))
-engine.data(DataConnection(varB, "value", printB, "value"))
-engine.data(DataConnection(failMsg, "value", printFail, "value"))
-
-
-engine.exec(ExecutionConnection(start, ifNode))
-engine.exec(ExecutionConnection(ifNode, printA, "success"))
-engine.exec(ExecutionConnection(printA, printB))
-engine.exec(ExecutionConnection(ifNode, printFail, "fail"))
-
-# Output
-print(engine)
+luau_code = engine.generateLuau()
+print(luau_code)
