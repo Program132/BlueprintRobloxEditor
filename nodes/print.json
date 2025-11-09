@@ -1,0 +1,9 @@
+{
+    "type": "METHOD",
+    "inputs": {
+        "value": {
+            "defaultValue": "Hello World!"
+        }
+    },
+    "outputs": []
+}
