@@ -13,6 +13,9 @@ from src.Nodes.TransitionType import TransitionType
 from src.Nodes.Events.Start import Start
 from src.Nodes.Models.Print import Print
 from src.Nodes.Models.math.Addition import Addition
+from src.Nodes.Models.math.Subtraction import Subtraction
+from src.Nodes.Models.math.Multiplication import Multiplication
+from src.Nodes.Models.math.Division import Division
 
 # Initialize the Flask application
 # Static folder is set to '.' so files are served from the current directory
@@ -27,6 +30,9 @@ NODE_CLASS_MAP = {
     "start": Start,
     "print": Print,
     "addition": Addition,
+    "subtraction": Subtraction,
+    "multiplication": Multiplication,
+    "division": Division
 }
 
 # Define colors (RGB list) based on node type/class
