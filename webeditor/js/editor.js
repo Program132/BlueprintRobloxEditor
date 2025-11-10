@@ -37,6 +37,15 @@ document.addEventListener('DOMContentLoaded', function () {
      * Creates the HTML (DOM) element for a node and adds it to the editor.
      */
     function createNodeElement(nodeDef, container, x, y) {
+        if (nodeDef.type === 'EVENT' && nodeDef.name.toLowerCase() === 'start') {
+            const existingStart = document.querySelector('.editor-node[data-node-type="start"][data-node-class="EVENT"]');
+
+            if (existingStart) {
+                console.warn("The creation of the 'Start' node has been cancelled: a Start node already exists.");
+                return null;
+            }
+        }
+
         const nodeEl = document.createElement('div');
         nodeEl.className = 'editor-node';
         nodeEl.dataset.nodeType = nodeDef.name;
