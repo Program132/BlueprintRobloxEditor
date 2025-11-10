@@ -52,7 +52,7 @@ from src.Nodes.NodeColor import NodeColor
 from src.Nodes.NodeType import NodeType
 class MyNode(Node):
     def __init__(self):
-        super().__init__(NodeType.METHOD, NodeColor(0,0,255))
+        super().__init__()
         self.loadFromJson("nodes/MyNode.json")
 
     def toLuau(self):
