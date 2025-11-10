@@ -1,8 +1,8 @@
 # Blueprint Roblox Editor
 
-[![Downloads](https://img.shields.io/github/downloads/Program132/BlueprintRobloxEditor/total?style=for-the-badge)](https://github.com/Program132/BlueprintRobloxEditor/releases)
-[![Code size](https://img.shields.io/github/languages/code-size/Program132/BlueprintRobloxEditor?style=for-the-badge)](https://github.com/Program132/BlueprintRobloxEditor)
-[![Last Release](https://img.shields.io/github/release/Program132/BlueprintRobloxEditor?style=for-the-badge)](https://github.com/Program132/BlueprintRobloxEditor/releases)
+![Latest version](https://img.shields.io/github/v/release/Program132/BlueprintRobloxEditor?style=for-the-badge&include_prereleases)
+![Code size](https://img.shields.io/github/languages/code-size/Program132/BlueprintRobloxEditor?style=for-the-badge&logo=github)
+![Downloads](https://img.shields.io/github/downloads/Program132/BlueprintRobloxEditor/total?color=%2324cc24&style=for-the-badge&logo=github)
 
 **BRE (Blueprint Roblox Editor)** is an open-source project that allows users to use Python or the editor (the web application) to program in Luau, the language used by Roblox, derived from Lua.
 
