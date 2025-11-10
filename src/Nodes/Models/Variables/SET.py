@@ -1,5 +1,6 @@
 import json
 from src.Nodes.Node import Node
+from src.Nodes.Utils import is_luau_expression
 
 class SET(Node):
     def __init__(self):
@@ -10,25 +11,17 @@ class SET(Node):
         value = self.getInputValue("value")
         name = self.getInputValue("name")
 
-        v = self.getInputValue("value")
-        if v is None:
-            return "print(nil)"
+        if name is None:
+            return None
 
-        luau_expression = str(v)
-        is_string_literal = False
-        if hasattr(self, "engine") and any(var.name == v for var in self.engine.variables):
-            return f"print({v})"
+        if value is None:
+            luau_expression = "nil"
+        else:
+            luau_expression = str(value)
 
-        try:
-            v_test = eval(luau_expression)
-            if isinstance(v_test, str):
-                pass
-        except NameError:
-            is_string_literal = True
-        except Exception:
-            is_string_literal = True
+        engine_vars = self.engine.variables if hasattr(self, "engine") and self.engine else []
 
-        if is_string_literal:
-            luau_expression = f'"{luau_expression}"'
-
-        return f"{name} = {luau_expression}"
+        if is_luau_expression(luau_expression, engine_vars):
+            return f"{name} = {luau_expression}"
+        else:
+            return f'{name} = "{luau_expression}"'
