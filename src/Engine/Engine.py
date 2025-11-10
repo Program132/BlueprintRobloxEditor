@@ -111,4 +111,4 @@ class Engine:
                 current_node = next_transition.end
             else:
                 current_node = None
-        return "\n".join(luau_declarations) + "\n\n" + "\n".join(luau_code)
+        return "\n".join(luau_declarations) + "\n" + "\n".join(luau_code)
