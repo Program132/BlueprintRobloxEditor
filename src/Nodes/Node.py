@@ -12,6 +12,7 @@ class Node:
         self.color = color
         self.inputs = []
         self.outputs = []
+        self.engine = None
 
     def getType(self):
         return self.type
@@ -127,6 +128,3 @@ class Node:
 
     def toLuau(self):
         return ""
-
-    def __str__(self):
-        return self.toLuau()
