@@ -18,6 +18,20 @@ from src.Nodes.Models.Variables.Variable import Variable
 from src.Nodes.Models.Variables.GET import GET
 from src.Nodes.Models.Variables.SET import SET
 
+from src.Nodes.Models.math.Absolute import Absolute
+from src.Nodes.Models.math.Arcos import Arcos
+from src.Nodes.Models.math.Arcsin import Arcsin
+from src.Nodes.Models.math.Arctangent import Arctangent
+from src.Nodes.Models.math.Cosinus import Cosinus
+from src.Nodes.Models.math.Cosinush import Cosinush
+from src.Nodes.Models.math.Exponential import Exponential
+from src.Nodes.Models.math.Logarithm import Logarithm
+from src.Nodes.Models.math.Sinus import Sinus
+from src.Nodes.Models.math.Sinush import Sinush
+from src.Nodes.Models.math.Squareroot import Squareroot
+from src.Nodes.Models.math.Tangent import Tangent
+from src.Nodes.Models.math.Tangenth import Tangenth
+
 
 app = Flask(__name__, static_folder='.', static_url_path='')
 
@@ -31,9 +45,24 @@ NODE_CLASS_MAP = {
     "subtraction": Subtraction,
     "multiplication": Multiplication,
     "division": Division,
+    "variable": Variable,
     "get": GET,
-    "set": SET
+    "set": SET,
+    "absolute": Absolute,
+    "arcos": Arcos,
+    "arcsin": Arcsin,
+    "arctangent": Arctangent,
+    "cosinus": Cosinus,
+    "cosinush": Cosinush,
+    "exponential": Exponential,
+    "logarithm": Logarithm,
+    "sinus": Sinus,
+    "sinush": Sinush,
+    "squareroot": Squareroot,
+    "tangent": Tangent,
+    "tangenth": Tangenth
 }
+
 
 GLOBAL_VARIABLES = {}
 
