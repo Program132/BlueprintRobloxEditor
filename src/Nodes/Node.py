@@ -5,7 +5,7 @@ from src.Nodes.NodeColor import NodeColor
 from src.Nodes.IO import Input, Output
 
 class Node:
-    def __init__(self, type:'NodeType', color:'NodeColor'):
+    def __init__(self, type:'NodeType'=None, color:'NodeColor'=None):
         self.x = 0
         self.y = 0
         self.type = type

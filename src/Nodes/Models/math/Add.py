@@ -5,10 +5,8 @@ from src.Nodes.Node import Node
 
 class Add(Node):
     def __init__(self):
-        super().__init__(NodeType.FUNCTION, NodeColor(0, 255, 0))
-        #self.addInput("a", 0)
-        #self.addInput("b", 0)
-        #self.addOutput("result")
+        #super().__init__(NodeType.FUNCTION, NodeColor(0, 255, 0))
+        super().__init__()
         self.loadFromJson("nodes/math/add.json")
 
     def toLuau(self):

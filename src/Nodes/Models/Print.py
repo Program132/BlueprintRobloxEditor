@@ -4,8 +4,8 @@ from src.Nodes.NodeType import NodeType
 
 class Print(Node):
     def __init__(self):
-        super().__init__(NodeType.METHOD, NodeColor(0,0,255))
-        #self.addInput("value", "Hello World!")
+        #super().__init__(NodeType.METHOD, NodeColor(0,0,255))
+        super().__init__()
         self.loadFromJson("nodes/print.json")
 
     def toLuau(self):
