@@ -1,0 +1,12 @@
+{
+    "color": [0, 150, 255],
+    "type": "METHOD",
+    "inputs": {
+        "name": {
+            "defaultValue": "Var"
+        }
+    },
+    "outputs": [
+        "value"
+    ]
+}
