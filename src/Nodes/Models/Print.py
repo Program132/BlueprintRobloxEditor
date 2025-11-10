@@ -1,10 +1,7 @@
 from src.Nodes.Node import Node
-from src.Nodes.NodeColor import NodeColor
-from src.Nodes.NodeType import NodeType
 
 class Print(Node):
     def __init__(self):
-        #super().__init__(NodeType.METHOD, NodeColor(0,0,255))
         super().__init__()
         self.loadFromJson("nodes/print.json")
 
@@ -15,6 +12,9 @@ class Print(Node):
 
         luau_expression = str(v)
         is_string_literal = False
+        if hasattr(self, "engine") and any(var.name == v for var in self.engine.variables):
+            return f"print({v})"
+
         try:
             v_test = eval(luau_expression)
             if isinstance(v_test, str):
