@@ -192,6 +192,7 @@ if (loadCodeBtn) {
 
 function loadProjectIntoEditor(data) {
     const editorContent = document.getElementById('editor-content');
+    editorContent.innerHTML = '';
 
     // 🔹 1. Clear the existing editor
     document.querySelectorAll('.editor-node').forEach(el => el.remove());

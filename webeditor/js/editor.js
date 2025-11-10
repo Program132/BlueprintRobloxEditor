@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Load nodes on startup
-    loadNodeDefinitions();
+    const nodeDefinitionsPromise = loadNodeDefinitions();
 
     /**
      * Creates the HTML (DOM) element for a node and adds it to the editor.
@@ -449,6 +449,12 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     function initializeEditor() {
         console.log("All loaded nodeDefinitions:", nodeDefinitions);
+        
+        const existingStart = document.querySelector('.editor-node[data-node-type="Start"]');
+        if (existingStart) {
+            console.log("Start node already exists, skipping default creation.");
+            return;
+        }
 
         let startNodeDef = null;
         for (const category in nodeDefinitions) {
@@ -469,8 +475,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+
     window.createNodeElement = createNodeElement;
-    window.nodeDefinitionsReady = loadNodeDefinitions();
+    window.nodeDefinitionsReady = nodeDefinitionsPromise;
     Object.defineProperty(window, "nodeDefinitions", {
         get: () => nodeDefinitions
     });
