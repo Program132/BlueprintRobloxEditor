@@ -4,3 +4,4 @@ src/Nodes/__pycache__
 src/Nodes/Models/__pycache__
 src/Nodes/Models/math/__pycache__
 src/Nodes/Events/__pycache__
+env
