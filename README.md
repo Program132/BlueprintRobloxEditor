@@ -10,11 +10,7 @@ The goal is to replicate the same programming system as Unreal Engine 5’s Blue
 
 BRE can be customized using block definitions that you can create yourself! Read the documentation to learn more.
 
-## Current Version
-
-BRE includes 3 basic blocks: a start event which corresponds to the base event and is essential to begin coding if you are not using Roblox events (such as PlayerAdded, PlayerRemoved, etc.).
-
-Bugs may be present, please report them.
+Please send bugs to [Report a Bug (Issues)](https://github.com/Program132/BlueprintRobloxEditor/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title=) and proposals to [Propose a Node (Issues)](https://github.com/Program132/BlueprintRobloxEditor/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.md&title=).
 
 ## Contribute
 
@@ -47,7 +43,24 @@ Note: outputs and inputs can be empty:
 - FUNCTION = no exec connection
 - EVENT = one exec output
 
-Please send bugs to [Report a Bug (Issues)](https://github.com/Program132/BlueprintRobloxEditor/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title=) and proposals to [Propose a Node (Issues)](https://github.com/Program132/BlueprintRobloxEditor/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.md&title=).
+Once that's done you need to create the node in Python on the backend, create a file in `src/Nodes/Models`, you need to complete the `toLuau` function and indicate your **.json** file in the constructor then the type of the node.
+```python
+from src.Nodes.Node import Node
+from src.Nodes.NodeColor import NodeColor
+from src.Nodes.NodeType import NodeType
+class MyNode(Node):
+    def __init__(self):
+        super().__init__(NodeType.METHOD, NodeColor(0,0,255))
+        self.loadFromJson("nodes/MyNode.json")
+
+    def toLuau(self):
+        return "My node"
+
+    def __str__(self):
+        return "MyNode NODE"
+```
+
+You can implement several things in the "translation" function, I advise you to look at the already existing nodes.
 
 ## Installation
 
