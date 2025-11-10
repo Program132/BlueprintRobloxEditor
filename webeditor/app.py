@@ -12,7 +12,7 @@ from src.Nodes.Transition import Transition
 from src.Nodes.TransitionType import TransitionType
 from src.Nodes.Events.Start import Start
 from src.Nodes.Models.Print import Print
-from src.Nodes.Models.math.Add import Add
+from src.Nodes.Models.math.Addition import Addition
 
 # Initialize the Flask application
 # Static folder is set to '.' so files are served from the current directory
@@ -26,7 +26,7 @@ SAVE_FILE_PATH = Path(__file__).parent / 'project_save.json'
 NODE_CLASS_MAP = {
     "start": Start,
     "print": Print,
-    "add": Add,
+    "addition": Addition,
 }
 
 # Define colors (RGB list) based on node type/class
