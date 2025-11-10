@@ -8,4 +8,4 @@ class GET(Node):
     def toLuau(self):
         name = self.getInputValue("name")
         self.setOutputValue("value", name)
-        return name
+        return None
