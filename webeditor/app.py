@@ -77,7 +77,7 @@ Used by the frontend to populate the node palette/library.
 
                         # Determine color based on the node's defined type
                         node_type = node_data.get("type", "METHOD").upper()
-                        color = NODE_COLORS.get(node_type, [128, 128, 128]) # Default grey
+                        color = node_data.get("color", NODE_COLORS.get(node_type)) # Default grey
 
                         nodes.append({
                             "name": os.path.splitext(file)[0], # Node name is the file name without extension

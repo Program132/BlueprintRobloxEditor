@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
         nodeEl.style.top = `${y}px`;
         nodeEl.style.backgroundColor = `rgba(${nodeDef.color.join(',')},0.1)`;
         nodeEl.style.border = `1px solid rgba(${nodeDef.color.join(',')},0.3)`;
-        // ... (other styles)
         nodeEl.style.borderRadius = '6px';
         nodeEl.style.padding = '12px';
         nodeEl.style.minWidth = '180px';
