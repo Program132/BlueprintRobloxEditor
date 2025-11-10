@@ -718,3 +718,183 @@ html, body {
   position: relative;
   overflow: visible;
 }
+
+
+
+
+
+
+
+/* --- Amélioration des variables --- */
+
+.variable-desc {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: linear-gradient(145deg, #1b2231, #1f2b3b);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.variable-desc:hover {
+  background: linear-gradient(145deg, #202a3b, #243448);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+}
+
+.variable-desc p {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 500;
+}
+
+.variable-actions {
+  display: flex;
+  gap: 8px; /* Plus d’espace entre les boutons */
+}
+
+/* Style harmonisé pour les boutons GET / SET */
+.btn-var-desc-get,
+.btn-var-desc-set {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--btn-secondary-bg);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.btn-var-desc-get:hover {
+  background: #28584f;
+  border-color: #4ccfa4;
+  color: #aef2de;
+}
+
+.btn-var-desc-set:hover {
+  background: #2b4066;
+  border-color: #4f8cff;
+  color: #b4d0ff;
+}
+
+/* Supprimer : plus rond et cohérent */
+.btn-del-variable {
+  background: rgba(255, 107, 107, 0.15);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  color: var(--danger);
+  padding: 6px 10px;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-del-variable:hover {
+  background: rgba(255, 107, 107, 0.25);
+  border-color: rgba(255, 107, 107, 0.6);
+  color: var(--danger-hover);
+  transform: scale(1.05);
+}
+
+
+/* --- Style amélioré du formulaire de création de variable --- */
+.variable-def {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: linear-gradient(145deg, #1b2231, #1f2b3b);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.variable-def:hover {
+  background: linear-gradient(145deg, #202a3b, #243448);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+}
+
+.var-name {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 10px;
+}
+
+.var-name label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-hover);
+  letter-spacing: 0.3px;
+}
+
+.var-name-input {
+  flex: 1;
+  min-width: 120px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--bg-input);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.var-name-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(79,140,255,0.2);
+  background: #202534;
+}
+
+.variable-def-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* --- Boutons du formulaire (Ok / Annuler) --- */
+.btn-var-validation,
+.btn-cancel-variable-def {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border);
+}
+
+/* Bouton OK */
+.btn-var-validation {
+  background: var(--btn-primary-bg);
+  border-color: var(--btn-primary-border);
+  color: #fff;
+}
+
+.btn-var-validation:hover {
+  background: var(--btn-primary-hover-bg);
+  box-shadow: 0 2px 8px rgba(79,140,255,0.4);
+}
+
+/* Bouton Annuler */
+.btn-cancel-variable-def {
+  background: rgba(255,184,108,0.1);
+  border-color: rgba(255,184,108,0.3);
+  color: var(--warning);
+}
+
+.btn-cancel-variable-def:hover {
+  background: rgba(255,184,108,0.2);
+  color: var(--warning-hover);
+  border-color: rgba(255,184,108,0.5);
+}
