@@ -69,7 +69,11 @@ function collectEditorData() {
         type: conn.type
     }));
 
-    return { nodes: nodesData, connections: connectionsData };
+    const variablesData = window.getVariablesData ? window.getVariablesData() : [];
+
+    console.log(variablesData);
+
+    return { nodes: nodesData, connections: connectionsData, variables:variablesData };
 }
 
 // --- 🚀 Execution Button ---
@@ -190,7 +194,7 @@ if (loadCodeBtn) {
 }
 
 
-function loadProjectIntoEditor(data) {
+async function loadProjectIntoEditor(data) {
     const editorContent = document.getElementById('editor-content');
     editorContent.innerHTML = '';
 
@@ -244,6 +248,13 @@ function loadProjectIntoEditor(data) {
             }
         }
     });
+
+    if (Array.isArray(data.variables) && window.loadVariablesData) {
+        await window.loadVariablesData(data.variables);
+        console.log("Variables restored.");
+    } else {
+        if (window.loadVariablesData) await window.loadVariablesData([]);
+    }
 
     // 🔹 4. Restore connections
     if (Array.isArray(data.connections)) {
