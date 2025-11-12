@@ -1,6 +1,6 @@
 from src.Nodes.Node import Node
 
-class Ceiling(Node):
+class LoadExponent(Node):
     def __init__(self):
         super().__init__()
         self.loadFromJson("nodes/math/loadexponent.json")
