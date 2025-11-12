@@ -2,35 +2,53 @@ from urllib import request
 from flask import Flask, jsonify, send_from_directory, request
 import os
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
+
 sys.path.append(str(Path(__file__).parent.parent))
+
 from src.Engine.Engine import Engine
 from src.Nodes.Transition import Transition
 from src.Nodes.TransitionType import TransitionType
 from src.Nodes.Events.Start import Start
 from src.Nodes.Models.Print import Print
-from src.Nodes.Models.math.Addition import Addition
-from src.Nodes.Models.math.Subtraction import Subtraction
-from src.Nodes.Models.math.Multiplication import Multiplication
-from src.Nodes.Models.math.Division import Division
 from src.Nodes.Models.Variables.Variable import Variable
 from src.Nodes.Models.Variables.GET import GET
 from src.Nodes.Models.Variables.SET import SET
-
 from src.Nodes.Models.math.Absolute import Absolute
 from src.Nodes.Models.math.Arcos import Arcos
 from src.Nodes.Models.math.Arcsin import Arcsin
 from src.Nodes.Models.math.Arctangent import Arctangent
+from src.Nodes.Models.math.Addition import Addition
+from src.Nodes.Models.math.Subtraction import Subtraction
+from src.Nodes.Models.math.Multiplication import Multiplication
+from src.Nodes.Models.math.Division import Division
+from src.Nodes.Models.math.Ceiling import Ceiling
 from src.Nodes.Models.math.Cosinus import Cosinus
 from src.Nodes.Models.math.Cosinush import Cosinush
+from src.Nodes.Models.math.Degree import Degree
 from src.Nodes.Models.math.Exponential import Exponential
+from src.Nodes.Models.math.ExtractMantissaExponent import ExtractMantissaExponent
+from src.Nodes.Models.math.FloatingPointRemainder import FloatingPointRemainder
+from src.Nodes.Models.math.Floor import Floor
+from src.Nodes.Models.math.LoadExponent import LoadExponent
 from src.Nodes.Models.math.Logarithm import Logarithm
+from src.Nodes.Models.math.Logarithm10 import Logarithm10
+from src.Nodes.Models.math.Maximum import Maximum
+from src.Nodes.Models.math.Minimum import Minimum
+from src.Nodes.Models.math.ModuloFractional import ModuloFractional
+from src.Nodes.Models.math.PI import PI
+from src.Nodes.Models.math.PositiveInfinity import PositiveInfinity
+from src.Nodes.Models.math.Power import Power
+from src.Nodes.Models.math.Radians import Radians
+from src.Nodes.Models.math.RandomSeed import RandomSeed
 from src.Nodes.Models.math.Sinus import Sinus
 from src.Nodes.Models.math.Sinush import Sinush
 from src.Nodes.Models.math.Squareroot import Squareroot
 from src.Nodes.Models.math.Tangent import Tangent
 from src.Nodes.Models.math.Tangenth import Tangenth
+
+
 
 
 app = Flask(__name__, static_folder='.', static_url_path='')
@@ -52,16 +70,32 @@ NODE_CLASS_MAP = {
     "arcos": Arcos,
     "arcsin": Arcsin,
     "arctangent": Arctangent,
+    "ceiling": Ceiling,
     "cosinus": Cosinus,
     "cosinush": Cosinush,
+    "degree": Degree,
     "exponential": Exponential,
+    "extract_mantissa_exponent": ExtractMantissaExponent,
+    "floating_point_remainder": FloatingPointRemainder,
+    "floor": Floor,
+    "load_exponent": LoadExponent,
     "logarithm": Logarithm,
+    "logarithm10": Logarithm10,
+    "maximum": Maximum,
+    "minimum": Minimum,
+    "modulo_fractional": ModuloFractional,
+    "pi": PI,
+    "positive_infinity": PositiveInfinity,
+    "power": Power,
+    "radians": Radians,
+    "random_seed": RandomSeed,
     "sinus": Sinus,
     "sinush": Sinush,
     "squareroot": Squareroot,
     "tangent": Tangent,
     "tangenth": Tangenth
 }
+
 
 
 GLOBAL_VARIABLES = {}
