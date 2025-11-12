@@ -1,3 +1,4 @@
+from src.Nodes.Utils import is_luau_expression
 from src.Nodes.Node import Node
 
 class Character(Node):
@@ -7,7 +8,14 @@ class Character(Node):
 
     def toLuau(self):
         a = self.getInputValue("a")
-        r = f"(string.char({a})"
+
+        engine_vars = self.engine.variables if hasattr(self, "engine") and self.engine else []
+        luau_expression = str(a)
+        if is_luau_expression(luau_expression, engine_vars):
+            r = f"(string.char({a})"
+        else:
+            r = f"(string.char(\"{a}\")"
+
         self.setOutputValue(name="result", value=r)
 
     def __str__(self):
