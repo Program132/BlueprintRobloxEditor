@@ -48,6 +48,16 @@ from src.Nodes.Models.math.Squareroot import Squareroot
 from src.Nodes.Models.math.Tangent import Tangent
 from src.Nodes.Models.math.Tangenth import Tangenth
 
+from src.Nodes.Models.string.Byte import Byte
+from src.Nodes.Models.string.Character import Character
+from src.Nodes.Models.string.Concat import Concat
+from src.Nodes.Models.string.Find import Find
+from src.Nodes.Models.string.Length import Length
+from src.Nodes.Models.string.Lower import Lower
+from src.Nodes.Models.string.Repeat import Repeat
+from src.Nodes.Models.string.Replace import Replace
+from src.Nodes.Models.string.Reverse import Reverse
+from src.Nodes.Models.string.Upper import Upper
 
 
 
@@ -93,7 +103,17 @@ NODE_CLASS_MAP = {
     "sinush": Sinush,
     "squareroot": Squareroot,
     "tangent": Tangent,
-    "tangenth": Tangenth
+    "tangenth": Tangenth,
+    "byte": Byte,
+    "character": Character,
+    "concat": Concat,
+    "find": Find,
+    "length": Length,
+    "lower": Lower,
+    "repeat": Repeat,
+    "replace": Replace,
+    "reverse": Reverse,
+    "upper": Upper
 }
 
 

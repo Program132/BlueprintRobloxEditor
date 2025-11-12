@@ -1,0 +1,15 @@
+{
+    "type": "FUNCTION",
+    "inputs": {
+        "main": {
+            "defaultValue": "Hi"
+        },
+        "find": {
+            "defaultValue": "i"
+        },
+        "replace": {
+            "defaultValue": "ello"
+        }
+    },
+    "outputs": ["result"]
+}

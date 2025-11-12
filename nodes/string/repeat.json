@@ -1,0 +1,12 @@
+{
+    "type": "FUNCTION",
+    "inputs": {
+        "str": {
+            "defaultValue": "a"
+        },
+        "n": {
+            "defaultValue": "5"
+        }
+    },
+    "outputs": ["result"]
+}

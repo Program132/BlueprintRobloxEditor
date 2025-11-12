@@ -1,0 +1,12 @@
+{
+    "type": "FUNCTION",
+    "inputs": {
+        "a": {
+            "defaultValue": "Hello"
+        },
+        "b": {
+            "defaultValue": "World"
+        }
+    },
+    "outputs": ["result"]
+}
