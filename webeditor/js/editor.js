@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Title
         const title = document.createElement('div');
         title.className = 'node-title';
-        title.textContent = nodeDef.name;
+        title.textContent = nodeDef.title || nodeDef.name;
         // ... (title styles)
         title.style.fontWeight = 'bold';
         title.style.marginBottom = '10px';
@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 nodeItem.innerHTML = `
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:8px">
                         <div>
-                            <p class="node-name" style="font-weight:500;margin-bottom:4px">${node.name}</p>
+                            <p class="node-name" style="font-weight:500;margin-bottom:4px">${node.title || node.name}</p>
                             <p style="font-size:12px;color:#a0a0a0">${node.description || ''}</p>
                         </div>
                         <span style="
