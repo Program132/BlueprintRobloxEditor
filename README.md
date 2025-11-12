@@ -89,8 +89,7 @@ py webditor/app.py
 ```
 Now move to http://127.0.0.1:80/
 
-Note: Download the lastest release if you want something stable! Please report me bugs to [Report a Bug (Issues)](https://github.com/Program132/BlueprintRobloxEditor/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title=).
-Download the lastest release:
+Download the lastest release if you want something stable:
 ```bash
 git clone https://github.com/Program132/BlueprintRobloxEditor.git
 cd BlueprintRobloxEditor
