@@ -61,6 +61,7 @@ from src.Nodes.Models.string.Upper import Upper
 
 from src.Nodes.Models.statement.If import If
 from src.Nodes.Models.statement.While import While
+from src.Nodes.Models.statement.ForRange import ForRange
 
 from src.Nodes.Models.boolean.And import And
 from src.Nodes.Models.boolean.Equal import Equal
@@ -136,7 +137,8 @@ NODE_CLASS_MAP = {
     "greater": Greater,
     "ge": GreaterEqual,
     "low": Low,
-    "le": LowerEqual
+    "le": LowerEqual,
+    "forrange": ForRange
 }
 
 

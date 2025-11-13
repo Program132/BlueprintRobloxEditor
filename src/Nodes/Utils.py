@@ -23,4 +23,7 @@ def is_luau_expression(s: str, engine_variables: List) -> bool:
     if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
         return False
 
+    if (s[0].isalpha() or s[0] == '_') and ' ' not in s:
+        return True
+
     return False

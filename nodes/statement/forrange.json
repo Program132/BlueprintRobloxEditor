@@ -1,0 +1,24 @@
+{
+    "title": "For (Range)",
+    "color": [200,200,200],
+    "type": "METHOD",
+    "inputs": {
+        "variable": {
+            "defaultValue": "i"
+        },
+        "start": {
+            "defaultValue": 1
+        },
+        "end": {
+            "defaultValue": 10
+        },
+        "step": {
+            "defaultValue": 1
+        }
+    },
+    "exec": [
+        "Loop Body",
+        "Continue"
+    ],
+    "outputs": []
+}

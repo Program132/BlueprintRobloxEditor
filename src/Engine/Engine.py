@@ -1,14 +1,13 @@
 from typing import List
-
-from src.Nodes.Models.statement.If import If
 from src.Nodes.TransitionType import TransitionType
 from src.Nodes.NodeType import NodeType
 from src.Nodes.Node import Node
 from src.Nodes.Transition import Transition
 from src.Nodes.Models.Variables.Variable import Variable
 from src.Nodes.Models.Variables.GET import GET
-from src.Nodes.Models.Variables.SET import SET
+from src.Nodes.Models.statement.If import If
 from src.Nodes.Models.statement.While import While
+from src.Nodes.Models.statement.ForRange import ForRange
 
 class Engine:
     def __init__(self):
@@ -55,34 +54,28 @@ class Engine:
         indent_str = "    " * indent
 
         while current_node is not None:
-            # 1. Traitement des transitions de données (inchangé)
             for t in self.transitions:
                 if t.type == TransitionType.DATA and t.end == current_node:
                     t.setInputValueFromOutput()
 
-            # 2. Génération du code Luau
             code = ""
             if current_node.type == NodeType.METHOD:
                 code = current_node.toLuau()
             elif isinstance(current_node, If):
-                # Le nœud If génère son propre bloc 'if/else/end'
                 code = current_node.toLuau()
 
             if code:
-                # Ajout de l'indentation
                 for line in code.split('\n'):
                     code_lines.append(indent_str + line)
 
             next_transition = None
 
-            if isinstance(current_node, If) or isinstance(current_node, While):
+            if isinstance(current_node, If) or isinstance(current_node, While) or isinstance(current_node, ForRange):
                 next_transition = self.getExecTransition(current_node, "Continue")
             else:
                 next_transition = self.getExecTransition(current_node, "next")
-
                 if not next_transition:
                     next_transition = next((t for t in self.transitions if t.type == TransitionType.EXEC and t.start == current_node), None)
-
 
             if next_transition:
                 current_node = next_transition.end
@@ -99,7 +92,6 @@ class Engine:
         luau_declarations = []
         for var in self.variables:
             initial_value_luau = "nil"
-
             if var.value is not None:
                 if isinstance(var.value, str) and var.value.lower() in ["none", "nil"]:
                     initial_value_luau = "nil"
@@ -107,7 +99,6 @@ class Engine:
                     initial_value_luau = f'"{var.value}"'
                 else:
                     initial_value_luau = str(var.value)
-
             luau_declarations.append(f"local {var.name} = {initial_value_luau}")
 
         executable_nodes = [n for n in self.nodes if n.type == NodeType.FUNCTION or n.type == NodeType.METHOD]
@@ -127,10 +118,8 @@ class Engine:
                                 break
                     if is_ready:
                         nodes_to_calculate_in_this_pass.append(node)
-
             if not nodes_to_calculate_in_this_pass and len(calculated_nodes) < len(executable_nodes):
                 break
-
             for node in nodes_to_calculate_in_this_pass:
                 for t in self.transitions:
                     if t.type == TransitionType.DATA and t.end == node and t.start in calculated_nodes:
@@ -159,10 +148,8 @@ class Engine:
                                 break
                     if is_ready:
                         nodes_to_calculate_in_this_pass.append(node)
-
             if not nodes_to_calculate_in_this_pass and len(calculated_nodes) < len(executable_nodes):
                 break
-
             for node in nodes_to_calculate_in_this_pass:
                 for t in self.transitions:
                     if t.type == TransitionType.DATA and t.end == node and t.start in calculated_nodes:
@@ -173,10 +160,7 @@ class Engine:
                     node.toLuau()
                 calculated_nodes.add(node)
 
-
-        # NOUVELLE LOGIQUE D'EXÉCUTION
         luau_code = self.generateCodeBranch(start_node)
-
         if len(luau_declarations) != 0:
             return "\n".join(luau_declarations) + "\n" + luau_code
         return luau_code
