@@ -72,6 +72,9 @@ from src.Nodes.Models.boolean.LowerEqual import LowerEqual
 from src.Nodes.Models.boolean.Not import Not
 from src.Nodes.Models.boolean.NotEqual import NotEqual
 
+from src.Nodes.Models.convert.ToNumber import ToNumber
+from src.Nodes.Models.convert.ToString import ToString
+
 
 
 
@@ -138,7 +141,9 @@ NODE_CLASS_MAP = {
     "ge": GreaterEqual,
     "low": Low,
     "le": LowerEqual,
-    "forrange": ForRange
+    "forrange": ForRange,
+    "tostring": ToString,
+    "tonumber": ToNumber
 }
 
 
