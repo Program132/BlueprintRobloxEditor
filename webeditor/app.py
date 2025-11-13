@@ -62,6 +62,16 @@ from src.Nodes.Models.string.Upper import Upper
 from src.Nodes.Models.statement.If import If
 from src.Nodes.Models.statement.While import While
 
+from src.Nodes.Models.boolean.And import And
+from src.Nodes.Models.boolean.Equal import Equal
+from src.Nodes.Models.boolean.Greater import Greater
+from src.Nodes.Models.boolean.GreaterEqual import GreaterEqual
+from src.Nodes.Models.boolean.Lower import Lower as Low
+from src.Nodes.Models.boolean.LowerEqual import LowerEqual
+from src.Nodes.Models.boolean.Not import Not
+from src.Nodes.Models.boolean.NotEqual import NotEqual
+
+
 
 
 app = Flask(__name__, static_folder='.', static_url_path='')
@@ -118,7 +128,15 @@ NODE_CLASS_MAP = {
     "reverse": Reverse,
     "upper": Upper,
     "if": If,
-    "while": While
+    "while": While,
+    "and": And,
+    "not": Not,
+    "equal": Equal,
+    "nequal": NotEqual,
+    "greater": Greater,
+    "ge": GreaterEqual,
+    "low": Low,
+    "le": LowerEqual
 }
 
 

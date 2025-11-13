@@ -1,0 +1,11 @@
+{
+    "title": "NOT (Boolean)",
+    "color": [110, 82, 5],
+    "type": "FUNCTION",
+    "inputs": {
+        "a": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": ["result"]
+}

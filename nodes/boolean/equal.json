@@ -1,0 +1,14 @@
+{
+    "title": "Equal",
+    "color": [145, 114, 29],
+    "type": "FUNCTION",
+    "inputs": {
+        "a": {
+            "defaultValue": "2"
+        },
+        "b": {
+            "defaultValue": "2"
+        }
+    },
+    "outputs": ["result"]
+}
