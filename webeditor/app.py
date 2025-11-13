@@ -60,6 +60,7 @@ from src.Nodes.Models.string.Reverse import Reverse
 from src.Nodes.Models.string.Upper import Upper
 
 from src.Nodes.Models.statement.If import If
+from src.Nodes.Models.statement.While import While
 
 
 
@@ -116,7 +117,8 @@ NODE_CLASS_MAP = {
     "replace": Replace,
     "reverse": Reverse,
     "upper": Upper,
-    "if": If
+    "if": If,
+    "while": While
 }
 
 

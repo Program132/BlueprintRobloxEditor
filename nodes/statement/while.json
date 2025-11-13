@@ -1,0 +1,11 @@
+{
+    "color": [200,200,200],
+    "type": "METHOD",
+    "inputs": {
+        "condition": {
+            "defaultValue": "true"
+        }
+    },
+    "outputs": [],
+    "exec": ["True", "Continue"]
+}

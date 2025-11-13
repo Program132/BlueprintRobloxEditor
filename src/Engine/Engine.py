@@ -8,6 +8,7 @@ from src.Nodes.Transition import Transition
 from src.Nodes.Models.Variables.Variable import Variable
 from src.Nodes.Models.Variables.GET import GET
 from src.Nodes.Models.Variables.SET import SET
+from src.Nodes.Models.statement.While import While
 
 class Engine:
     def __init__(self):
@@ -72,25 +73,21 @@ class Engine:
                 for line in code.split('\n'):
                     code_lines.append(indent_str + line)
 
-            # 3. Trouver le prochain nœud (Gestion du flux de contrôle)
             next_transition = None
 
-            if isinstance(current_node, If):
-                # Si c'est un nœud IF, le prochain nœud est celui connecté à la sortie "Continue"
+            if isinstance(current_node, If) or isinstance(current_node, While):
                 next_transition = self.getExecTransition(current_node, "Continue")
             else:
-                # Pour les autres nœuds (séquentiels), on cherche la transition EXEC standard.
                 next_transition = self.getExecTransition(current_node, "next")
 
                 if not next_transition:
-                    # Sinon, on prend la première/seule transition EXEC (pour compatibilité)
                     next_transition = next((t for t in self.transitions if t.type == TransitionType.EXEC and t.start == current_node), None)
 
 
             if next_transition:
                 current_node = next_transition.end
             else:
-                current_node = None # Fin de la branche/du flux
+                current_node = None
 
         return "\n".join(code_lines)
 
