@@ -24,9 +24,6 @@ print_win.setInputValue("value", "You win!")
 print_lose = Print()
 print_lose.setInputValue("value", "You lose!")
 
-print_after = Print()
-print_after.setInputValue("value", "Fin")
-
 
 
 exec_1 = Transition(START, get_score, TransitionType.EXEC)
@@ -34,9 +31,6 @@ exec_2 = Transition(get_score, IF_NODE, TransitionType.EXEC)
 
 exec_true = Transition(IF_NODE, print_win, TransitionType.EXEC, output=IF_NODE.getOutput("True"))
 exec_false = Transition(IF_NODE, print_lose, TransitionType.EXEC, output=IF_NODE.getOutput("False"))
-
-exec_continue = Transition(IF_NODE, print_after, TransitionType.EXEC, output=IF_NODE.getOutput("Continue"))
-
 
 engine = Engine()
 
@@ -46,14 +40,11 @@ engine.addNode(START)
 engine.addNode(get_score)
 engine.addNode(IF_NODE)
 engine.addNode(print_win)
-engine.addNode(print_lose)
-engine.addNode(print_after)
 
 engine.addTransition(exec_1)
 engine.addTransition(exec_2)
 engine.addTransition(exec_true)
 engine.addTransition(exec_false)
-engine.addTransition(exec_continue)
 
 luau_code = engine.generateLuau()
 print(luau_code)

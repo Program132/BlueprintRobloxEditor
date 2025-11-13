@@ -1,6 +1,6 @@
 from src.Engine.Engine import Engine
 from src.Nodes.Models.Print import Print
-from src.Nodes.Models.math.Add import Add
+from src.Nodes.Models.math.Addition import Add
 from src.Nodes.Transition import Transition
 from src.Nodes.TransitionType import TransitionType
 from src.Nodes.Events.Start import Start

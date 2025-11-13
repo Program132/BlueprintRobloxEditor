@@ -1,14 +1,14 @@
 from src.Engine.Engine import Engine
 from src.Nodes.Models.Print import Print
-from src.Nodes.Models.math.Add import Add
+from src.Nodes.Models.math.Addition import Addition
 from src.Nodes.Transition import Transition
 from src.Nodes.TransitionType import TransitionType
 from src.Nodes.Events.Start import Start
 
 START = Start()
 
-add_node = Add()
-add_2_node = Add()
+add_node = Addition()
+add_2_node = Addition()
 print_node = Print()
 
 add_node.setInputValue("a", 5)

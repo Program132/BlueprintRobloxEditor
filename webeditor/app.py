@@ -59,6 +59,8 @@ from src.Nodes.Models.string.Replace import Replace
 from src.Nodes.Models.string.Reverse import Reverse
 from src.Nodes.Models.string.Upper import Upper
 
+from src.Nodes.Models.statement.If import If
+
 
 
 app = Flask(__name__, static_folder='.', static_url_path='')
@@ -113,7 +115,8 @@ NODE_CLASS_MAP = {
     "repeat": Repeat,
     "replace": Replace,
     "reverse": Reverse,
-    "upper": Upper
+    "upper": Upper,
+    "if": If
 }
 
 
@@ -196,9 +199,9 @@ def run_luau_code():
     engine = Engine()
     node_instances = {}
 
-    for k,v in GLOBAL_VARIABLES.items():
-        v = Variable(k,v)
-        engine.addVariable(v)
+    for k, v in GLOBAL_VARIABLES.items():
+        var = Variable(k, v)
+        engine.addVariable(var)
 
     for n_data in nodes_data:
         node_id = n_data['id']
@@ -206,41 +209,65 @@ def run_luau_code():
         inputs_values = n_data.get('inputs', {})
 
         NodeClass = NODE_CLASS_MAP.get(node_name_lower)
-
-        if NodeClass:
-            node_instance = NodeClass()
-            node_instance.id = node_id
-
-            node_instance.setX(n_data.get('x', 0))
-            node_instance.setY(n_data.get('y', 0))
-
-            node_instances[node_id] = node_instance
-            engine.addNode(node_instance)
-
-            for input_name, input_value in inputs_values.items():
-                node_instance.setInputValue(input_name, input_value)
-        else:
+        if not NodeClass:
             return jsonify({"error": f"Node definition for {node_name_lower} not found in map."}), 400
 
+        node_instance = NodeClass()
+        node_instance.id = node_id
+        node_instance.setX(n_data.get('x', 0))
+        node_instance.setY(n_data.get('y', 0))
+
+        for input_name, input_value in inputs_values.items():
+            node_instance.setInputValue(input_name, input_value)
+
+        node_instances[node_id] = node_instance
+        engine.addNode(node_instance)
+
     for c_data in connections_data:
-        from_node = node_instances.get(c_data['fromNode'])
-        to_node = node_instances.get(c_data['toNode'])
+        from_node = node_instances.get(c_data.get('fromNode'))
+        to_node = node_instances.get(c_data.get('toNode'))
 
         if not from_node or not to_node:
             return jsonify({"error": "Invalid node ID in connection."}), 400
 
-        transition_type_str = c_data['type'].upper()
-        transition_type = TransitionType[transition_type_str]
+        transition_type_str = (c_data.get('type') or '').upper()
+        try:
+            transition_type = TransitionType[transition_type_str]
+        except Exception:
+            return jsonify({"error": f"Invalid transition type: {transition_type_str}"}), 400
+
+        from_port_name = c_data.get('fromPort')
+        to_port_name = c_data.get('toPort')
 
         output_port = None
         input_port = None
 
         if transition_type == TransitionType.DATA:
-            output_port = from_node.getOutput(c_data['fromPort'])
-            input_port = to_node.getInput(c_data['toPort'])
-
+            output_port = from_node.getOutput(from_port_name)
+            input_port = to_node.getInput(to_port_name)
             if not output_port or not input_port:
                 return jsonify({"error": f"Data connection error: Port not found or mismatch on nodes {from_node.id} -> {to_node.id}."}), 400
+
+        elif transition_type == TransitionType.EXEC:
+            if from_port_name:
+                output_port = from_node.getOutput(from_port_name)
+            if not output_port:
+                for o in from_node.getOutputs():
+                    if o.name:
+                        output_port = o
+                        break
+            if not output_port and from_node.type.name in ["EVENT", "METHOD"]:
+                from_node.addOutput("ExecOut")
+                output_port = from_node.getOutput("ExecOut")
+            if to_port_name:
+                input_port = to_node.getInput(to_port_name)
+            if not input_port:
+                input_port = to_node.getInput('ExecIn')
+            if not output_port:
+                return jsonify({"error": f"Exec connection error: Output port '{from_port_name}' not found on node {from_node.id}."}), 400
+
+        else:
+            return jsonify({"error": f"Unsupported transition type: {transition_type_str}"}), 400
 
         engine.addTransition(
             Transition(
@@ -254,14 +281,12 @@ def run_luau_code():
 
     luau_code = engine.generateLuau()
 
-    simulation_output = f"Simulating Luau output (from generated code):\n{luau_code}"
-
     return jsonify({
         "message": "Code generated and simulated.",
         "luau_code": luau_code,
         "output": ""
     })
-
+    
 
 
 
@@ -325,5 +350,4 @@ def delete_variable(variable_name):
 
 
 if __name__ == '__main__':
-    # Run the Flask application
     app.run(host='0.0.0.0', port=80, debug=True)

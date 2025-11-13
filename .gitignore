@@ -7,3 +7,4 @@ src/Nodes/Events/__pycache__
 src/Nodes/Models/Variables/__pycache__
 env
 src/Nodes/Models/string/__pycache__
+src/Nodes/Models/statement/__pycache__

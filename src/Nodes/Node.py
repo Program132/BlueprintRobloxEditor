@@ -103,6 +103,9 @@ class Node:
                 pass
             self.addInput(name, default_val)
 
+        for out_name in data.get("exec", []):
+            self.addOutput(out_name) # as exec
+
         for out in data.get("outputs", []):
             self.addOutput(out)
 
