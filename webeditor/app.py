@@ -75,6 +75,12 @@ from src.Nodes.Models.boolean.NotEqual import NotEqual
 from src.Nodes.Models.convert.ToNumber import ToNumber
 from src.Nodes.Models.convert.ToString import ToString
 
+from src.Nodes.Models.table.ConstructTable import ConstructTable
+from src.Nodes.Models.table.TableGetElement import TableGetElement
+from src.Nodes.Models.table.TableInsert import TableInsert
+from src.Nodes.Models.table.TableLength import TableLength
+from src.Nodes.Models.table.TableRemove import TableRemove
+from src.Nodes.Models.table.TableSetElement import TableSetElement
 
 
 
@@ -143,7 +149,13 @@ NODE_CLASS_MAP = {
     "le": LowerEqual,
     "forrange": ForRange,
     "tostring": ToString,
-    "tonumber": ToNumber
+    "tonumber": ToNumber,
+    "constructtable": ConstructTable,
+    "tableget": TableGetElement,
+    "tableinsert": TableInsert,
+    "tablelength": TableLength,
+    "tableremove": TableRemove,
+    "tableset": TableSetElement
 }
 
 
