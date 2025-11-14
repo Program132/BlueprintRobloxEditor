@@ -9,3 +9,4 @@ env
 src/Nodes/Models/string/__pycache__
 src/Nodes/Models/statement/__pycache__
 src/Nodes/Models/convert/__pycache__
+src/Nodes/Models/table/__pycache__

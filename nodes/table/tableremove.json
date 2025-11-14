@@ -1,0 +1,14 @@
+{
+    "type": "METHOD",
+    "color": [32, 128, 201],
+    "title": "Table REMOVE Element",
+    "inputs": {
+        "table": {
+            "defaultValue": ""
+        },
+        "index": {
+            "defaultValue": "0"
+        }
+    },
+    "outputs": []
+}

@@ -10,7 +10,7 @@ from src.Nodes.Models.table.TableInsert import TableInsert
 
 START = Start()
 
-var_ = Variable("myDict")
+var_ = Variable("myArray")
 
 SET_NODE = SET()
 T_MAP = ConstructTable()

@@ -1,0 +1,14 @@
+{
+    "type": "FUNCTION",
+    "color": [32, 128, 201],
+    "title": "Table GET Element",
+    "inputs": {
+        "table": {
+            "defaultValue": ""
+        },
+        "key": {
+            "defaultValue": "key"
+        }
+    },
+    "outputs": ["value"]
+}

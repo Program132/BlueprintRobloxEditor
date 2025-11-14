@@ -1,0 +1,11 @@
+{
+    "type": "FUNCTION",
+    "color": [32, 128, 201],
+    "title": "Table Length",
+    "inputs": {
+        "table": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": ["length"]
+}

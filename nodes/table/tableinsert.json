@@ -1,0 +1,14 @@
+{
+    "type": "METHOD",
+    "color": [32, 128, 201],
+    "title": "Table INSERT Element (As Array)",
+    "inputs": {
+        "table": {
+            "defaultValue": ""
+        },
+        "value": {
+            "defaultValue": "value"
+        }
+    },
+    "outputs": []
+}

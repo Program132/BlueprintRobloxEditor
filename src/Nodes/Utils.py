@@ -7,7 +7,7 @@ def is_luau_expression(s: str, engine_variables: List) -> bool:
     if any(var.name == s for var in engine_variables):
         return True
 
-    operators = ['+', '-', '*', '/', '%', '^', '(', ')', '[', ']', '==', '~=', '>', '<']
+    operators = ['+', '-', '*', '/', '%', '^', '(', ')', '[', ']', '==', '~=', '>', '<', '{', '}']
     if any(op in s for op in operators):
         return True
 
