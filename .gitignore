@@ -12,3 +12,4 @@ src/models/table/__pycache__
 src/models/string/__pycache__
 src/models/values/__pycache__
 src/models/variables/__pycache__
+__pycache__
