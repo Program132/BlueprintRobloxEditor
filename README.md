@@ -22,6 +22,7 @@ Additionally, it is possible to propose your own node. Please follow the format 
 ```json
 {
     "type": "METHOD",
+    "title": "My Node",
     "inputs": {
         "input_name": {
             "defaultValue": "default_input_value"
@@ -36,6 +37,7 @@ Note: outputs and inputs can be empty:
 ```json
 {
     "type": "METHOD",
+    "title": "My Node",
     "inputs": {},
     "outputs": []
 }
