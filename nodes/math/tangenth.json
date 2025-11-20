@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Tangent Hyperbolic (tanh)",
     "inputs": {
         "a": {
             "defaultValue": "0"

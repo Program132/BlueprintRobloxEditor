@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Substraction (-)",
     "inputs": {
         "a": {
             "defaultValue": "0"

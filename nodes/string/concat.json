@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Concat (String)",
     "inputs": {
         "a": {
             "defaultValue": "Hello"

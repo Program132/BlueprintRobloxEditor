@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+    "title": "Addition (+)",
     "inputs": {
         "a": {
             "defaultValue": "0"

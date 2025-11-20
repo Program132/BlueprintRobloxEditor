@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+    "title": "Arctangent 2 (atan2)",
     "inputs": {
         "y": {
             "defaultValue": "0"

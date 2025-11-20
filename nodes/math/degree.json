@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+    "title": "Degree",
     "inputs": {
         "a": {
             "defaultValue": "0"

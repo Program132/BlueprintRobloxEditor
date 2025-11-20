@@ -1,6 +1,7 @@
 {
     "color": [0, 150, 255],
-    "type": "METHOD",
+    "title": "GET (Variable)",
+    "type": "FUNCTION",
     "inputs": {
         "name": {
             "defaultValue": "Var"

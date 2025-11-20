@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Tangent (tan)",
     "inputs": {
         "a": {
             "defaultValue": "0"

@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+    "title": "Character (String)",
     "inputs": {
         "a": {
             "defaultValue": "hello"

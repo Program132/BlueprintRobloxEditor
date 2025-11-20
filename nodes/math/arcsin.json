@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+    "title": "Arcsin (asin)",
     "inputs": {
         "a": {
             "defaultValue": "0"

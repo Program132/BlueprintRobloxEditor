@@ -1,0 +1,13 @@
+{
+    "type": "FUNCTION",
+    "color": [50, 0, 166],
+    "title": "Boolean Value",
+    "inputs": {
+        "value": {
+            "defaultValue": "true"
+        }
+    },
+    "outputs": [
+      "value"
+    ]
+}

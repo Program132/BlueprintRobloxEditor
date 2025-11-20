@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Square Root (sqrt, √)",
     "inputs": {
         "a": {
             "defaultValue": "0"

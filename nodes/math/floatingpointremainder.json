@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Floating Point Remainder (fmod)",
     "inputs": {
         "x": {
             "defaultValue": "0"

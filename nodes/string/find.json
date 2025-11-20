@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Find (String)",
     "inputs": {
         "str": {
             "defaultValue": "hello"

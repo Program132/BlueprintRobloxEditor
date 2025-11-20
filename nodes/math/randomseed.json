@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Random Seed",
     "inputs": {
         "a": {
             "defaultValue": "0"

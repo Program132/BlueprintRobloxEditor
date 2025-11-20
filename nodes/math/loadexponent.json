@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Load Exponent (ldexp)",
     "inputs": {
         "m": {
             "defaultValue": "0"

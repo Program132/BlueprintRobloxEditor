@@ -1,0 +1,10 @@
+{
+    "type": "METHOD",
+    "title": "Error",
+    "inputs": {
+        "value": {
+            "defaultValue": "Error: Invalid type"
+        }
+    },
+    "outputs": []
+}

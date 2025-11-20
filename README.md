@@ -45,24 +45,82 @@ Note: outputs and inputs can be empty:
 - FUNCTION = no exec connection
 - EVENT = one exec output
 
-Once that's done you need to create the node in Python on the backend, create a file in `src/Nodes/Models`, you need to complete the `toLuau` function and indicate your **.json** file in the constructor then the type of the node.
+Once that's done you need to create the node in Python on the backend, create a file in `src/models`, you need to complete the `toLuau` function and indicate your **.json** file in the constructor then the type of the node.
 ```python
-from src.Nodes.Node import Node
-from src.Nodes.NodeColor import NodeColor
-from src.Nodes.NodeType import NodeType
+from src.Node import Node, NodeType
+
 class MyNode(Node):
     def __init__(self):
-        super().__init__()
-        self.loadFromJson("nodes/MyNode.json")
+        super().__init__("nodes/MyNode.json")
 
     def toLuau(self):
         return "My node"
-
-    def __str__(self):
-        return "MyNode NODE"
 ```
 
+Note: If you create custom events and there is "more than 1 event" in your node, like CharacterAdded, make sure to give a value to `events_count`, example:
+```py 
+from typing import Optional
+from src.Node import Node
+
+
+class PlayerAdded(Node):
+    def __init__(self) -> None:
+        super().__init__("nodes/events/playeradded.json")
+        self.events_count = 1 # here, PlayerAdded is "one event"
+
+    def toLuau(self) -> Optional[str]:
+        output_names = [o.name for o in self.outputs]
+        args = ", ".join(output_names)
+        r = f'game:GetService("Players").PlayerAdded:Connect(function({args})'
+        return r
+```
+```py 
+from typing import Optional
+from src.Node import Node
+
+
+class CharacterAdded(Node):
+    def __init__(self) -> None:
+        super().__init__("nodes/events-characteradded.json")
+        self.event_count = 2 # there is PlayerAdded and CharacterAdded events
+
+    def toLuau(self) -> Optional[str]:
+        r = (f'game:GetService("Players").PlayerAdded:Connect(function(Player)\n'
+             f'Player.CharacterAdded:Connect(function(Character)')
+        return r
+```
+ 
 You can implement several things in the "translation" function, I advise you to look at the already existing nodes.
+
+
+WARNING: If you create custom statement, like if, loops etc. make sure to have a "exec output" named "Continue" !
+Example (for range):
+```json
+  {
+      "title": "For (Range)",
+      "color": [200,200,200],
+      "type": "METHOD",
+      "inputs": {
+          "variable": {
+              "defaultValue": "i"
+          },
+          "start": {
+              "defaultValue": 1
+          },
+          "end": {
+              "defaultValue": 10
+          },
+          "step": {
+              "defaultValue": 1
+          }
+      },
+      "exec": [
+          "Loop Body",
+          "Continue"
+      ],
+      "outputs": []
+  }
+```
 
 ## Installation
 

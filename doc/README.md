@@ -1,29 +1,109 @@
-# BRE Documentation
+# Documentation
 
-## Bases
+Firstly, launch the application by running `python app.py` in the root directory.
 
-Once on the site, you will see 3 sections:
-- Tools: allow you to transform your blocks into Luau code, save and load your project.
-- Explorer: allows the creation of variables and scripts.
-- Editor: allows you to create and connect your blocks.
+Then move to `http://localhost:80/` in your web browser.
 
-## Create your first blueprint
+![Welcome Page](1.png)
 
-By default, you have the "Start" block. It is an event, and in any case your script must begin with an event.
+You can create more graphs, modify their content and delete them if need.
+![Graphs](2.png)
 
-Next, you need to create your blocks. You have two different types of blocks:
-- METHOD: requires executive connections, has inputs and outputs.
-- FUNCTION: does not require executive connections, has inputs and outputs.
+You can also see the graph to a **Luau**.
+![Export](3.png)
 
-A METHOD block is generally an instruction, while a FUNCTION block is a callable function. For example, addition is a function, while print is an instruction.
+Moreover, you can save and load a project you created (click on the save button to save your project, or load if you want to load one).
 
-Exec connections are traceable via triangles, while data connections are traceable via circles, opposite the names of inputs and outputs. As their name suggests, these are data that flow from one block to another.
+Then, it's possible for you to create variables : 
+![Var Creation](4.png)
+![Var](5.png)
 
-## Execution
+You can also create functions : 
+![Func Creation](6.png)
+![Func Declaration](7.png)
+And edit the content of your custom function : 
+![Func content](8.png)
 
-Once your script is finished, you can click on the Run button, and a window will open with the Luau code. You just need to copy and paste it wherever you want!
+## Node creation
 
-## FAQ
+Make sure to follow the format:
+```json
+{
+    "type": "METHOD",
+    "title": "Node title",
+    "color": [200,200,200],
+    "inputs": {
+        "input_name": {
+            "defaultValue": "default_input_value"
+        }
+    },
+    "outputs": [
+        "output_name"
+    ]
+}
+```
+
+- `color` is not mandatory, but you can create your own color using RGB values.
+- `inputs` and `outputs` are not mandatory, but you need to have at least inputs empty and outputs empty like : 
+```json
+{
+    "type": "METHOD",
+    "title": "Node title",
+    "color": [200,200,200],
+    "inputs": {},
+    "outputs": []
+}
+```
+- `exec`is for special statement, you can use it but make sure to edit the backend side.
+- `type` can be `METHOD`, `FUNCTION`, `EVENT`, connections: 
+    * events: one execution as output
+    * methods: one execution as input and one execution as output
+    * functions: one execution as input and one execution as output
+
+Example of a math node:
+```json
+{
+    "type": "METHOD",
+    "title": "Add",
+    "color": [200,200,200],
+    "inputs": {
+        "a": {
+            "defaultValue": "0"
+        },
+        "b": {
+            "defaultValue": "0"
+        }
+    },
+    "outputs": [
+        "result"
+    ]
+}
+```
+
+Example of a custom event:
+```json
+{
+    "type": "EVENT",
+    "title": "Custom Event",
+    "color": [200,200,200],
+    "inputs": {},
+    "outputs": []
+}
+```
+
+Moreover you need to create the python class : 
+```python
+from src.Node import Node
+
+class CustomNode(Node):
+    def __init__(self):
+        super().__init__("path/to/node.json")
+
+    def toLuau():
+        return 'warn("Custom Node")'
+```
+
+# FAQ
 
 ### How to open the nodes menu ?
 
@@ -53,9 +133,3 @@ Do a left click anywhere and move with your mouse. As long as you hold down the 
 ### How do I come back to the default view in the editor ?
 
 Click on the button "Reset View" at the top right in the editor window.
-
-
-## Example 1
-![Example](img/example.png)
-## Example 2
-![Example](img/example2.png)

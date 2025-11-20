@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Repeat (String)",
     "inputs": {
         "str": {
             "defaultValue": "a"

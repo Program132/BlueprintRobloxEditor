@@ -1,0 +1,10 @@
+{
+    "type": "METHOD",
+    "title": "Warning",
+    "inputs": {
+        "value": {
+            "defaultValue": "Warn: Folder not found"
+        }
+    },
+    "outputs": []
+}

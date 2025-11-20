@@ -1,5 +1,6 @@
 {
     "type": "METHOD",
+    "title": "Print",
     "inputs": {
         "value": {
             "defaultValue": "Hello World!"

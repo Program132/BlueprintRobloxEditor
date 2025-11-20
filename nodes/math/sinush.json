@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Sinus Hyperbolic (sinh)",
     "inputs": {
         "a": {
             "defaultValue": "0"

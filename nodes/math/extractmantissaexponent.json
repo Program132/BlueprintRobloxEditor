@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+    "title": "Extract Mantissa and Exponent (modf)",
     "inputs": {
         "a": {
             "defaultValue": "0"

@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Division (/, ÷)",
     "inputs": {
         "a": {
             "defaultValue": "0"

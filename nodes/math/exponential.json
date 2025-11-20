@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Exponential (e)",
     "inputs": {
         "a": {
             "defaultValue": "0"

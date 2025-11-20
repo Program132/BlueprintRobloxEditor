@@ -1,5 +1,6 @@
 {
     "type": "EVENT",
+    "title": "Event Start",
     "inputs": {},
     "outputs": []
 }

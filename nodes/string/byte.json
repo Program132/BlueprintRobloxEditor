@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+    "title": "Byte (String)",
     "inputs": {
         "a": {
             "defaultValue": "hello"

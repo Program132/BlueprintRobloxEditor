@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Sinus (sin)",
     "inputs": {
         "a": {
             "defaultValue": "0"

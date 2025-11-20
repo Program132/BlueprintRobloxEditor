@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Radians (rad)",
     "inputs": {
         "a": {
             "defaultValue": "0"

@@ -1,0 +1,14 @@
+{
+    "title": "Greater or Equal (>=)",
+    "color": [145, 114, 29],
+    "type": "FUNCTION",
+    "inputs": {
+        "a": {
+            "defaultValue": "3"
+        },
+        "b": {
+            "defaultValue": "2"
+        }
+    },
+    "outputs": ["result"]
+}

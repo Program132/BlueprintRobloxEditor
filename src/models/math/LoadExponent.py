@@ -1,0 +1,11 @@
+from src.Node import Node
+
+class LoadExponent(Node):
+    def __init__(self):
+        super().__init__("nodes/math/loadexponent.json")
+
+    def toLuau(self):
+        m = self.getInputValue("m")
+        e = self.getInputValue("e")
+        r = f"(math.ldexp({m}, {e}))"
+        self.setOutputValue(name="result", value=r)

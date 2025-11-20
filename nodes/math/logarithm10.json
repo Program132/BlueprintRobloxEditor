@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+  "title": "Logarithm 10 (log10)",
     "inputs": {
         "a": {
             "defaultValue": "0"

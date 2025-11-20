@@ -1,5 +1,6 @@
 {
     "color": [0, 150, 255],
+    "title": "SET (Variable)",
     "type": "METHOD",
     "inputs": {
         "name": {

@@ -1,5 +1,6 @@
 {
     "type": "FUNCTION",
+    "title": "Arctangent (atan)",
     "inputs": {
         "a": {
             "defaultValue": "0"
