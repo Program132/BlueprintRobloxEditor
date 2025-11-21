@@ -11,7 +11,10 @@ class Instance(Node):
         classname = self.getInputValue("ClassName")
         parent = self.getInputValue("parent")
 
-        classname_formatted = self._formatValueForLuau(classname)
+        if not classname.startswith('"') and not classname.startswith("'"):
+            classname_formatted = f'"{classname}"'
+        else:
+            classname_formatted = classname
         
         if parent == "" or len(parent) == 0:
             r = f'Instance.new({classname_formatted})'
@@ -20,4 +23,3 @@ class Instance(Node):
             r = f'Instance.new({classname_formatted}, {parent_formatted})'
         
         self.setOutputValue("instance", r)
-        return r
