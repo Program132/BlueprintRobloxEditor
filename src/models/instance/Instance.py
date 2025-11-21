@@ -26,4 +26,3 @@ class Instance(Node):
             r = f'Instance.new({classname_formatted}, {parent_formatted})'
         
         self.setOutputValue("instance", r)
-        return r
