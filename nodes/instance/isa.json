@@ -1,0 +1,20 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        52,
+        168,
+        83
+    ],
+    "title": "Is A",
+    "inputs": {
+        "instance": {
+            "defaultValue": ""
+        },
+        "className": {
+            "defaultValue": "Part"
+        }
+    },
+    "outputs": [
+        "result"
+    ]
+}
