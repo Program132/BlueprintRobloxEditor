@@ -1,0 +1,20 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        52,
+        168,
+        83
+    ],
+    "title": "Instance New",
+    "inputs": {
+        "ClassName": {
+            "defaultValue": "Part"
+        },
+        "parent": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "instance"
+    ]
+}
