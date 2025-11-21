@@ -140,76 +140,10 @@ class Node:
         return None
 
     def _detectValueType(self, s:str) -> str:
-        if not isinstance(s, str) or not s:
-            return "string"
-
-        stripped = s.strip()
-
-        if any(var.name == stripped for var in self.engine.variables):
-            return "variable"
-
-        operators = ['+', '-', '*', '/', '%', '^', '(', ')', '[', ']', '==', '~=', '>', '<', '{', '}']
-        if any(op in stripped for op in operators):
-            if (stripped.startswith("{") and stripped.endswith("}")) or (
-                    stripped.startswith("[") and stripped.endswith("]")):
-                try:
-                    json.loads(stripped)
-                    return "json"
-                except:
-                    return "formula"
-            return "formula"
-
-        try:
-            float(stripped)
-            return "number"
-        except:
-            pass
-
-        if stripped.lower() in ['true', 'false']:
-            return "boolean"
-        if stripped.lower() == 'nil':
-            return "nil"
-
-        if (stripped.startswith('"') and stripped.endswith('"')) or \
-                (stripped.startswith("'") and stripped.endswith("'")):
-            return "string"
-
-        if (stripped[0].isalpha() or stripped[0] == '_') and ' ' not in stripped:
-            return "string"
-
-        return "string"
+        return "variable"
 
     def _formatValueForLuau(self, value) -> str:
-        if value is None:
-            return "nil"
-        
-        value_str = str(value).strip()
-        
-        if not value_str:
-            return '""'
-        
-        if value_str.startswith('"') or value_str.startswith("'"):
-            return value_str
-        
-        try:
-            float(value_str)
-            return value_str
-        except:
-            pass
-        
-        if value_str.lower() in ['true', 'false']:
-            return value_str.lower()
-        
-        if value_str.lower() == 'nil':
-            return 'nil'
-        
-        is_variable = (value_str.replace('_', '').replace('.', '').isalnum() and 
-                     (value_str[0].isalpha() or value_str[0] == '_'))
-        
-        if not is_variable:
-            return f'"{value_str}"'
-        
-        return value_str
+        return value
 
     def toLuau(self) -> Optional[str]:
         return None
