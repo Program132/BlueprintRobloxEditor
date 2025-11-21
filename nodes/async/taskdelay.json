@@ -1,0 +1,18 @@
+{
+    "type": "METHOD",
+    "color": [
+        255,
+        165,
+        0
+    ],
+    "title": "Task Delay",
+    "inputs": {
+        "duration": {
+            "defaultValue": "1"
+        },
+        "function": {
+            "defaultValue": "function"
+        }
+    },
+    "outputs": []
+}
