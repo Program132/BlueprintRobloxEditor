@@ -1,0 +1,12 @@
+{
+    "type": "FUNCTION",
+    "title": "KeyCode",
+    "inputs": {
+        "key": {
+            "defaultValue": "Space"
+        }
+    },
+    "outputs": [
+        "keyCode"
+    ]
+}
