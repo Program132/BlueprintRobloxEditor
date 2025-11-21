@@ -1,0 +1,12 @@
+{
+    "type": "FUNCTION",
+    "title": "UserInputType Enum",
+    "inputs": {
+        "key": {
+            "defaultValue": "Space"
+        }
+    },
+    "outputs": [
+        "userinputtype"
+    ]
+}
