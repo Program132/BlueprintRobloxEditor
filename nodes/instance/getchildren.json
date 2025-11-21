@@ -1,0 +1,17 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        52,
+        168,
+        83
+    ],
+    "title": "GetChildren",
+    "inputs": {
+        "instance": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "children"
+    ]
+}
