@@ -19,7 +19,11 @@ class Instance(Node):
         if parent == "" or len(parent) == 0:
             r = f'Instance.new({classname_formatted})'
         else:
-            parent_formatted = self._formatValueForLuau(parent)
+            if ':' in parent or '(' in parent or '.' in parent:
+                parent_formatted = parent
+            else:
+                parent_formatted = self._formatValueForLuau(parent)
             r = f'Instance.new({classname_formatted}, {parent_formatted})'
         
         self.setOutputValue("instance", r)
+        return r
