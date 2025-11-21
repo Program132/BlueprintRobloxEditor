@@ -1,0 +1,21 @@
+{
+    "type": "METHOD",
+    "color": [
+        52,
+        168,
+        83
+    ],
+    "title": "Set Property",
+    "inputs": {
+        "instance": {
+            "defaultValue": ""
+        },
+        "PropertyName": {
+            "defaultValue": "Name"
+        },
+        "value": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": []
+}
