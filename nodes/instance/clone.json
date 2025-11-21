@@ -1,0 +1,17 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        52,
+        168,
+        83
+    ],
+    "title": "Clone",
+    "inputs": {
+        "instance": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "clone"
+    ]
+}
