@@ -1,6 +1,6 @@
 {
     "type": "FUNCTION",
-    "title": "KeyCode",
+    "title": "KeyCode Enum",
     "inputs": {
         "key": {
             "defaultValue": "Space"
