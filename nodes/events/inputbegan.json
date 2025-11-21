@@ -1,0 +1,14 @@
+{
+    "type": "EVENT",
+    "color": [
+        255,
+        0,
+        0
+    ],
+    "title": "InputBegan Event",
+    "inputs": {},
+    "outputs": [
+        "input",
+        "gameProcessedEvent"
+    ]
+}
