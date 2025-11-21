@@ -1,0 +1,20 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        52,
+        168,
+        83
+    ],
+    "title": "Find First Child",
+    "inputs": {
+        "instance": {
+            "defaultValue": ""
+        },
+        "childName": {
+            "defaultValue": "Part"
+        }
+    },
+    "outputs": [
+        "child"
+    ]
+}
