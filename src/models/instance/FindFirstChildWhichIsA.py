@@ -1,0 +1,20 @@
+from typing import Optional
+from src.Node import Node
+
+class FindFirstChildWhichIsA(Node):
+    def __init__(self) -> None:
+        super().__init__("nodes/instance/findfirstchildwhichisa.json")
+
+    def toLuau(self) -> Optional[str]:
+        instance = self.getInputValue("instance")
+        class_name = self.getInputValue("className")
+
+        if not class_name.startswith('"') and not class_name.startswith("'"):
+            class_name_formatted = f'"{class_name}"'
+        else:
+            class_name_formatted = class_name
+        
+        r = f'{instance}:FindFirstChildWhichIsA({class_name_formatted})'
+        
+        self.setOutputValue("child", r)
+        return r
