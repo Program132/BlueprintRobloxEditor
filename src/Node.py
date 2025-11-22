@@ -6,6 +6,7 @@ class NodeType(Enum):
     EVENT = "EVENT"
     METHOD = "METHOD"
     FUNCTION = "FUNCTION"
+    ENUM = "ENUM"
 
 class Input:
     def __init__(self, name=None, value=None, required=True) -> None:
@@ -49,7 +50,7 @@ class Node:
 
         if data.get("type") == "EVENT":
             self.type = NodeType.EVENT
-        elif data.get("type") == "FUNCTION":
+        elif data.get("type") == "FUNCTION" or data.get("type") == "ENUM":
             self.type = NodeType.FUNCTION
         else:
             self.type = NodeType.METHOD

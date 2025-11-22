@@ -52,8 +52,11 @@ document.addEventListener('DOMContentLoaded', function () {
         nodeEl.style.position = 'absolute';
         nodeEl.style.left = `${x}px`;
         nodeEl.style.top = `${y}px`;
-        nodeEl.style.backgroundColor = `rgba(${nodeDef.color.join(',')},0.1)`;
-        nodeEl.style.border = `1px solid rgba(${nodeDef.color.join(',')},0.3)`;
+
+        // Use default color if not defined
+        const nodeColor = nodeDef.color || [100, 100, 100];
+        nodeEl.style.backgroundColor = `rgba(${nodeColor.join(',')},0.1)`;
+        nodeEl.style.border = `1px solid rgba(${nodeColor.join(',')},0.3)`;
         nodeEl.style.borderRadius = '6px';
         nodeEl.style.padding = '12px';
         nodeEl.style.minWidth = '180px';
@@ -73,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         title.style.marginBottom = '10px';
         title.style.paddingBottom = '6px';
         title.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
-        title.style.color = `rgb(${nodeDef.color.join(',')})`;
+        title.style.color = `rgb(${nodeColor.join(',')})`;
         nodeEl.appendChild(title);
 
         const content = document.createElement('div');
@@ -198,23 +201,54 @@ document.addEventListener('DOMContentLoaded', function () {
                 inp.style.alignItems = 'center';
                 inp.style.gap = '6px';
 
-                inp.innerHTML = `
-                    <div class="input-circle" data-port="${name}"></div>
-                    <div class="input-label" style="font-size:12px;color:#d4d4d4;flex:0 0 60px">${name}</div>
-                    <input type="text"
-                        class="node-input-value"
-                        data-port-id="${name}"
-                        value="${def.defaultValue || ''}" style="
-                        flex:1;
-                        max-width:100px;
-                        padding:4px 6px;
-                        background-color:#1b1f29;
-                        border:1px solid #2a3d55;
-                        border-radius:4px;
-                        color:#d4d4d4;
-                        font-size:12px;
-                    ">
-                `;
+                // Check if this input has predefined values (enum)
+                const hasValues = Array.isArray(def.values) && def.values.length > 0;
+
+                if (hasValues) {
+                    // Create dropdown for enum inputs
+                    const optionsHtml = def.values.map(val =>
+                        `<option value="${val}" ${val === def.defaultValue ? 'selected' : ''}>${val}</option>`
+                    ).join('');
+
+                    inp.innerHTML = `
+                        <div class="input-circle" data-port="${name}"></div>
+                        <div class="input-label" style="font-size:12px;color:#d4d4d4;flex:0 0 60px">${name}</div>
+                        <select
+                            class="node-input-value"
+                            data-port-id="${name}" style="
+                            flex:1;
+                            max-width:100px;
+                            padding:4px 6px;
+                            background-color:#1b1f29;
+                            border:1px solid #2a3d55;
+                            border-radius:4px;
+                            color:#d4d4d4;
+                            font-size:12px;
+                            cursor:pointer;
+                        ">
+                            ${optionsHtml}
+                        </select>
+                    `;
+                } else {
+                    // Create text input for regular inputs
+                    inp.innerHTML = `
+                        <div class="input-circle" data-port="${name}"></div>
+                        <div class="input-label" style="font-size:12px;color:#d4d4d4;flex:0 0 60px">${name}</div>
+                        <input type="text"
+                            class="node-input-value"
+                            data-port-id="${name}"
+                            value="${def.defaultValue || ''}" style="
+                            flex:1;
+                            max-width:100px;
+                            padding:4px 6px;
+                            background-color:#1b1f29;
+                            border:1px solid #2a3d55;
+                            border-radius:4px;
+                            color:#d4d4d4;
+                            font-size:12px;
+                        ">
+                    `;
+                }
                 inputsSec.appendChild(inp);
             }
             content.appendChild(inputsSec);
@@ -254,8 +288,8 @@ document.addEventListener('DOMContentLoaded', function () {
         makeDraggable(nodeEl);
 
         nodeEl.addEventListener('mouseenter', () => {
-            nodeEl.style.border = `2px solid rgb(${nodeDef.color.join(',')})`;
-            nodeEl.style.boxShadow = `0 0 8px rgba(${nodeDef.color.join(',')}, 0.6)`;
+            nodeEl.style.border = `2px solid rgb(${nodeColor.join(',')})`;
+            nodeEl.style.boxShadow = `0 0 8px rgba(${nodeColor.join(',')}, 0.6)`;
         });
         nodeEl.addEventListener('mouseleave', () => {
             nodeEl.style.border = `1px solid rgba(255, 255, 255, 0.1)`;
@@ -375,7 +409,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function createNodeListItem(nodeDef) {
         const nodeItem = document.createElement('div');
         nodeItem.className = 'node-item';
-        nodeItem.style.borderLeft = `3px solid rgb(${nodeDef.color.join(',')})`;
+        const nodeColor = nodeDef.color || [100, 100, 100];
+        nodeItem.style.borderLeft = `3px solid rgb(${nodeColor.join(',')})`;
         nodeItem.innerHTML = `
             <div style="display:flex;justify-content:space-between;align-items:center;padding:8px">
                 <div>
@@ -383,8 +418,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p style="font-size:12px;color:#a0a0a0">${nodeDef.description || ''}</p>
                 </div>
                 <span style="
-                    background: rgba(${nodeDef.color.join(',')},0.2);
-                    color: rgb(${nodeDef.color.join(',')});
+                    background: rgba(${nodeColor.join(',')},0.2);
+                    color: rgb(${nodeColor.join(',')});
                     padding:2px 6px;
                     border-radius:4px;
                     font-size:10px;
@@ -454,7 +489,8 @@ document.addEventListener('DOMContentLoaded', function () {
             filteredNodes.forEach(node => {
                 const nodeItem = document.createElement('div');
                 nodeItem.className = 'node-item';
-                nodeItem.style.borderLeft = `3px solid rgb(${node.color.join(',')})`;
+                const nodeColor = node.color || [100, 100, 100];
+                nodeItem.style.borderLeft = `3px solid rgb(${nodeColor.join(',')})`;
                 nodeItem.innerHTML = `
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:8px">
                         <div>
@@ -462,8 +498,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             <p style="font-size:12px;color:#a0a0a0">${node.description || ''}</p>
                         </div>
                         <span style="
-                            background: rgba(${node.color.join(',')},0.2);
-                            color: rgb(${node.color.join(',')});
+                            background: rgba(${nodeColor.join(',')},0.2);
+                            color: rgb(${nodeColor.join(',')});
                             padding:2px 6px;
                             border-radius:4px;
                             font-size:10px;
@@ -506,7 +542,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 const nodeDef = window.generateFunctionCallNode(func);
                 const nodeItem = document.createElement('div');
                 nodeItem.className = 'node-item';
-                nodeItem.style.borderLeft = `3px solid rgb(${nodeDef.color.join(',')})`;
+                const nodeColor = nodeDef.color || [100, 100, 100];
+                nodeItem.style.borderLeft = `3px solid rgb(${nodeColor.join(',')})`;
                 nodeItem.innerHTML = `
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:8px">
                         <div>
@@ -514,8 +551,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             <p style="font-size:12px;color:#a0a0a0">${nodeDef.description || ''}</p>
                         </div>
                         <span style="
-                            background: rgba(${nodeDef.color.join(',')},0.2);
-                            color: rgb(${nodeDef.color.join(',')});
+                            background: rgba(${nodeColor.join(',')},0.2);
+                            color: rgb(${nodeColor.join(',')});
                             padding:2px 6px;
                             border-radius:4px;
                             font-size:10px;

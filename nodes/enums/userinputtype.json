@@ -1,9 +1,25 @@
 {
-    "type": "FUNCTION",
+    "type": "ENUM",
     "title": "UserInputType Enum",
     "inputs": {
-        "key": {
-            "defaultValue": "Space"
+        "type": {
+            "defaultValue": "Keyboard",
+            "values": [
+                "Keyboard",
+                "MouseButton1",
+                "MouseButton2",
+                "MouseButton3",
+                "MouseWheel",
+                "MouseMovement",
+                "Touch",
+                "Gamepad1",
+                "Gamepad2",
+                "Gamepad3",
+                "Gamepad4",
+                "Focus",
+                "Accelerometer",
+                "Gyro"
+            ]
         }
     },
     "outputs": [
