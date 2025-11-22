@@ -1,0 +1,23 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        3,
+        190,
+        252
+    ],
+    "title": "Vector3 Builder",
+    "inputs": {
+        "x": {
+            "defaultValue": "0"
+        },
+        "y": {
+            "defaultValue": "0"
+        },
+        "z": {
+            "defaultValue": "0"
+        }
+    },
+    "outputs": [
+        "Vector3"
+    ]
+}

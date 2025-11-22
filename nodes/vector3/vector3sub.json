@@ -1,0 +1,20 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        3,
+        190,
+        252
+    ],
+    "title": "Vector3 Sub (-)",
+    "inputs": {
+        "vec1": {
+            "defaultValue": ""
+        },
+        "vec2": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "Vector3"
+    ]
+}
