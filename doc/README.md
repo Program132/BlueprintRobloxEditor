@@ -26,6 +26,8 @@ And edit the content of your custom function :
 
 ## Node creation
 
+### Default
+
 Make sure to follow the format:
 ```json
 {
@@ -101,6 +103,30 @@ class CustomNode(Node):
 
     def toLuau():
         return 'warn("Custom Node")'
+```
+
+### Enums 
+
+If you want to add a custom node about Enums, you have to follow this format:
+```json
+{
+    "type": "ENUM",
+    "title": "Enum title",
+    "color": [200,200,200],
+    "inputs": {
+        "input_name": {
+            "defaultValue": "default_input_value"
+            "values": [
+                "value1",
+                "value2",
+                "value3"
+            ]
+        }
+    },
+    "outputs": [
+        "output_name"
+    ]
+}
 ```
 
 # FAQ
