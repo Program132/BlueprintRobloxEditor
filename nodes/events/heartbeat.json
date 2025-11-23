@@ -1,0 +1,8 @@
+{
+    "type": "EVENT",
+    "title": "Heartbeat (RunService)",
+    "description": "Fires every frame on the server (60 FPS). Use for server-side game logic.",
+    "outputs": [
+        "deltaTime"
+    ]
+}
