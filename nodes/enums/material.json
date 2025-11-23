@@ -1,0 +1,47 @@
+{
+    "type": "ENUM",
+    "title": "Material Enum",
+    "description": "Roblox material types for parts",
+    "inputs": {
+        "material": {
+            "defaultValue": "Plastic",
+            "values": [
+                "Plastic",
+                "Wood",
+                "Slate",
+                "Concrete",
+                "CorrodedMetal",
+                "DiamondPlate",
+                "Foil",
+                "Grass",
+                "Ice",
+                "Marble",
+                "Granite",
+                "Brick",
+                "Pebble",
+                "Sand",
+                "Fabric",
+                "SmoothPlastic",
+                "Metal",
+                "WoodPlanks",
+                "Cobblestone",
+                "Air",
+                "Water",
+                "Rock",
+                "Glacier",
+                "Snow",
+                "Sandstone",
+                "Mud",
+                "Basalt",
+                "Ground",
+                "CrackedLava",
+                "Neon",
+                "Glass",
+                "ForceField"
+            ]
+        }
+    },
+    "outputs": [
+        "material"
+    ]
+}
