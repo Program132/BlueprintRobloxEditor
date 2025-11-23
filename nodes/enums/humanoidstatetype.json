@@ -1,0 +1,32 @@
+{
+    "type": "ENUM",
+    "title": "HumanoidStateType Enum",
+    "description": "States a Humanoid can be in",
+    "inputs": {
+        "state": {
+            "defaultValue": "Running",
+            "values": [
+                "FallingDown",
+                "Running",
+                "RunningNoPhysics",
+                "Climbing",
+                "StrafingNoPhysics",
+                "Ragdoll",
+                "GettingUp",
+                "Jumping",
+                "Landed",
+                "Flying",
+                "Freefall",
+                "Seated",
+                "PlatformStanding",
+                "Dead",
+                "Swimming",
+                "Physics",
+                "None"
+            ]
+        }
+    },
+    "outputs": [
+        "state"
+    ]
+}
