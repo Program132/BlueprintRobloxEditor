@@ -1,0 +1,13 @@
+{
+    "type": "FUNCTION",
+    "title": "Get CFrame Position",
+    "description": "Extracts the position (Vector3) from a CFrame",
+    "inputs": {
+        "cframe": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "position"
+    ]
+}
