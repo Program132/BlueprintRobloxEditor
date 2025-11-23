@@ -1,0 +1,13 @@
+{
+    "type": "EVENT",
+    "title": "Touch Ended",
+    "description": "Fires when another part stops touching this part",
+    "inputs": {
+        "instance": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "otherPart"
+    ]
+}
