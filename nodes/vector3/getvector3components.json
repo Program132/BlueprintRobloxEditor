@@ -1,0 +1,15 @@
+{
+    "type": "FUNCTION",
+    "title": "Get Vector3 Components",
+    "description": "Extracts X, Y, Z components from a Vector3",
+    "inputs": {
+        "vector": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "x",
+        "y",
+        "z"
+    ]
+}
