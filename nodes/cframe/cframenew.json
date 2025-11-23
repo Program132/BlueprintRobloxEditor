@@ -1,0 +1,19 @@
+{
+    "type": "FUNCTION",
+    "title": "CFrame Builder",
+    "description": "Creates a CFrame from position coordinates (X, Y, Z)",
+    "inputs": {
+        "x": {
+            "defaultValue": "0"
+        },
+        "y": {
+            "defaultValue": "0"
+        },
+        "z": {
+            "defaultValue": "0"
+        }
+    },
+    "outputs": [
+        "cframe"
+    ]
+}

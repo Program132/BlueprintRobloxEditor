@@ -1,0 +1,19 @@
+{
+    "type": "FUNCTION",
+    "title": "CFrame Angles",
+    "description": "Creates a rotated CFrame from Euler angles (in radians)",
+    "inputs": {
+        "rx": {
+            "defaultValue": "0"
+        },
+        "ry": {
+            "defaultValue": "0"
+        },
+        "rz": {
+            "defaultValue": "0"
+        }
+    },
+    "outputs": [
+        "cframe"
+    ]
+}
