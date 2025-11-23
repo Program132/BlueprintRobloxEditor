@@ -1,0 +1,13 @@
+{
+    "type": "EVENT",
+    "title": "Touched",
+    "description": "Fires when another part touches this part",
+    "inputs": {
+        "instance": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "otherPart"
+    ]
+}
