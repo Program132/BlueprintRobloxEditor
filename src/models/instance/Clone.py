@@ -11,4 +11,3 @@ class Clone(Node):
         r = f'{instance}:Clone()'
         
         self.setOutputValue("clone", r)
-        return r

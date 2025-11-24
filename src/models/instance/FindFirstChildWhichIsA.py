@@ -17,4 +17,3 @@ class FindFirstChildWhichIsA(Node):
         r = f'{instance}:FindFirstChildWhichIsA({class_name_formatted})'
         
         self.setOutputValue("child", r)
-        return r
