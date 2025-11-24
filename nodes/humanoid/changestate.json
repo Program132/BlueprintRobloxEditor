@@ -1,0 +1,18 @@
+{
+    "type": "METHOD",
+    "color": [
+        255,
+        100,
+        100
+    ],
+    "title": "Humanoid Change State",
+    "inputs": {
+        "humanoid": {
+            "defaultValue": ""
+        },
+        "state": {
+            "defaultValue": "Enum.HumanoidStateType.Jumping"
+        }
+    },
+    "outputs": []
+}

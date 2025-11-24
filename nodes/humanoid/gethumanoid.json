@@ -1,0 +1,17 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        255,
+        100,
+        100
+    ],
+    "title": "Get Humanoid",
+    "inputs": {
+        "character": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "humanoid"
+    ]
+}

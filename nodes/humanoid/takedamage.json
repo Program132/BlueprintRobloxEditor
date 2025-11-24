@@ -1,0 +1,18 @@
+{
+    "type": "METHOD",
+    "color": [
+        255,
+        100,
+        100
+    ],
+    "title": "Humanoid Take Damage",
+    "inputs": {
+        "humanoid": {
+            "defaultValue": ""
+        },
+        "damage": {
+            "defaultValue": "10"
+        }
+    },
+    "outputs": []
+}
