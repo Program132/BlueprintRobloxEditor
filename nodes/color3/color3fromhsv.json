@@ -1,0 +1,23 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        255,
+        150,
+        50
+    ],
+    "title": "Color3 From HSV",
+    "inputs": {
+        "h": {
+            "defaultValue": "0"
+        },
+        "s": {
+            "defaultValue": "1"
+        },
+        "v": {
+            "defaultValue": "1"
+        }
+    },
+    "outputs": [
+        "color"
+    ]
+}
