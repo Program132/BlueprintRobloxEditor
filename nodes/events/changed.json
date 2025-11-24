@@ -1,0 +1,17 @@
+{
+    "type": "EVENT",
+    "color": [
+        255,
+        0,
+        0
+    ],
+    "title": "Property Changed",
+    "inputs": {
+        "instance": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "property"
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "type": "EVENT",
+    "color": [
+        255,
+        0,
+        0
+    ],
+    "title": "Child Removed",
+    "inputs": {
+        "instance": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "child"
+    ]
+}
