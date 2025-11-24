@@ -1,0 +1,18 @@
+{
+    "type": "ENUM",
+    "title": "EasingDirection Enum",
+    "description": "Easing direction for tweens",
+    "inputs": {
+        "easingDirection": {
+            "defaultValue": "Out",
+            "values": [
+                "In",
+                "Out",
+                "InOut"
+            ]
+        }
+    },
+    "outputs": [
+        "easingDirection"
+    ]
+}

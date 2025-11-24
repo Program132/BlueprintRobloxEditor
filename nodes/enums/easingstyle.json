@@ -1,0 +1,26 @@
+{
+    "type": "ENUM",
+    "title": "EasingStyle Enum",
+    "description": "Easing style for tweens",
+    "inputs": {
+        "easingStyle": {
+            "defaultValue": "Linear",
+            "values": [
+                "Linear",
+                "Sine",
+                "Back",
+                "Quad",
+                "Quart",
+                "Quint",
+                "Bounce",
+                "Elastic",
+                "Exponential",
+                "Circular",
+                "Cubic"
+            ]
+        }
+    },
+    "outputs": [
+        "easingStyle"
+    ]
+}
