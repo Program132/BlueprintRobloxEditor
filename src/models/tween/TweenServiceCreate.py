@@ -14,4 +14,3 @@ class TweenServiceCreate(Node):
         r = f'{tween_service}:Create({instance}, {tween_info}, {properties})'
         
         self.setOutputValue("tween", r)
-        return r

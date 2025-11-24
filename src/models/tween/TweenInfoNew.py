@@ -16,4 +16,3 @@ class TweenInfoNew(Node):
         r = f'TweenInfo.new({time}, {easing_style}, {easing_direction}, {repeat_count}, {reverses}, {delay_time})'
         
         self.setOutputValue("tweenInfo", r)
-        return r
