@@ -1,0 +1,32 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        100,
+        200,
+        255
+    ],
+    "title": "TweenInfo New",
+    "inputs": {
+        "time": {
+            "defaultValue": "1"
+        },
+        "easingStyle": {
+            "defaultValue": "Enum.EasingStyle.Linear"
+        },
+        "easingDirection": {
+            "defaultValue": "Enum.EasingDirection.Out"
+        },
+        "repeatCount": {
+            "defaultValue": "0"
+        },
+        "reverses": {
+            "defaultValue": "false"
+        },
+        "delayTime": {
+            "defaultValue": "0"
+        }
+    },
+    "outputs": [
+        "tweenInfo"
+    ]
+}

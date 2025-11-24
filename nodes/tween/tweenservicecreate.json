@@ -1,0 +1,26 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        100,
+        200,
+        255
+    ],
+    "title": "TweenService Create",
+    "inputs": {
+        "tweenService": {
+            "defaultValue": ""
+        },
+        "instance": {
+            "defaultValue": ""
+        },
+        "tweenInfo": {
+            "defaultValue": ""
+        },
+        "properties": {
+            "defaultValue": "{}"
+        }
+    },
+    "outputs": [
+        "tween"
+    ]
+}
