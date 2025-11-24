@@ -1,0 +1,17 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        100,
+        150,
+        255
+    ],
+    "title": "Get Character",
+    "inputs": {
+        "player": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "character"
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "type": "METHOD",
+    "color": [
+        100,
+        150,
+        255
+    ],
+    "title": "Load Character",
+    "inputs": {
+        "player": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": []
+}
