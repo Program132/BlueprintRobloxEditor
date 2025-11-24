@@ -1,0 +1,17 @@
+{
+    "type": "EVENT",
+    "color": [
+        255,
+        100,
+        255
+    ],
+    "title": "RemoteEvent On Client Event",
+    "inputs": {
+        "remoteEvent": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "args"
+    ]
+}

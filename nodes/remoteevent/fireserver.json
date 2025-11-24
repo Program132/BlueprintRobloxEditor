@@ -1,0 +1,14 @@
+{
+    "type": "METHOD",
+    "color": [255, 100, 255],
+    "title": "RemoteEvent Fire Server",
+    "inputs": {
+        "remoteEvent": {
+            "defaultValue": ""
+        },
+        "args": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": []
+}
