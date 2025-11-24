@@ -1,0 +1,21 @@
+{
+    "title": "For-In (pairs)",
+    "color": [200, 200, 200],
+    "type": "METHOD",
+    "inputs": {
+        "keyVariable": {
+            "defaultValue": "key"
+        },
+        "valueVariable": {
+            "defaultValue": "value"
+        },
+        "table": {
+            "defaultValue": ""
+        }
+    },
+    "exec": [
+        "Loop Body",
+        "Continue"
+    ],
+    "outputs": []
+}
