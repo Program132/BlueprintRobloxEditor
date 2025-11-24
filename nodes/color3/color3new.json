@@ -1,0 +1,23 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        255,
+        150,
+        50
+    ],
+    "title": "Color3 New",
+    "inputs": {
+        "r": {
+            "defaultValue": "1"
+        },
+        "g": {
+            "defaultValue": "1"
+        },
+        "b": {
+            "defaultValue": "1"
+        }
+    },
+    "outputs": [
+        "color"
+    ]
+}
