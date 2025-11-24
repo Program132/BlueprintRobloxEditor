@@ -1,0 +1,25 @@
+{
+    "title": "For-In (ipairs)",
+    "color": [
+        200,
+        200,
+        200
+    ],
+    "type": "METHOD",
+    "inputs": {
+        "indexVariable": {
+            "defaultValue": "i"
+        },
+        "valueVariable": {
+            "defaultValue": "value"
+        },
+        "array": {
+            "defaultValue": ""
+        }
+    },
+    "exec": [
+        "Loop Body",
+        "Continue"
+    ],
+    "outputs": []
+}
