@@ -1,0 +1,18 @@
+{
+    "type": "EVENT",
+    "color": [
+        255,
+        0,
+        0
+    ],
+    "title": "Humanoid State Changed",
+    "inputs": {
+        "humanoid": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "oldState",
+        "newState"
+    ]
+}

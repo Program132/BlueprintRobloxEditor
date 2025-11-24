@@ -1,0 +1,15 @@
+{
+    "type": "EVENT",
+    "color": [
+        255,
+        0,
+        0
+    ],
+    "title": "Humanoid Died",
+    "inputs": {
+        "humanoid": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": []
+}
