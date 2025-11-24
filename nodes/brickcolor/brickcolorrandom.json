@@ -1,0 +1,13 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        200,
+        100,
+        50
+    ],
+    "title": "BrickColor Random",
+    "inputs": {},
+    "outputs": [
+        "brickColor"
+    ]
+}
