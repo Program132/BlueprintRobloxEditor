@@ -1,0 +1,20 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        150,
+        100,
+        255
+    ],
+    "title": "UDim2 From Offset",
+    "inputs": {
+        "x": {
+            "defaultValue": "100"
+        },
+        "y": {
+            "defaultValue": "100"
+        }
+    },
+    "outputs": [
+        "udim2"
+    ]
+}

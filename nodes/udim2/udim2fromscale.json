@@ -1,0 +1,20 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        150,
+        100,
+        255
+    ],
+    "title": "UDim2 From Scale",
+    "inputs": {
+        "x": {
+            "defaultValue": "0.5"
+        },
+        "y": {
+            "defaultValue": "0.5"
+        }
+    },
+    "outputs": [
+        "udim2"
+    ]
+}
