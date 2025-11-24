@@ -1,0 +1,19 @@
+{
+    "type": "FUNCTION",
+    "color": [
+        200,
+        100,
+        50
+    ],
+    "title": "BrickColor To RGB",
+    "inputs": {
+        "brickColor": {
+            "defaultValue": ""
+        }
+    },
+    "outputs": [
+        "r",
+        "g",
+        "b"
+    ]
+}
