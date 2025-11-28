@@ -1,15 +1,10 @@
-.idea
-.venv
-src/__pycache__
-src/models/__pycache__
-src/models/boolean/__pycache__
-src/models/convert/__pycache__
-src/models/events/__pycache__
-src/models/math/__pycache__
-src/models/statement/__pycache__
-src/models/string/__pycache__
-src/models/table/__pycache__
-src/models/string/__pycache__
-src/models/values/__pycache__
-src/models/variables/__pycache__
-__pycache__
+# Project place file
+/BlueprintRobloxEditor.rbxlx
+/BlueprintRobloxEditor.rbxm
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock
+
+sourcemap.json
+aftman.toml

@@ -1,0 +1,12 @@
+{
+  "name": "BlueprintRobloxEditor",
+  "tree": {
+    "$className": "Folder",
+    "Plugin": {
+      "$path": "src/plugin"
+    },
+    "Shared": {
+      "$path": "src/shared"
+    }
+  }
+}
