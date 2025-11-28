@@ -1,8 +1,0 @@
-{
-    "type": "EVENT",
-    "title": "PlayerAdded Event",
-    "inputs": {},
-    "outputs": [
-      "Player"
-    ]
-}

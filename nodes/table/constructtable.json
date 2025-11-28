@@ -1,7 +1,0 @@
-{
-    "type": "FUNCTION",
-    "color": [32, 128, 201],
-    "title": "Construct Table",
-    "inputs": {},
-    "outputs": ["table"]
-}

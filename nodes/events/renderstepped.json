@@ -1,8 +1,0 @@
-{
-    "type": "EVENT",
-    "title": "RenderStepped (RunService)",
-    "description": "Fires every frame on the client (before rendering). Use for camera/visual updates.",
-    "outputs": [
-        "deltaTime"
-    ]
-}
