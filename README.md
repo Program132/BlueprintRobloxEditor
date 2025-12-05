@@ -1,31 +1,20 @@
 # BlueprintRobloxEditor
 
+BRE (Blueprint Roblox Editor) is a blueprint editor for creating Roblox games using a plugin within Roblox Studio.
 
-BRE (Blueprint Roblox Editor) est un éditeur de Blueprint pour la création de jeux Roblox depuis un plugin sous Roblox Studio.
-
-Le projet utilise Rojo, une extension de VS Code pour gérer les projets Roblox.
-
-# Installation
-
-If you have rojo:
-```bash
-git clone https://github.com/Program132/BlueprintRobloxEditor.git
-cd BlueprintRobloxEditor
-rojo build -o "BlueprintRobloxEditor.rbxlx"
-```
-
-If you don't have rojo, you can download it from [here](https://rojo.space/docs/rojo/download).
-Else, you can use the `.rbxm` file provided in the releases.
+The project uses Rojo, a VS Code extension for managing Roblox projects.
 
 # Roadmap
 
 ## Phase 1 : Core
 
 ### Classes
-- [ ] Node
+- [X] Node & NodeType
 - [ ] Graph
-- [ ] Pin
-- [ ] Transition
+- [ ] Block
+- [X] Input
+- [X] Output
+- [X] Transition & TransitionType
 
 ## Phase 2 : UI
 
@@ -48,3 +37,19 @@ Else, you can use the `.rbxm` file provided in the releases.
     - [ ] Custom Color
     - [ ] Custom Description
     - [ ] Custom transitions
+
+
+# Installation
+
+You can clone the repository and build the plugin yourself:
+```bash
+git clone https://github.com/Program132/BlueprintRobloxEditor.git
+cd BlueprintRobloxEditor
+rojo build -o BlueprintRobloxEditor.rbxmx
+```
+
+You can as well download the lastest release!
+
+Once you have the plugin, open Roblox Studio and move the plugin to your plugin folder.
+Windows path: `%LOCALAPPDATA%\Roblox\Plugins`
+Mac path: `/Users/%USERNAME%/Library/Application Support/Roblox/Versions/version/Plugins`
