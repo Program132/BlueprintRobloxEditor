@@ -20,6 +20,7 @@ export type Node = typeof(setmetatable({} :: {
 	Color: Color3,
 	Inputs: {Input},
 	Outputs: {Output},
+	EventsCounts: IntValue,
 }, Node))
 
 function Node.new(name: string?, type: NodeType?): Node
@@ -33,6 +34,7 @@ function Node.new(name: string?, type: NodeType?): Node
 		Color = Color3.new(1, 1, 1),
 		Inputs = {},
 		Outputs = {},
+		EventsCounts = 0,
 	}, Node)
 
 	return self
