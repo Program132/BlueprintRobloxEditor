@@ -1,0 +1,6 @@
+{
+    "aliases": {
+        "shared": "src/shared",
+        "plugin": "src/plugin"
+    }
+}

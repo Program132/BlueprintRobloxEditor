@@ -1,8 +1,7 @@
-# Project place file
 /BlueprintRobloxEditor.rbxlx
 /BlueprintRobloxEditor.rbxm
+/BlueprintRobloxEditor.rbxmx
 
-# Roblox Studio lock files
 /*.rbxlx.lock
 /*.rbxl.lock
 
