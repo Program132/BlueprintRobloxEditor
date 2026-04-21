@@ -1,11 +1,18 @@
+-- Import services
+local HttpService = game:GetService("HttpService")
+
+-- Import the backend modules
+local Shared = script.Parent:WaitForChild("Shared")
+local Graph = require(Shared.Graph)
+
 -- Create a new toolbar section for the plugin
 local toolbar = plugin:CreateToolbar("Blueprint Editor")
 
--- Create a button on the toolbar
+-- Create a button on the toolbar (only toggles the widget open/closed)
 local pluginButton = toolbar:CreateButton(
 	"Edit Blueprint",
 	"Open the Blueprint Editor",
-	"rbxassetid://4458901886" -- Generic placeholder icon
+	"rbxassetid://4458901886"
 )
 
 pluginButton.ClickableWhenViewportHidden = true
@@ -15,23 +22,16 @@ local widgetInfo = DockWidgetPluginGuiInfo.new(
 	Enum.InitialDockState.Float,
 	true,   -- Widget is initially enabled
 	false,  -- Don't override previous enabled state
-	200,    -- Float X size
+	400,    -- Float X size
 	300,    -- Float Y size
-	150,    -- Min Width
+	200,    -- Min Width
 	150     -- Min Height
 )
 
 local widget = plugin:CreateDockWidgetPluginGui("BlueprintEditorWidget", widgetInfo)
 widget.Title = "Blueprint Editor"
 
--- Function to toggle the widget's visibility
-local function onPluginButtonClicked()
-	widget.Enabled = not widget.Enabled
-end
-
-pluginButton.Click:Connect(onPluginButtonClicked)
-
--- Make sure the button stays active if the widget is open
+-- Keep the toolbar button active state in sync with the widget
 local function onWidgetEnabledChanged()
 	pluginButton:SetActive(widget.Enabled)
 end
@@ -39,94 +39,92 @@ end
 widget:GetPropertyChangedSignal("Enabled"):Connect(onWidgetEnabledChanged)
 onWidgetEnabledChanged()
 
-print("Blueprint Editor Plugin Loaded")
+-- Toggle widget on toolbar button click
+pluginButton.Click:Connect(function()
+	widget.Enabled = not widget.Enabled
+end)
 
--- Import the backend modules
-local Shared = script.Parent:WaitForChild("Shared")
-local Graph = require(Shared.Graph)
+-- Project state
+local currentProjectPath = nil
+local currentGraph = Graph.new()
 
--- Import specific nodes
-local EventStart = require(Shared.nodes.events.Start)
-local PrintNode = require(Shared.nodes.Print)
-local AddNode = require(Shared.nodes.math.Add)
+-- Build the widget UI
 
-print("--- STARTING BLUEPRINT SYSTEM DEMO ---")
+-- Top bar frame
+local topBar = Instance.new("Frame")
+topBar.Name = "TopBar"
+topBar.Size = UDim2.new(1, 0, 0, 40)
+topBar.Position = UDim2.new(0, 0, 0, 0)
+topBar.BackgroundColor3 = Color3.fromRGB(36, 36, 36)
+topBar.BorderSizePixel = 0
+topBar.Parent = widget
 
--- 1. Create a Graph
-local myGraph = Graph.new()
-print("✓ Graph created")
+local topBarLayout = Instance.new("UIListLayout")
+topBarLayout.FillDirection = Enum.FillDirection.Horizontal
+topBarLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+topBarLayout.Padding = UDim.new(0, 6)
+topBarLayout.Parent = topBar
 
--- 2. Create Nodes
-local eventNode = EventStart.new()
-eventNode:setXY(100, 100)
+local topBarPadding = Instance.new("UIPadding")
+topBarPadding.PaddingLeft = UDim.new(0, 8)
+topBarPadding.Parent = topBar
 
-local addNode1 = AddNode.new()
-addNode1:setXY(300, 100)
+-- Helper: create a small action button in the top bar
+local function makeTopBarButton(name, label)
+	local btn = Instance.new("TextButton")
+	btn.Name = name
+	btn.Size = UDim2.new(0, 110, 0, 26)
+	btn.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+	btn.BorderSizePixel = 0
+	btn.Text = label
+	btn.TextColor3 = Color3.fromRGB(220, 220, 220)
+	btn.TextSize = 13
+	btn.Font = Enum.Font.GothamMedium
+	btn.AutoButtonColor = true
 
-local addNode2 = AddNode.new()
-addNode2:setXY(500, 100)
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 4)
+	corner.Parent = btn
 
-local printNode = PrintNode.new()
-printNode:setXY(700, 100)
-
-print("✓ Nodes created: EventStart, Add1, Add2, Print")
-
--- 3. Add Nodes to Graph
-myGraph:add_node(eventNode)
-myGraph:add_node(addNode1)
-myGraph:add_node(addNode2)
-myGraph:add_node(printNode)
-print("✓ Nodes added to graph")
-
--- 4. Set up data for the first Add node (5 + 10)
-local inputA1 = addNode1:getInput("A")
-local inputB1 = addNode1:getInput("B")
-if inputA1 then inputA1.Value = "5" end
-if inputB1 then inputB1.Value = "10" end
-print("✓ Add1 node inputs set: A=5, B=10")
-
--- 5. Set up data for the second Add node (Result + 3)
--- Note: A will receive the result from Add1, B is set to 3
-local inputB2 = addNode2:getInput("B")
-if inputB2 then inputB2.Value = "3" end
-print("✓ Add2 node input B set: B=3 (A will come from Add1.Result)")
-
--- 6. Connect execution flow: EventStart -> Add1 -> Add2 -> Print
-myGraph:connect_exec(eventNode, addNode1, "Exec")
-myGraph:connect_exec(addNode1, addNode2, "Exec")
-myGraph:connect_exec(addNode2, printNode, "Exec")
-print("✓ Execution edges connected: EventStart → Add1 → Add2 → Print")
-
--- 7. Connect data flow: 
---    Add1.Result -> Add2.A (chain the additions)
---    Add2.Result -> Print.Value
-myGraph:connect_data(addNode1, addNode2, "Result", "A")
-myGraph:connect_data(addNode2, printNode, "Result", "Value")
-print("✓ Data edges connected:")
-print("  - Add1.Result → Add2.A")
-print("  - Add2.Result → Print.Value")
-
--- 8. Build blocks from the graph
-print("\n--- BUILDING BLOCKS ---")
-local blocks = myGraph:build_blocks()
-print("✓ Built " .. #blocks .. " block(s)")
-
-for i, block in ipairs(blocks) do
-	print("  Block " .. i .. ": parent = " .. block.parent_node.Title)
-	print("    - " .. #block.exec_edges .. " exec edge(s)")
-	print("    - " .. #block.data_edges .. " data edge(s)")
+	btn.Parent = topBar
+	return btn
 end
 
--- 9. Generate and display code
-print("\n--- GENERATED LUAU CODE ---")
-for i, block in ipairs(blocks) do
-	print("-- Block " .. i .. " (from " .. block.parent_node.Title .. "):")
-	local code = block:run()
-	print(code)
-end
-print("--- END OF GENERATED CODE ---")
+local newProjectBtn  = makeTopBarButton("NewProjectBtn",  "+ New Project")
+local openProjectBtn = makeTopBarButton("OpenProjectBtn", "Open Project")
 
-print("\n--- BLUEPRINT SYSTEM DEMO COMPLETED ---")
-print("Expected output: print((5 + 10) + 3)")
+-- Canvas area below the top bar
+local canvas = Instance.new("Frame")
+canvas.Name = "Canvas"
+canvas.Size = UDim2.new(1, 0, 1, -40)
+canvas.Position = UDim2.new(0, 0, 0, 40)
+canvas.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+canvas.BorderSizePixel = 0
+canvas.ClipsDescendants = true
+canvas.Parent = widget
 
+-- Placeholder label shown before any project is loaded
+local placeholder = Instance.new("TextLabel")
+placeholder.Name = "Placeholder"
+placeholder.Size = UDim2.new(1, 0, 1, 0)
+placeholder.BackgroundTransparency = 1
+placeholder.Text = "No project open.\nUse '+ New Project' or 'Open Project' above."
+placeholder.TextColor3 = Color3.fromRGB(100, 100, 100)
+placeholder.TextSize = 14
+placeholder.Font = Enum.Font.Gotham
+placeholder.TextWrapped = true
+placeholder.Parent = canvas
 
+-- Button logic
+
+newProjectBtn.MouseButton1Click:Connect(function()
+	currentProjectPath = nil
+	currentGraph = Graph.new()
+	placeholder.Text = "New project created. Start adding nodes!"
+	-- TODO: initialise the canvas for the new graph
+end)
+
+openProjectBtn.MouseButton1Click:Connect(function()
+	-- TODO: implement file-pick and graph loading
+	placeholder.Text = "Open Project -- file picker not yet implemented."
+end)
