@@ -12,6 +12,7 @@ local TopBar  = require(UI.TopBar)
 local Canvas  = require(UI.Canvas)
 local Sidebar = require(UI.Sidebar)
 local Modal   = require(UI.Modal)
+local ScriptModal = require(UI.ScriptModal)
 
 -- Toolbar button (toggle widget only)
 local toolbar      = plugin:CreateToolbar("Blueprint Editor")
@@ -119,9 +120,20 @@ saveProjectBtn:OnClick(function()
 end)
 
 -- ── Sidebar: Scripts ──────────────────────────────────────────────────────────
+local function onEditScript(handle)
+	ScriptModal.prompt(widget, handle.data, function(updatedData)
+		-- Update the data
+		handle.data = updatedData
+		-- Update UI
+		handle.nameLabel.Text = updatedData.name
+		handle.typeBtn.Text = updatedData.type == "Function" and "FUN" or (updatedData.type == "Module" and "MOD" or "DEF")
+	end)
+end
+
 sidebar:OnAddScript(function()
-	-- TODO: prompt for script name
-	print("[Blueprint] + Add Script clicked")
+	ScriptModal.prompt(widget, nil, function(newScriptData)
+		sidebar:AddScript(newScriptData, onEditScript)
+	end)
 end)
 
 -- ── Sidebar: Variables ────────────────────────────────────────────────────────

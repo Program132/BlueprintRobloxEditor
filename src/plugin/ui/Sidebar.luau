@@ -145,6 +145,7 @@ function Sidebar.new(parent)
 	self._scripts   = makeSection(content, "Scripts",   1)
 	self._variables = makeSection(content, "Variables", 2)
 	self._varItems  = {}
+	self._scriptItems = {}
 
 	return self
 end
@@ -157,6 +158,86 @@ end
 
 function Sidebar:OnAddVariable(callback)
 	self._variables.addBtn.MouseButton1Click:Connect(callback)
+end
+
+-- Adds a script row to the list: [name] [TYPE] [EDIT] [X]
+function Sidebar:AddScript(data, onEdit)
+	local row = Instance.new("Frame")
+	row.Name = "Script_" .. data.name
+	row.Size = UDim2.new(1, 0, 0, 28)
+	row.BackgroundColor3 = Color3.fromRGB(22, 28, 45)
+	row.BorderSizePixel = 0
+	row.Parent = self._scripts.list
+	makeCorner(row, 4)
+
+	local nameLabel = Instance.new("TextLabel")
+	nameLabel.Size = UDim2.new(1, -120, 1, 0)
+	nameLabel.Position = UDim2.new(0, 10, 0, 0)
+	nameLabel.BackgroundTransparency = 1
+	nameLabel.Text = data.name
+	nameLabel.TextColor3 = Color3.fromRGB(170, 195, 230)
+	nameLabel.TextSize = 12
+	nameLabel.Font = Enum.Font.GothamMedium
+	nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+	nameLabel.TextTruncate = Enum.TextTruncate.AtEnd
+	nameLabel.Parent = row
+
+	local tagBar = Instance.new("Frame")
+	tagBar.Size = UDim2.new(0, 105, 1, 0)
+	tagBar.Position = UDim2.new(1, -110, 0, 0)
+	tagBar.BackgroundTransparency = 1
+	tagBar.Parent = row
+
+	local tagLayout = Instance.new("UIListLayout")
+	tagLayout.FillDirection = Enum.FillDirection.Horizontal
+	tagLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+	tagLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+	tagLayout.Padding = UDim.new(0, 3)
+	tagLayout.Parent = tagBar
+
+	local function makeTag(tagLabel, bg, fg)
+		local btn = Instance.new("TextButton")
+		btn.Size = UDim2.new(0, 30, 0, 20)
+		btn.BackgroundColor3 = bg
+		btn.BorderSizePixel = 0
+		btn.Text = tagLabel
+		btn.TextColor3 = fg
+		btn.TextSize = 10
+		btn.Font = Enum.Font.GothamBold
+		btn.AutoButtonColor = true
+		makeCorner(btn, 3)
+		btn.Parent = tagBar
+		return btn
+	end
+
+	local typeStr = data.type == "Function" and "FUN" or (data.type == "Module" and "MOD" or "DEF")
+	local typeBtn = makeTag(typeStr, Color3.fromRGB(30, 60, 50), Color3.fromRGB(90, 200, 150))
+	local editBtn = makeTag("⚙️", Color3.fromRGB(50, 50, 50), Color3.fromRGB(200, 200, 200))
+	local delBtn = makeTag("X", Color3.fromRGB(90, 25, 25), Color3.fromRGB(230, 80, 80))
+
+	local handle = {
+		data = data,
+		instance = row,
+		nameLabel = nameLabel,
+		typeBtn = typeBtn
+	}
+
+	editBtn.MouseButton1Click:Connect(function()
+		if onEdit then onEdit(handle) end
+	end)
+
+	delBtn.MouseButton1Click:Connect(function()
+		row:Destroy()
+		for i, item in self._scriptItems do
+			if item == handle then
+				table.remove(self._scriptItems, i)
+				break
+			end
+		end
+	end)
+
+	table.insert(self._scriptItems, handle)
+	return handle
 end
 
 -- Adds a variable row to the list: [name]  [GET] [SET] [X]
