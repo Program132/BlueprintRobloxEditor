@@ -2,6 +2,9 @@
 local Shared = script.Parent:WaitForChild("Shared")
 local Graph  = require(Shared.Graph)
 
+-- Import plugin classes
+local FileManager = require(script.FileManager)
+
 -- Import UI classes
 local UI     = script.ui
 local TopBar = require(UI.TopBar)
@@ -34,19 +37,50 @@ local canvas = Canvas.new(widget)
 local newProjectBtn  = topBar:AddButton("NewProjectBtn",  "+ New Project")
 local openProjectBtn = topBar:AddButton("OpenProjectBtn", "Open Project")
 
+-- Initialise services
+local fm           = FileManager.new(plugin)
+local SETTING_KEY  = "BlueprintEditor_CurrentProject"
+
 -- Project state
-local currentProjectPath = nil
+local currentProjectName = nil
 local currentGraph       = Graph.new()
 
--- Wire up buttons
+-- ── New Project ────────────────────────────────────────────────────────────────
 newProjectBtn:OnClick(function()
-	currentProjectPath = nil
+	currentProjectName = nil
 	currentGraph       = Graph.new()
+
+	-- Clear any previously saved project from Studio settings
+	fm:DeleteSetting(SETTING_KEY)
+
 	canvas:SetPlaceholder("New project created. Start adding nodes!")
-	-- TODO: render graph on canvas
+	-- TODO: render blank graph on canvas
 end)
 
+-- ── Open Project ───────────────────────────────────────────────────────────────
 openProjectBtn:OnClick(function()
-	-- TODO: implement project file loading
-	canvas:SetPlaceholder("Open Project -- file picker not yet implemented.")
+	local project = fm:OpenJSON({"json"})
+
+	if project == nil then
+		-- User cancelled or file was invalid (FileManager already warns)
+		return
+	end
+
+	currentProjectName = project.name
+	currentGraph       = Graph.new()
+
+	-- Persist to Studio settings so it survives session restarts
+	fm:SaveJSON(SETTING_KEY, project.data)
+
+	-- TODO: rebuild graph from project.data.nodes / project.data.connections
+
+	canvas:SetPlaceholder("Project '" .. project.name .. "' loaded!")
 end)
+
+-- ── Restore last project on startup ───────────────────────────────────────────
+local saved = fm:LoadJSON(SETTING_KEY)
+if saved then
+	currentGraph = Graph.new()
+	-- TODO: rebuild graph from saved
+	canvas:SetPlaceholder("Restored last project from Studio settings.")
+end
