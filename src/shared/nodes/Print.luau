@@ -7,7 +7,7 @@ Print.__index = Print
 setmetatable(Print, Node) 
 
 function Print.new()
-	local self = Node.new("Print String", NodeType.METHOD)
+	local self = Node.new("Print", NodeType.METHOD)
 	setmetatable(self, Print)
 	
 	self:addInput(IO.Input.new("Exec", ""))

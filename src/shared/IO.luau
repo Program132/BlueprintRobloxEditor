@@ -16,9 +16,11 @@ export type Output = typeof(setmetatable({} :: {
     Value: string,
 }, Output))
 
+local HttpService = game:GetService("HttpService")
+
 function Input.new(name: string, value: string): Input
     return setmetatable({
-        Id = DateTime.now():FormatLocalTime("LTS", "en-us"),
+        Id = HttpService:GenerateGUID(false),
         Name = name,
         Value = value,
     }, Input)
@@ -26,7 +28,7 @@ end
 
 function Output.new(name: string, value: string): Output
     return setmetatable({
-        Id = DateTime.now():FormatLocalTime("LTS", "en-us"),
+        Id = HttpService:GenerateGUID(false),
         Name = name,
         Value = value,
     }, Output)

@@ -114,19 +114,29 @@ function Canvas:_setupPanning()
 			if self._onLeftClickCallback then
 				self._onLeftClickCallback()
 			end
+		elseif input.UserInputType == Enum.UserInputType.Keyboard then
+			if self._onKeyDownCallback then
+				self._onKeyDownCallback(input.KeyCode)
+			end
 		end
 	end)
 
 	self._group.InputChanged:Connect(function(input)
-		if panning and input.UserInputType == Enum.UserInputType.MouseMovement then
-			local delta = input.Position - panStartPos
-			self._panX = startPanX + delta.X
-			self._panY = startPanY + delta.Y
+		if input.UserInputType == Enum.UserInputType.MouseMovement then
+			if self._onMouseMoveCallback then
+				self._onMouseMoveCallback(input.Position)
+			end
 			
-			self._nodeContainer.Position = UDim2.fromOffset(self._panX, self._panY)
-			
-			if self._gridFrame then
-				self._gridFrame.Position = UDim2.fromOffset(self._panX % DOT_SPACING, self._panY % DOT_SPACING)
+			if panning then
+				local delta = input.Position - panStartPos
+				self._panX = startPanX + delta.X
+				self._panY = startPanY + delta.Y
+				
+				self._nodeContainer.Position = UDim2.fromOffset(self._panX, self._panY)
+				
+				if self._gridFrame then
+					self._gridFrame.Position = UDim2.fromOffset(self._panX % DOT_SPACING, self._panY % DOT_SPACING)
+				end
 			end
 		end
 	end)
@@ -237,6 +247,14 @@ end
 
 function Canvas:OnLeftClick(callback)
 	self._onLeftClickCallback = callback
+end
+
+function Canvas:OnMouseMove(callback)
+	self._onMouseMoveCallback = callback
+end
+
+function Canvas:OnKeyDown(callback)
+	self._onKeyDownCallback = callback
 end
 
 function Canvas:HideGrid()

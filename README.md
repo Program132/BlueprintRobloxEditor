@@ -39,3 +39,13 @@ Roblox plugins have limited access to your local file system, so project managem
 1. To load an external project file, click **Open Project** in the top bar.
 2. A native file dialog will appear. Select your .json project file.
 3. The Blueprint Editor will now load and render the project!
+
+# Controls & Shortcuts
+
+| Action | Control |
+| :--- | :--- |
+| **Add Node** | Right-click on the canvas to open the node menu. |
+| **Move Node** | Drag the header of any node. |
+| **Connect Pins** | Drag from an output pin to an input pin. |
+| **Delete Node** | Hover over a node and press `Delete` or `Backspace`. |
+| **Pan Canvas** | Right-click or Middle-click and drag the background. |

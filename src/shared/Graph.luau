@@ -45,6 +45,27 @@ function Graph:add_node(node: Node)
     self.nodes[node] = true
 end
 
+--- Remove a node and all its connections from the graph.
+function Graph:remove_node(node: Node)
+    self.nodes[node] = nil
+    
+    -- Remove exec connections
+    for i = #self.exec_edges, 1, -1 do
+        local edge = self.exec_edges[i]
+        if edge.FromNode == node or edge.ToNode == node then
+            table.remove(self.exec_edges, i)
+        end
+    end
+    
+    -- Remove data connections
+    for i = #self.data_edges, 1, -1 do
+        local edge = self.data_edges[i]
+        if edge.FromNode == node or edge.ToNode == node then
+            table.remove(self.data_edges, i)
+        end
+    end
+end
+
 --- Connect two nodes with an execution edge.
 function Graph:connect_exec(from_node: Node, to_node: Node, exec_pin: string?)
     local pin = exec_pin or "default"
@@ -151,6 +172,102 @@ function Graph:build_blocks(): { Block }
         blocks[1], blocks[start_i] = blocks[start_i], blocks[1]
     end
     return blocks
+end
+
+--- Serialize the graph to a table.
+function Graph:serialize()
+    local nodes_data = {}
+    for node, _ in pairs(self.nodes) do
+        local inputs_values = {}
+        for _, inp in ipairs(node:getInputs()) do
+            inputs_values[inp.Name] = inp.Value
+        end
+
+        table.insert(nodes_data, {
+            Id = node.Id,
+            Class = node.Name,
+            Title = node.Title,
+            Position = { x = node.Position.X, y = node.Position.Y },
+            InputsValues = inputs_values
+        })
+    end
+
+    local exec_data = {}
+    for _, edge in ipairs(self.exec_edges) do
+        table.insert(exec_data, {
+            fromId = edge.FromNode.Id,
+            toId = edge.ToNode.Id,
+            fromPin = edge.FromPort,
+            toPin = edge.ToPort
+        })
+    end
+
+    local data_conn = {}
+    for _, edge in ipairs(self.data_edges) do
+        table.insert(data_conn, {
+            fromId = edge.FromNode.Id,
+            toId = edge.ToNode.Id,
+            outName = edge.FromPort,
+            inName = edge.ToPort
+        })
+    end
+
+    return {
+        nodes = nodes_data,
+        exec_edges = exec_data,
+        data_edges = data_conn
+    }
+end
+
+--- Static method: create a Graph from serialized data.
+function Graph.from_data(data, NodesFactory)
+    local graph = Graph.new()
+    local id_to_node = {}
+
+    -- 1. Restore nodes
+    for _, nData in ipairs(data.nodes or {}) do
+        local nodeClass = NodesFactory[nData.Class]
+        if nodeClass then
+            local node = nodeClass.new()
+            node.Id = nData.Id
+            node.Title = nData.Title
+            node:editPosition(Vector2.new(nData.Position.x, nData.Position.y))
+            
+            -- Restore input values
+            if nData.InputsValues then
+                for inpName, val in pairs(nData.InputsValues) do
+                    local inp = node:getInput(inpName)
+                    if inp then inp.Value = val end
+                end
+            end
+            
+            graph:add_node(node)
+            id_to_node[nData.Id] = node
+        end
+    end
+
+    -- 2. Restore exec edges
+    for _, eData in ipairs(data.exec_edges or {}) do
+        local from = id_to_node[eData.fromId]
+        local to = id_to_node[eData.toId]
+        if from and to then
+            -- Use 'fromPin' (new) or 'pin' (old) or default to 'Exec'
+            local fPin = eData.fromPin or eData.pin or "Exec"
+            local tPin = eData.toPin or "Exec"
+            graph:connect_exec(from, to, fPin, tPin)
+        end
+    end
+
+    -- 3. Restore data edges
+    for _, dData in ipairs(data.data_edges or {}) do
+        local from = id_to_node[dData.fromId]
+        local to = id_to_node[dData.toId]
+        if from and to then
+            graph:connect_data(from, to, dData.outName, dData.inName)
+        end
+    end
+
+    return graph
 end
 
 --- String representation for debugging.

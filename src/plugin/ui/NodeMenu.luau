@@ -12,14 +12,14 @@ local NODES_DATA = {
 		category = "Events",
 		color = Color3.fromRGB(150, 40, 40),
 		items = {
-			{ id = "Start", name = "Start Event", type = "Event" }
+			{ id = "Start Event", name = "Start Event", type = "Event" }
 		}
 	},
 	{
 		category = "Methods",
 		color = Color3.fromRGB(40, 100, 150),
 		items = {
-			{ id = "Print", name = "Print String", type = "Method" }
+			{ id = "Print", name = "Print", type = "Method" }
 		}
 	},
 	{

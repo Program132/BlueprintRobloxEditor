@@ -146,6 +146,7 @@ function Sidebar.new(parent)
 	self._variables = makeSection(content, "Variables", 2)
 	self._varItems  = {}
 	self._scriptItems = {}
+	self._onScriptSelected = nil
 
 	return self
 end
@@ -158,6 +159,21 @@ end
 
 function Sidebar:OnAddVariable(callback)
 	self._variables.addBtn.MouseButton1Click:Connect(callback)
+end
+
+function Sidebar:OnScriptSelected(callback)
+	self._onScriptSelected = callback
+end
+
+function Sidebar:Clear()
+	for _, item in ipairs(self._scriptItems) do
+		item.instance:Destroy()
+	end
+	for _, item in ipairs(self._varItems) do
+		item.instance:Destroy()
+	end
+	self._scriptItems = {}
+	self._varItems = {}
 end
 
 -- Adds a script row to the list: [name] [TYPE] [EDIT] [X]
@@ -219,8 +235,28 @@ function Sidebar:AddScript(data, onEdit)
 		data = data,
 		instance = row,
 		nameLabel = nameLabel,
-		typeBtn = typeBtn
+		typeBtn = typeBtn,
+		selected = false
 	}
+
+	function handle:Select()
+		self.selected = true
+		self.instance.BackgroundColor3 = Color3.fromRGB(35, 50, 85)
+		self.nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	end
+
+	function handle:Deselect()
+		self.selected = false
+		self.instance.BackgroundColor3 = Color3.fromRGB(22, 28, 45)
+		self.nameLabel.TextColor3 = Color3.fromRGB(170, 195, 230)
+	end
+
+	-- Clicking the row selects the script
+	row.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			if self._onScriptSelected then self._onScriptSelected(handle) end
+		end
+	end)
 
 	editBtn.MouseButton1Click:Connect(function()
 		if onEdit then onEdit(handle) end
@@ -336,6 +372,22 @@ end
 
 function Sidebar:GetInstance()
 	return self._frame
+end
+
+function Sidebar:GetScripts()
+	local scripts = {}
+	for _, item in ipairs(self._scriptItems) do
+		table.insert(scripts, item.data)
+	end
+	return scripts
+end
+
+function Sidebar:GetVariables()
+	local vars = {}
+	for _, item in ipairs(self._varItems) do
+		table.insert(vars, item.name)
+	end
+	return vars
 end
 
 return Sidebar

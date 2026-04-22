@@ -53,6 +53,7 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 		outputs = scriptData and scriptData.outputs or {},
 		attributes = scriptData and scriptData.attributes or {},
 		methods = scriptData and scriptData.methods or {},
+		graph = scriptData and scriptData.graph or nil, -- Preserve graph!
 	}
 
 	-- Create overlay

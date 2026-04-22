@@ -9,29 +9,29 @@ local function makeCorner(parent, radius)
 end
 
 local function makePin(parent, labelText, isOutput, isExec)
-	local row = Instance.new("Frame")
+	local row = Instance.new("TextButton")
+	row.Text = ""
+	row.AutoButtonColor = false
 	row.Size = UDim2.new(1, 0, 0, 24)
 	row.BackgroundTransparency = 1
+	row.Active = true -- Capture clicks on the whole row, sinking them!
 	row.Parent = parent
 
 	local pin = Instance.new("Frame")
-	pin.Size = UDim2.new(0, 10, 0, 10)
-	pin.Position = UDim2.new(isOutput and 1 or 0, isOutput and -5 or -5, 0.5, -5)
+	pin.Size = UDim2.new(0, 12, 0, 12)
+	-- Shift pin inwards so it is fully inside the row bounds
+	pin.Position = UDim2.new(isOutput and 1 or 0, isOutput and -12 or 0, 0.5, -6)
 	pin.BackgroundColor3 = isExec and Color3.fromRGB(240, 240, 240) or Color3.fromRGB(110, 180, 240)
 	pin.BorderSizePixel = 0
 	pin.ZIndex = 12
+	pin.Active = false
 	pin.Parent = row
-	makeCorner(pin, 5)
-
-	-- Add outline to pin
-	local stroke = Instance.new("UIStroke")
-	stroke.Color = Color3.fromRGB(20, 25, 35)
-	stroke.Thickness = 1
-	stroke.Parent = pin
+	makeCorner(pin, 6)
 
 	local label = Instance.new("TextLabel")
 	label.Size = UDim2.new(1, -20, 1, 0)
-	label.Position = UDim2.new(isOutput and 0 or 0, isOutput and 10 or 20, 0, 0)
+	-- Shift label text slightly inwards to account for the pin
+	label.Position = UDim2.new(isOutput and 0 or 0, isOutput and 0 or 15, 0, 0)
 	label.BackgroundTransparency = 1
 	label.Text = labelText
 	label.TextColor3 = Color3.fromRGB(200, 215, 230)
@@ -41,7 +41,28 @@ local function makePin(parent, labelText, isOutput, isExec)
 	label.ZIndex = 11
 	label.Parent = row
 
-	return { row = row, pin = pin }
+	local inputField = nil
+	if not isOutput and not isExec then
+		inputField = Instance.new("TextBox")
+		inputField.Size = UDim2.new(0, 50, 0, 18)
+		inputField.Position = UDim2.new(0, 15, 0.5, -9)
+		inputField.BackgroundColor3 = Color3.fromRGB(14, 19, 30)
+		inputField.BorderSizePixel = 0
+		inputField.Text = ""
+		inputField.PlaceholderText = "val"
+		inputField.TextColor3 = Color3.fromRGB(200, 215, 240)
+		inputField.TextSize = 10
+		inputField.Font = Enum.Font.Gotham
+		inputField.ZIndex = 13
+		inputField.Parent = row
+		makeCorner(inputField, 4)
+		
+		-- Shift label to the right of the input field
+		label.Position = UDim2.new(0, 70, 0, 0)
+		label.Size = UDim2.new(1, -75, 1, 0)
+	end
+
+	return { row = row, pin = pin, inputField = inputField }
 end
 
 local TYPE_COLORS = {
@@ -138,68 +159,126 @@ function NodeComponent.new(canvasParent, nodeData)
 
 	self.pins = {}
 
+	self.OnSelect = Instance.new("BindableEvent")
+	self.OnPinDragStart = Instance.new("BindableEvent")
+	self.OnPinDragEnd = Instance.new("BindableEvent")
+	self.OnPinHover = Instance.new("BindableEvent")
+	self.OnPinHoverEnd = Instance.new("BindableEvent")
+	self.OnHover = Instance.new("BindableEvent")
+	self.OnHoverEnd = Instance.new("BindableEvent")
+	self.OnKeyDown = Instance.new("BindableEvent")
+
 	-- Create Inputs
-	local maxInputWidth = 0
 	for _, input in ipairs(nodeData:getInputs()) do
 		local isExec = (input.Name == "Exec")
 		local pinObj = makePin(leftFrame, input.Name, false, isExec)
 		self.pins[input.Id] = pinObj
+		
+		if pinObj.inputField then
+			pinObj.inputField.Text = input.Value or ""
+			pinObj.inputField.FocusLost:Connect(function()
+				input.Value = pinObj.inputField.Text
+			end)
+		end
+
+		pinObj.row.InputBegan:Connect(function(inp)
+			if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+				print("[Pin] Firing OnPinDragStart for INPUT " .. input.Name)
+				self.OnPinDragStart:Fire(self.nodeData, input, false, pinObj.pin, inp.Position)
+				
+				local endConn
+				endConn = inp.Changed:Connect(function()
+					if inp.UserInputState == Enum.UserInputState.End then
+						print("[Pin] Firing OnPinDragEnd for INPUT " .. input.Name)
+						self.OnPinDragEnd:Fire()
+						endConn:Disconnect()
+					end
+				end)
+			end
+		end)
+		pinObj.pin.MouseEnter:Connect(function()
+			self.OnPinHover:Fire(self.nodeData, input, false, pinObj.pin)
+		end)
+		pinObj.pin.MouseLeave:Connect(function()
+			self.OnPinHoverEnd:Fire(self.nodeData, input, false, pinObj.pin)
+		end)
 	end
 
 	-- Create Outputs
-	local maxOutputWidth = 0
 	for _, output in ipairs(nodeData:getOutputs()) do
 		local isExec = (output.Name == "Exec")
 		local pinObj = makePin(rightFrame, output.Name, true, isExec)
 		self.pins[output.Id] = pinObj
+		
+		pinObj.row.InputBegan:Connect(function(inp)
+			if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+				print("[Pin] Firing OnPinDragStart for OUTPUT " .. output.Name)
+				self.OnPinDragStart:Fire(self.nodeData, output, true, pinObj.pin, inp.Position)
+				
+				local endConn
+				endConn = inp.Changed:Connect(function()
+					if inp.UserInputState == Enum.UserInputState.End then
+						print("[Pin] Firing OnPinDragEnd for OUTPUT " .. output.Name)
+						self.OnPinDragEnd:Fire()
+						endConn:Disconnect()
+					end
+				end)
+			end
+		end)
+		pinObj.pin.MouseEnter:Connect(function()
+			self.OnPinHover:Fire(self.nodeData, output, true, pinObj.pin)
+		end)
+		pinObj.pin.MouseLeave:Connect(function()
+			self.OnPinHoverEnd:Fire(self.nodeData, output, true, pinObj.pin)
+		end)
 	end
 
 	-- Auto-size frame based on pins
-	local rows = math.max(#nodeData:getInputs(), #nodeData:getOutputs())
-	local minHeight = 28 + 10 + (rows * 26)
-	frame.Size = UDim2.new(0, 160, 0, minHeight)
+	local maxPins = math.max(#nodeData:getInputs(), #nodeData:getOutputs())
+	local bodyHeight = math.max(40, maxPins * 26 + 10)
+	frame.Size = UDim2.new(0, 180, 0, bodyHeight + 28)
 
 	self.frame = frame
 	self.header = header
 	self.stroke = stroke
 	self.selected = false
-	self.OnSelect = Instance.new("BindableEvent")
 
 	self:_makeDraggable()
-	self:_setupEffects()
 
-	return self
-end
-
-function NodeComponent:_setupEffects()
-	local normalStroke = Color3.fromRGB(15, 20, 30)
-	local hoverStroke = Color3.fromRGB(80, 100, 140)
-	local selectStroke = Color3.fromRGB(220, 160, 40)
-
+	-- Interaction Events
 	self.frame.MouseEnter:Connect(function()
+		self.OnHover:Fire()
 		if not self.selected then
-			self.stroke.Color = hoverStroke
+			self.stroke.Color = Color3.fromRGB(50, 75, 110)
 		end
 	end)
-
 	self.frame.MouseLeave:Connect(function()
+		self.OnHoverEnd:Fire()
 		if not self.selected then
-			self.stroke.Color = normalStroke
+			self.stroke.Color = Color3.fromRGB(15, 20, 30)
 		end
 	end)
 
 	-- We can toggle selection on click
 	self.header.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		if input.UserInputType == Enum.UserInputType.Keyboard then
+			self.OnKeyDown:Fire(input.KeyCode)
+		elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
 			self:Select()
 			self.OnSelect:Fire()
 		end
 	end)
+
+	self.frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.Keyboard then
+			self.OnKeyDown:Fire(input.KeyCode)
+		end
+	end)
+
+	return self
 end
 
 function NodeComponent:Select()
-	-- Deselect others in the same container? For now just visual toggle
-	-- Ideally, this should communicate with a global selection manager
 	self.selected = true
 	self.stroke.Color = Color3.fromRGB(220, 160, 40)
 	self.stroke.Thickness = 2
@@ -221,12 +300,10 @@ function NodeComponent:_makeDraggable()
 	local startPos = nil
 
 	self.header.InputBegan:Connect(function(input)
-		print(string.format("[NodeDrag] InputBegan on %s. Type: %s, Pos: %s", self.nodeData.Name, input.UserInputType.Name, tostring(input.Position)))
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			dragging = true
 			dragStart = input.Position
 			startPos = self.frame.Position
-			print(string.format("[NodeDrag] Started Drag! startPos: %s", tostring(startPos)))
 			
 			self:Select()
 			self.OnSelect:Fire()
@@ -235,7 +312,6 @@ function NodeComponent:_makeDraggable()
 			endConn = input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then
 					dragging = false
-					print("[NodeDrag] Ended Drag! MouseButton1 released.")
 					endConn:Disconnect()
 				end
 			end)
@@ -244,29 +320,39 @@ function NodeComponent:_makeDraggable()
 
 	self.header.InputChanged:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
-			if dragInput == nil then
-				print("[NodeDrag] Captured MouseMovement input reference for the first time.")
-			end
 			dragInput = input
 		end
 	end)
 
-	local lastPrint = 0
 	RunService.Heartbeat:Connect(function()
 		if dragging and dragInput then
 			local delta = dragInput.Position - dragStart
 			local newX = startPos.X.Offset + delta.X
 			local newY = startPos.Y.Offset + delta.Y
 			self.frame.Position = UDim2.new(0, newX, 0, newY)
-			
 			self.nodeData:editPosition(Vector2.new(newX, newY))
-			
-			if os.clock() - lastPrint > 0.5 then
-				print(string.format("[NodeDrag] Moving %s. Delta: %s, NewPos: (%d, %d)", self.nodeData.Name, tostring(delta), newX, newY))
-				lastPrint = os.clock()
-			end
 		end
 	end)
+end
+
+function NodeComponent:GetPins()
+	local allPins = {}
+	for _, input in ipairs(self.nodeData:getInputs()) do
+		local p = self.pins[input.Id]
+		if p then table.insert(allPins, { pinData = input, isOutput = false, pinGui = p.pin }) end
+	end
+	for _, output in ipairs(self.nodeData:getOutputs()) do
+		local p = self.pins[output.Id]
+		if p then table.insert(allPins, { pinData = output, isOutput = true, pinGui = p.pin }) end
+	end
+	return allPins
+end
+
+function NodeComponent:UpdatePinState(pinId, isConnected)
+	local pinObj = self.pins[pinId]
+	if pinObj and pinObj.inputField then
+		pinObj.inputField.Visible = not isConnected
+	end
 end
 
 function NodeComponent:Destroy()
