@@ -452,6 +452,18 @@ end
 
 -- Ready
 
+
+-- ── Sidebar: Scripts ──────────────────────────────────────────────────────────
+local function onEditScript(handle)
+	ScriptModal.prompt(widget, handle.data, function(updatedData)
+		-- Update the data
+		handle.data = updatedData
+		-- Update UI
+		handle.nameLabel.Text = updatedData.name
+		handle.typeBtn.Text = updatedData.type == "Function" and "FUN" or (updatedData.type == "Module" and "MOD" or "DEF")
+	end)
+end
+
 -- ── Start a project (shared setup for new / open) ─────────────────────────────
 local function activateProject(data, name)
 	projectActive      = true
@@ -538,16 +550,7 @@ saveProjectBtn:OnClick(function()
 	end)
 end)
 
--- ── Sidebar: Scripts ──────────────────────────────────────────────────────────
-local function onEditScript(handle)
-	ScriptModal.prompt(widget, handle.data, function(updatedData)
-		-- Update the data
-		handle.data = updatedData
-		-- Update UI
-		handle.nameLabel.Text = updatedData.name
-		handle.typeBtn.Text = updatedData.type == "Function" and "FUN" or (updatedData.type == "Module" and "MOD" or "DEF")
-	end)
-end
+
 
 sidebar:OnAddScript(function()
 	ScriptModal.prompt(widget, nil, function(newScriptData)
