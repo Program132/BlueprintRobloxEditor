@@ -1,15 +1,8 @@
 -- FileManager : handles all file I/O for the plugin
 --
--- Opening  : StudioService:PromptImportFile()  →  native OS file picker
--- Saving   : plugin:SetSetting() / plugin:GetSetting()
---            (Roblox plugins have no direct "export to disk" API, so project
---             data is persisted inside Studio's own settings store)
---
--- Usage:
---   local fm = FileManager.new(plugin)
---   local project = fm:OpenJSON()          -- returns {name, data} or nil
---   fm:SaveJSON("myKey", project.data)    -- persist to Studio settings
---   local data = fm:LoadJSON("myKey")     -- restore from Studio settings
+-- Opening  : StudioService:PromptImportFile()  - native OS file picker
+-- Saving   : plugin:SetSetting / plugin:GetSetting (Studio internal storage)
+-- Export   : Creates a StringValue in workspace with the JSON so the user can copy it
 
 local HttpService   = game:GetService("HttpService")
 local StudioService = game:GetService("StudioService")
@@ -17,7 +10,6 @@ local StudioService = game:GetService("StudioService")
 local FileManager = {}
 FileManager.__index = FileManager
 
--- plugin  : the global `plugin` object (needed for SetSetting/GetSetting)
 function FileManager.new(pluginRef)
 	assert(pluginRef, "FileManager.new requires the plugin reference")
 	local self = setmetatable({}, FileManager)
@@ -27,15 +19,12 @@ end
 
 -- ── Open ──────────────────────────────────────────────────────────────────────
 
--- Prompts the user with a native file picker filtered to JSON files.
--- Yields until the user picks a file or cancels.
--- Returns { name: string, data: table } on success, or nil if cancelled / invalid.
 function FileManager:OpenJSON(filters)
 	filters = filters or {"json"}
 
 	local file = StudioService:PromptImportFile(filters)
 	if file == nil then
-		return nil -- user cancelled
+		return nil
 	end
 
 	local raw = file:GetBinaryContents()
@@ -53,17 +42,13 @@ function FileManager:OpenJSON(filters)
 end
 
 -- ── Save / Load via plugin settings ──────────────────────────────────────────
--- NOTE: plugin:SetSetting stores data inside Studio's preferences, not on disk.
--- The value must be JSON-encodable and is keyed by a string.
 
--- Serialises `data` to JSON and stores it under the given key.
--- Returns true on success, false on failure.
 function FileManager:SaveJSON(key, data)
-	assert(type(key) == "string" and key ~= "", "FileManager:SaveJSON requires a non-empty key")
+	assert(type(key) == "string" and key ~= "", "SaveJSON requires a non-empty key")
 
 	local ok, encoded = pcall(HttpService.JSONEncode, HttpService, data)
 	if not ok then
-		warn("[FileManager] Failed to encode data for key '" .. key .. "': " .. tostring(encoded))
+		warn("[FileManager] Encode failed for '" .. key .. "': " .. tostring(encoded))
 		return false
 	end
 
@@ -71,10 +56,8 @@ function FileManager:SaveJSON(key, data)
 	return true
 end
 
--- Loads and decodes the JSON stored under the given key.
--- Returns the decoded table, or nil if the key is empty / the JSON is invalid.
 function FileManager:LoadJSON(key)
-	assert(type(key) == "string" and key ~= "", "FileManager:LoadJSON requires a non-empty key")
+	assert(type(key) == "string" and key ~= "", "LoadJSON requires a non-empty key")
 
 	local raw = self._plugin:GetSetting(key)
 	if raw == nil or raw == "" then
@@ -83,16 +66,34 @@ function FileManager:LoadJSON(key)
 
 	local ok, data = pcall(HttpService.JSONDecode, HttpService, raw)
 	if not ok then
-		warn("[FileManager] Failed to decode data for key '" .. key .. "': " .. tostring(data))
+		warn("[FileManager] Decode failed for '" .. key .. "': " .. tostring(data))
 		return nil
 	end
 
 	return data
 end
 
--- Removes a previously saved key from Studio settings.
 function FileManager:DeleteSetting(key)
 	self._plugin:SetSetting(key, nil)
+end
+
+-- ── Export JSON to a StringValue ─────────────────────────────────────────────
+-- Creates or updates a StringValue in workspace so the user can copy the JSON.
+-- Returns the StringValue instance.
+
+function FileManager:ExportToStringValue(data, name)
+	local json = HttpService:JSONEncode(data)
+
+	local existing = workspace:FindFirstChild("__BlueprintExport")
+	if existing then existing:Destroy() end
+
+	local sv = Instance.new("StringValue")
+	sv.Name  = "__BlueprintExport"
+	sv.Value = json
+	sv.Parent = workspace
+
+	game:GetService("Selection"):Set({sv})
+	return sv
 end
 
 return FileManager

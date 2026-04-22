@@ -1,4 +1,5 @@
 -- Import backend modules
+local HttpService = game:GetService("HttpService")
 local Shared = script.Parent:WaitForChild("Shared")
 local Graph  = require(Shared.Graph)
 
@@ -6,9 +7,11 @@ local Graph  = require(Shared.Graph)
 local FileManager = require(script.FileManager)
 
 -- Import UI classes
-local UI     = script.ui
-local TopBar = require(UI.TopBar)
-local Canvas = require(UI.Canvas)
+local UI      = script.ui
+local TopBar  = require(UI.TopBar)
+local Canvas  = require(UI.Canvas)
+local Sidebar = require(UI.Sidebar)
+local Modal   = require(UI.Modal)
 
 -- Toolbar button (toggle widget only)
 local toolbar      = plugin:CreateToolbar("Blueprint Editor")
@@ -16,9 +19,10 @@ local pluginButton = toolbar:CreateButton("Edit Blueprint", "Open the Blueprint 
 pluginButton.ClickableWhenViewportHidden = true
 
 -- Docking widget
-local widgetInfo = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, true, false, 400, 300, 200, 150)
+local widgetInfo = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, true, false, 800, 500, 400, 300)
 local widget     = plugin:CreateDockWidgetPluginGui("BlueprintEditorWidget", widgetInfo)
 widget.Title     = "Blueprint Editor"
+widget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 -- Sync toolbar button active state with widget visibility
 widget:GetPropertyChangedSignal("Enabled"):Connect(function()
@@ -30,57 +34,105 @@ pluginButton.Click:Connect(function()
 	widget.Enabled = not widget.Enabled
 end)
 
--- Build UI
-local topBar = TopBar.new(widget)
-local canvas = Canvas.new(widget)
+-- Build UI (order matters for Sibling ZIndex: last created = on top)
+local canvas  = Canvas.new(widget)   -- bottom layer
+local sidebar = Sidebar.new(widget)  -- above canvas
+local topBar  = TopBar.new(widget)   -- top layer
+
+-- Offset canvas to the right of the sidebar
+canvas:SetLeftOffset(sidebar:GetWidth())
 
 local newProjectBtn  = topBar:AddButton("NewProjectBtn",  "+ New Project")
 local openProjectBtn = topBar:AddButton("OpenProjectBtn", "Open Project")
+local saveProjectBtn = topBar:AddButton("SaveProjectBtn", "Save Project")
 
 -- Initialise services
 local fm           = FileManager.new(plugin)
 local SETTING_KEY  = "BlueprintEditor_CurrentProject"
 
 -- Project state
+local projectActive      = false
 local currentProjectName = nil
+local currentProjectData = nil
 local currentGraph       = Graph.new()
+
+-- ── Start a project (shared setup for new / open) ─────────────────────────────
+local function activateProject(data, name)
+	projectActive      = true
+	currentProjectName = name or "Untitled"
+	currentProjectData = data
+
+	currentGraph = Graph.new()
+	-- TODO: rebuild graph from data.nodes / data.connections
+
+	canvas:ShowGrid()
+	canvas:HidePlaceholder()
+
+	widget.Title = "Blueprint Editor  -  " .. currentProjectName
+end
+
+-- ── Collect current project data ──────────────────────────────────────────────
+local function gatherProjectData()
+	return {
+		name        = currentProjectName,
+		nodes       = {},   -- TODO: serialise currentGraph nodes
+		connections = {},   -- TODO: serialise currentGraph connections
+	}
+end
 
 -- ── New Project ────────────────────────────────────────────────────────────────
 newProjectBtn:OnClick(function()
-	currentProjectName = nil
-	currentGraph       = Graph.new()
-
-	-- Clear any previously saved project from Studio settings
-	fm:DeleteSetting(SETTING_KEY)
-
-	canvas:SetPlaceholder("New project created. Start adding nodes!")
-	-- TODO: render blank graph on canvas
+	local defaultData = { name = "Untitled", nodes = {}, connections = {} }
+	fm:SaveJSON(SETTING_KEY, defaultData)
+	activateProject(defaultData, nil)
 end)
 
 -- ── Open Project ───────────────────────────────────────────────────────────────
 openProjectBtn:OnClick(function()
 	local project = fm:OpenJSON({"json"})
+	if project == nil then return end
 
-	if project == nil then
-		-- User cancelled or file was invalid (FileManager already warns)
-		return
-	end
-
-	currentProjectName = project.name
-	currentGraph       = Graph.new()
-
-	-- Persist to Studio settings so it survives session restarts
 	fm:SaveJSON(SETTING_KEY, project.data)
+	activateProject(project.data, project.name)
+end)
 
-	-- TODO: rebuild graph from project.data.nodes / project.data.connections
+-- ── Save Project ───────────────────────────────────────────────────────────────
+saveProjectBtn:OnClick(function()
+	if not projectActive then return end
 
-	canvas:SetPlaceholder("Project '" .. project.name .. "' loaded!")
+	local data = gatherProjectData()
+
+	-- Auto-save to Studio settings
+	fm:SaveJSON(SETTING_KEY, data)
+
+	-- Export to StringValue for manual copy
+	fm:ExportToStringValue(data)
+
+	canvas:SetPlaceholder(
+		"Project saved!\n\n"
+		.. "JSON exported to workspace.__BlueprintExport.\n"
+		.. "Select it in Explorer and copy the Value."
+	)
+	task.delay(3, function()
+		if projectActive then canvas:HidePlaceholder() end
+	end)
+end)
+
+-- ── Sidebar: Scripts ──────────────────────────────────────────────────────────
+sidebar:OnAddScript(function()
+	-- TODO: prompt for script name
+	print("[Blueprint] + Add Script clicked")
+end)
+
+-- ── Sidebar: Variables ────────────────────────────────────────────────────────
+sidebar:OnAddVariable(function()
+	Modal.prompt(widget, "New Variable", "Variable name...", function(varName)
+		sidebar:AddVariable(varName)
+	end)
 end)
 
 -- ── Restore last project on startup ───────────────────────────────────────────
 local saved = fm:LoadJSON(SETTING_KEY)
 if saved then
-	currentGraph = Graph.new()
-	-- TODO: rebuild graph from saved
-	canvas:SetPlaceholder("Restored last project from Studio settings.")
+	activateProject(saved, saved.name)
 end
