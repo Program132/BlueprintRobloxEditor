@@ -22,9 +22,8 @@ Once you have the plugin, copy it to your Roblox plugins folder:
 ```powershell
 Copy-Item "BlueprintRobloxEditor.rbxmx" "$env:LOCALAPPDATA\Roblox\Plugins\BlueprintRobloxEditor.rbxmx"
 ```
-
-**Windows path:** `%LOCALAPPDATA%\Roblox\Plugins\`
-**Mac path:** `/Users/$USER/Library/Application Support/Roblox/Versions/<version>/Plugins`
+- **Windows path:** `%LOCALAPPDATA%\Roblox\Plugins\`
+- **Mac path:** `/Users/$USER/Library/Application Support/Roblox/Versions/<version>/Plugins`
 # Managing Projects
 
 Roblox plugins have limited access to your local file system, so project management works slightly differently:
