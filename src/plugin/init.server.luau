@@ -13,6 +13,14 @@ local Canvas  = require(UI.Canvas)
 local Sidebar = require(UI.Sidebar)
 local Modal   = require(UI.Modal)
 local ScriptModal = require(UI.ScriptModal)
+local NodeMenu = require(UI.NodeMenu)
+local NodeComponent = require(UI.NodeComponent)
+
+local Nodes = {
+	Start = require(Shared.nodes.events.Start),
+	Print = require(Shared.nodes.Print),
+	Add   = require(Shared.nodes.math.Add),
+}
 
 -- Toolbar button (toggle widget only)
 local toolbar      = plugin:CreateToolbar("Blueprint Editor")
@@ -56,6 +64,7 @@ local projectActive      = false
 local currentProjectName = nil
 local currentProjectData = nil
 local currentGraph       = Graph.new()
+local visualNodes        = {}
 
 -- ── Start a project (shared setup for new / open) ─────────────────────────────
 local function activateProject(data, name)
@@ -140,6 +149,54 @@ end)
 sidebar:OnAddVariable(function()
 	Modal.prompt(widget, "New Variable", "Variable name...", function(varName)
 		sidebar:AddVariable(varName)
+	end)
+end)
+
+-- ── Canvas: Left Click ─────────────────────────────────────────────────────────
+canvas:OnLeftClick(function()
+	print("[Blueprint] Left click callback fired! projectActive:", projectActive)
+	if not projectActive then return end
+	
+	-- Deselect all nodes
+	local count = 0
+	for _, v in ipairs(visualNodes) do
+		v:Deselect()
+		count += 1
+	end
+	print("[Blueprint] Deselected", count, "nodes")
+end)
+
+-- ── Canvas: Right Click Menu & Panning ────────────────────────────────────────
+canvas:OnRightClick(function(position)
+	if not projectActive then return end
+	
+	NodeMenu.prompt(widget, position, function(nodeId)
+		local nodeClass = Nodes[nodeId]
+		if not nodeClass then return end
+		
+		local nodeInstance = nodeClass.new()
+		
+		-- Place it under the mouse cursor in the canvas
+		-- We need to offset the screen position by the canvas absolute position and pan offset
+		local canvasPos = canvas:GetInstance().AbsolutePosition
+		local panOffset = canvas:GetPanOffset()
+		local relativeX = position.X - canvasPos.X - panOffset.X
+		local relativeY = position.Y - canvasPos.Y - panOffset.Y
+		
+		nodeInstance:editPosition(Vector2.new(relativeX, relativeY))
+		currentGraph:add_node(nodeInstance)
+		
+		-- Render it
+		local visualNode = NodeComponent.new(canvas:GetNodeContainer(), nodeInstance)
+		table.insert(visualNodes, visualNode)
+		
+		visualNode.OnSelect.Event:Connect(function()
+			for _, v in ipairs(visualNodes) do
+				if v ~= visualNode then
+					v:Deselect()
+				end
+			end
+		end)
 	end)
 end)
 

@@ -20,6 +20,7 @@ function Canvas.new(parent)
 	group.BackgroundColor3 = BG_COLOR
 	group.BorderSizePixel = 0
 	group.GroupTransparency = 0
+	group.Active = true -- Important for catching clicks
 	group.Parent = parent
 
 	local placeholder = Instance.new("TextLabel")
@@ -38,8 +39,136 @@ function Canvas.new(parent)
 	self._gridFrame   = nil
 	self._gridActive  = false
 	self._resizeConn  = nil
+	
+	self._panX = 0
+	self._panY = 0
+	
+	self._nodeContainer = Instance.new("Frame")
+	self._nodeContainer.Name = "NodeContainer"
+	self._nodeContainer.Size = UDim2.new(1, 0, 1, 0)
+	self._nodeContainer.BackgroundTransparency = 1
+	self._nodeContainer.ZIndex = 5
+	self._nodeContainer.Parent = group
+
+	self:_setupPanning()
 
 	return self
+end
+
+function Canvas:_setupPanning()
+	local UserInputService = game:GetService("UserInputService")
+	local RunService = game:GetService("RunService")
+
+	local panning = false
+	local panStartPos = nil
+	local startPanX = 0
+	local startPanY = 0
+
+	local mouseInCanvas = false
+	local keys = {
+		[Enum.KeyCode.Up] = false,
+		[Enum.KeyCode.Down] = false,
+		[Enum.KeyCode.Left] = false,
+		[Enum.KeyCode.Right] = false,
+		[Enum.KeyCode.W] = false,
+		[Enum.KeyCode.A] = false,
+		[Enum.KeyCode.S] = false,
+		[Enum.KeyCode.D] = false,
+	}
+
+	self._group.MouseEnter:Connect(function() 
+		print("[Canvas] Mouse entered canvas area")
+		mouseInCanvas = true 
+	end)
+	self._group.MouseLeave:Connect(function() 
+		print("[Canvas] Mouse left canvas area")
+		mouseInCanvas = false 
+	end)
+
+	self._group.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton2 or input.UserInputType == Enum.UserInputType.MouseButton3 then
+			print("[Canvas] Panning started (Right/Middle click)")
+			panning = true
+			panStartPos = input.Position
+			startPanX = self._panX
+			startPanY = self._panY
+			
+			local endConn
+			endConn = input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					panning = false
+					endConn:Disconnect()
+					
+					-- Right-click Context Menu
+					if input.UserInputType == Enum.UserInputType.MouseButton2 then
+						local delta = input.Position - panStartPos
+						if delta.Magnitude < 5 and self._onRightClickCallback then
+							print("[Canvas] Firing Right-Click Context Menu")
+							self._onRightClickCallback(Vector2.new(input.Position.X, input.Position.Y))
+						end
+					end
+				end
+			end)
+		elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
+			print("[Canvas] Left click detected inside canvas")
+			if self._onLeftClickCallback then
+				self._onLeftClickCallback()
+			end
+		end
+	end)
+
+	self._group.InputChanged:Connect(function(input)
+		if panning and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local delta = input.Position - panStartPos
+			self._panX = startPanX + delta.X
+			self._panY = startPanY + delta.Y
+			
+			self._nodeContainer.Position = UDim2.fromOffset(self._panX, self._panY)
+			
+			if self._gridFrame then
+				self._gridFrame.Position = UDim2.fromOffset(self._panX % DOT_SPACING, self._panY % DOT_SPACING)
+			end
+		end
+	end)
+
+	UserInputService.InputBegan:Connect(function(input, gpe)
+		-- In a plugin, gpe is often true just because the widget has focus.
+		-- So instead of checking gpe, we check if they're typing in a TextBox.
+		if UserInputService:GetFocusedTextBox() then return end
+		
+		if keys[input.KeyCode] ~= nil then
+			keys[input.KeyCode] = true
+			print("[Canvas] Key pressed:", input.KeyCode.Name)
+		end
+	end)
+
+	UserInputService.InputEnded:Connect(function(input, gpe)
+		if keys[input.KeyCode] ~= nil then
+			keys[input.KeyCode] = false
+		end
+	end)
+
+	local PAN_SPEED = 600
+	RunService.Heartbeat:Connect(function(dt)
+		if not mouseInCanvas then return end
+		
+		local dx, dy = 0, 0
+		if keys[Enum.KeyCode.Left] or keys[Enum.KeyCode.A] then dx = dx + 1 end
+		if keys[Enum.KeyCode.Right] or keys[Enum.KeyCode.D] then dx = dx - 1 end
+		if keys[Enum.KeyCode.Up] or keys[Enum.KeyCode.W] then dy = dy + 1 end
+		if keys[Enum.KeyCode.Down] or keys[Enum.KeyCode.S] then dy = dy - 1 end
+		
+		if dx ~= 0 or dy ~= 0 then
+			self._panX = self._panX + (dx * PAN_SPEED * dt)
+			self._panY = self._panY + (dy * PAN_SPEED * dt)
+			
+			self._nodeContainer.Position = UDim2.fromOffset(self._panX, self._panY)
+			
+			if self._gridFrame then
+				self._gridFrame.Position = UDim2.fromOffset(self._panX % DOT_SPACING, self._panY % DOT_SPACING)
+			end
+		end
+	end)
 end
 
 -- ─── Layout ────────────────────────────────────────────────────────────────────
@@ -57,11 +186,11 @@ local function buildGrid(gridFrame, absSize)
 		child:Destroy()
 	end
 
-	local cols = math.min(math.ceil(absSize.X / DOT_SPACING) + 1, 80)
-	local rows = math.min(math.ceil(absSize.Y / DOT_SPACING) + 1, 60)
+	local cols = math.min(math.ceil(absSize.X / DOT_SPACING) + 2, 80)
+	local rows = math.min(math.ceil(absSize.Y / DOT_SPACING) + 2, 60)
 
-	for row = 0, rows do
-		for col = 0, cols do
+	for row = -1, rows do
+		for col = -1, cols do
 			local dot = Instance.new("Frame")
 			dot.Size     = UDim2.new(0, DOT_SIZE, 0, DOT_SIZE)
 			dot.Position = UDim2.new(0, col * DOT_SPACING, 0, row * DOT_SPACING)
@@ -102,6 +231,14 @@ function Canvas:ShowGrid()
 	end)
 end
 
+function Canvas:OnRightClick(callback)
+	self._onRightClickCallback = callback
+end
+
+function Canvas:OnLeftClick(callback)
+	self._onLeftClickCallback = callback
+end
+
 function Canvas:HideGrid()
 	self._gridActive = false
 	if self._resizeConn then
@@ -133,6 +270,14 @@ end
 
 function Canvas:GetInstance()
 	return self._group
+end
+
+function Canvas:GetNodeContainer()
+	return self._nodeContainer
+end
+
+function Canvas:GetPanOffset()
+	return Vector2.new(self._panX, self._panY)
 end
 
 return Canvas
