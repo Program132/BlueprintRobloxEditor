@@ -91,7 +91,7 @@ local function handleKeyDown(keyCode)
 				local wire = visualWires[i]
 				if wire.fromNode == hoveredNode.nodeData or wire.toNode == hoveredNode.nodeData then
 					-- Show input field again if it was a target pin
-					if wire.toNode ~= hoveredNode.nodeData then
+					if wire.toNode ~= hoveredNode.nodeData and wire.toPinId then
 						for _, vNode in ipairs(visualNodes) do
 							if vNode.nodeData == wire.toNode then
 								vNode:UpdatePinState(wire.toPinId, false)
@@ -249,11 +249,34 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 						local p1, p2 = updatePermanentWire()
 						local line = drawWireLine(wiresFrame, p1, p2, color)
 						
+						-- Enforce single connection rules visually
+						for i = #visualWires, 1, -1 do
+							local w = visualWires[i]
+							if isExec1 then
+								-- Exec: only one outgoing per pin
+								if w.fromNode == outInfo.nodeData and w.fromPinName == outInfo.pinData.Name and w.isExec then
+									w.line:Destroy()
+									if w.hbConn then w.hbConn:Disconnect() end
+									table.remove(visualWires, i)
+								end
+							else
+								-- Data: only one incoming per pin
+								if w.toNode == inInfo.nodeData and w.toPinName == inInfo.pinData.Name and not w.isExec then
+									w.line:Destroy()
+									if w.hbConn then w.hbConn:Disconnect() end
+									table.remove(visualWires, i)
+								end
+							end
+						end
+
 						local wireObj = {
 							line = line,
 							fromNode = outInfo.nodeData,
 							toNode = inInfo.nodeData,
+							fromPinName = outInfo.pinData.Name,
+							toPinName = inInfo.pinData.Name,
 							toPinId = inInfo.pinData.Id,
+							isExec = isExec1,
 							hbConn = nil
 						}
 						
@@ -367,7 +390,10 @@ local function renderGraph(graph)
 				line = line, 
 				fromNode = outNode, 
 				toNode = inNode, 
+				fromPinName = edge.FromPin,
+				toPinName = edge.ToPin,
 				toPinId = nil,
+				isExec = true,
 				hbConn = nil 
 			}
 			for _, inp in ipairs(inNode:getInputs()) do
@@ -436,7 +462,10 @@ local function renderGraph(graph)
 				line = line, 
 				fromNode = outNode, 
 				toNode = inNode, 
+				fromPinName = edge.FromPort,
+				toPinName = edge.ToPort,
 				toPinId = nil,
+				isExec = false,
 				hbConn = nil 
 			}
 			for _, inp in ipairs(inNode:getInputs()) do

@@ -67,14 +67,29 @@ function Graph:remove_node(node: Node)
 end
 
 --- Connect two nodes with an execution edge.
+--- Connect two nodes with an execution edge.
 function Graph:connect_exec(from_node: Node, to_node: Node, exec_pin: string?)
-    local pin = exec_pin or "default"
+    local pin = exec_pin or "Exec"
+    -- Enforce single outgoing connection for exec pins
+    for i = #self.exec_edges, 1, -1 do
+        local edge = self.exec_edges[i]
+        if edge.FromNode == from_node and edge.FromPin == pin then
+            table.remove(self.exec_edges, i)
+        end
+    end
     local edge = ExecEdge.new(from_node, to_node, pin, pin)
     table.insert(self.exec_edges, edge)
 end
 
 --- Connect two nodes with a data edge (output → input).
 function Graph:connect_data(from_node: Node, to_node: Node, output_name: string, input_name: string)
+    -- Enforce single incoming connection for data input pins
+    for i = #self.data_edges, 1, -1 do
+        local edge = self.data_edges[i]
+        if edge.ToNode == to_node and edge.ToPort == input_name then
+            table.remove(self.data_edges, i)
+        end
+    end
     local edge = DataEdge.new(from_node, to_node, output_name, input_name)
     table.insert(self.data_edges, edge)
 end
