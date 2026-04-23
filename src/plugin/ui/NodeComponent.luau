@@ -127,6 +127,25 @@ function NodeComponent.new(canvasParent, nodeData)
 	title.ZIndex = 12
 	title.Parent = header
 
+	-- Refresh Button (for dynamic nodes like Module Call)
+	if nodeData.Type == "METHOD" or nodeData.Type == "FUNCTION" then
+		local refreshBtn = Instance.new("TextButton")
+		refreshBtn.Name = "RefreshBtn"
+		refreshBtn.Size = UDim2.new(0, 20, 0, 20)
+		refreshBtn.Position = UDim2.new(1, -25, 0.5, -10)
+		refreshBtn.BackgroundTransparency = 1
+		refreshBtn.Text = "🔄"
+		refreshBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		refreshBtn.TextSize = 12
+		refreshBtn.Font = Enum.Font.GothamBold
+		refreshBtn.ZIndex = 13
+		refreshBtn.Parent = header
+		
+		refreshBtn.MouseButton1Click:Connect(function()
+			self.OnRefresh:Fire()
+		end)
+	end
+
 	-- Body
 	local body = Instance.new("Frame")
 	body.Size = UDim2.new(1, 0, 1, -28)
@@ -169,6 +188,7 @@ function NodeComponent.new(canvasParent, nodeData)
 	self.OnHover = Instance.new("BindableEvent")
 	self.OnHoverEnd = Instance.new("BindableEvent")
 	self.OnKeyDown = Instance.new("BindableEvent")
+	self.OnRefresh = Instance.new("BindableEvent")
 
 	-- Create Inputs
 	for _, input in ipairs(nodeData:getInputs()) do

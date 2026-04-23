@@ -45,6 +45,14 @@ local NODES_DATA = {
 			{ id = "While", name = "While Loop", type = "Control" },
 			{ id = "For", name = "For Loop", type = "Control" }
 		}
+	},
+	{
+		category = "Modules",
+		color = Color3.fromRGB(150, 100, 40),
+		items = {
+			{ id = "Require", name = "Require", type = "Function" },
+			{ id = "Module Call", name = "Module Call", type = "Method" }
+		}
 	}
 }
 

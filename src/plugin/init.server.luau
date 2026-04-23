@@ -30,6 +30,8 @@ local Nodes = {
 	["If"]          = require(Shared.nodes.control.If),
 	["While"]       = require(Shared.nodes.control.While),
 	["For"]         = require(Shared.nodes.control.For),
+	["Require"]     = require(Shared.nodes.modules.Require),
+	["Module Call"] = require(Shared.nodes.modules.ModuleCall),
 	-- Special nodes handled dynamically
 	["Function Entry"] = FunctionEntry,
 	["Function Return"] = FunctionReturn,
@@ -241,6 +243,157 @@ local function clearCanvas()
 	hoveredNode = nil
 end
 
+local function renderWiresOnly(graph)
+	-- Render Exec edges
+	for _, edge in ipairs(graph.exec_edges) do
+		local outNode = edge.FromNode
+		local inNode = edge.ToNode
+		
+		-- Find visual pins
+		local vOut, vIn
+		for _, vNode in ipairs(visualNodes) do
+			if vNode.nodeData == outNode then
+				for _, pInfo in ipairs(vNode:GetPins()) do
+					if pInfo.isOutput and pInfo.pinData.Name == edge.FromPort then
+						vOut = pInfo.pinGui
+						break
+					end
+				end
+			elseif vNode.nodeData == inNode then
+				for _, pInfo in ipairs(vNode:GetPins()) do
+					if not pInfo.isOutput and pInfo.pinData.Name == edge.ToPort then
+						vIn = pInfo.pinGui
+						break
+					end
+				end
+			end
+		end
+		
+		if vOut and vIn then
+			local function updatePermanentWire()
+				local cPos = canvas:GetNodeContainer().AbsolutePosition
+				local p1 = vOut.AbsolutePosition + (vOut.AbsoluteSize / 2) - cPos
+				local p2 = vIn.AbsolutePosition + (vIn.AbsoluteSize / 2) - cPos
+				return p1, p2
+			end
+			local p1, p2 = updatePermanentWire()
+			local line = drawWireLine(wiresFrame, p1, p2, Color3.fromRGB(240, 240, 240))
+			
+			local wireObj = { 
+				line = line, 
+				fromNode = outNode, 
+				toNode = inNode, 
+				fromPinName = edge.FromPort,
+				toPinName = edge.ToPort,
+				toPinId = nil,
+				isExec = true,
+				hbConn = nil 
+			}
+			for _, inp in ipairs(inNode:getInputs()) do
+				if inp.Name == edge.ToPort then
+					wireObj.toPinId = inp.Id
+					break
+				end
+			end
+
+			wireObj.hbConn = RunService.Heartbeat:Connect(function()
+				local np1, np2 = updatePermanentWire()
+				local distance = (np2 - np1).Magnitude
+				local center = (np1 + np2) / 2
+				local angle = math.atan2(np2.Y - np1.Y, np2.X - np1.X)
+				line.Position = UDim2.fromOffset(center.X, center.Y)
+				local h = (hoveredWire == wireObj) and 5 or 3
+				line.Size = UDim2.fromOffset(distance, h)
+				line.Rotation = math.deg(angle)
+			end)
+			table.insert(visualWires, wireObj)
+			registerWireHover(wireObj)
+			if wireObj.toPinId then
+				for _, vNode in ipairs(visualNodes) do
+					if vNode.nodeData == inNode then
+						vNode:UpdatePinState(wireObj.toPinId, true)
+						break
+					end
+				end
+			end
+		end
+	end
+	
+	-- Render Data edges
+	for _, edge in ipairs(graph.data_edges) do
+		local outNode = edge.FromNode
+		local inNode = edge.ToNode
+		
+		local vOut, vIn
+		for _, vNode in ipairs(visualNodes) do
+			if vNode.nodeData == outNode then
+				for _, pInfo in ipairs(vNode:GetPins()) do
+					if pInfo.isOutput and pInfo.pinData.Name == edge.FromPort then
+						vOut = pInfo.pinGui
+						break
+					end
+				end
+			elseif vNode.nodeData == inNode then
+				for _, pInfo in ipairs(vNode:GetPins()) do
+					if not pInfo.isOutput and pInfo.pinData.Name == edge.ToPort then
+						vIn = pInfo.pinGui
+						break
+					end
+				end
+			end
+		end
+		
+		if vOut and vIn then
+			local function updatePermanentWire()
+				local cPos = canvas:GetNodeContainer().AbsolutePosition
+				local p1 = vOut.AbsolutePosition + (vOut.AbsoluteSize / 2) - cPos
+				local p2 = vIn.AbsolutePosition + (vIn.AbsoluteSize / 2) - cPos
+				return p1, p2
+			end
+			local p1, p2 = updatePermanentWire()
+			local line = drawWireLine(wiresFrame, p1, p2, Color3.fromRGB(110, 180, 240))
+			
+			local wireObj = { 
+				line = line, 
+				fromNode = outNode, 
+				toNode = inNode, 
+				fromPinName = edge.FromPort,
+				toPinName = edge.ToPort,
+				toPinId = nil,
+				isExec = false,
+				hbConn = nil 
+			}
+			for _, inp in ipairs(inNode:getInputs()) do
+				if inp.Name == edge.ToPort then
+					wireObj.toPinId = inp.Id
+					break
+				end
+			end
+
+			wireObj.hbConn = RunService.Heartbeat:Connect(function()
+				local np1, np2 = updatePermanentWire()
+				local distance = (np2 - np1).Magnitude
+				local center = (np1 + np2) / 2
+				local angle = math.atan2(np2.Y - np1.Y, np2.X - np1.X)
+				line.Position = UDim2.fromOffset(center.X, center.Y)
+				local h = (hoveredWire == wireObj) and 5 or 3
+				line.Size = UDim2.fromOffset(distance, h)
+				line.Rotation = math.deg(angle)
+			end)
+			table.insert(visualWires, wireObj)
+			registerWireHover(wireObj)
+			if wireObj.toPinId then
+				for _, vNode in ipairs(visualNodes) do
+					if vNode.nodeData == inNode then
+						vNode:UpdatePinState(wireObj.toPinId, true)
+						break
+					end
+				end
+			end
+		end
+	end
+end
+
 local function hookUpNodeEvents(visualNode, nodeInstance)
 	visualNode.OnSelect.Event:Connect(function()
 		for _, v in ipairs(visualNodes) do
@@ -264,6 +417,103 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 	
 	visualNode.OnKeyDown.Event:Connect(function(keyCode)
 		handleKeyDown(keyCode)
+	end)
+
+	visualNode.OnRefresh.Event:Connect(function()
+		if nodeInstance.Refresh then
+			local context = { projectScripts = sidebar:GetScripts() or {} }
+			nodeInstance:Refresh(context)
+		end
+	end)
+
+	nodeInstance.OnPinsChanged.Event:Connect(function()
+		-- Redraw the node UI
+		local oldPos = visualNode.frame.Position
+		
+		-- 1. Remove current visual node
+		visualNode:Destroy()
+		for i, v in ipairs(visualNodes) do
+			if v == visualNode then
+				table.remove(visualNodes, i)
+				break
+			end
+		end
+		
+		-- 2. Recreate visual node
+		local newNode = NodeComponent.new(canvas:GetNodeContainer(), nodeInstance)
+		newNode.frame.Position = oldPos
+		table.insert(visualNodes, newNode)
+		hookUpNodeEvents(newNode, nodeInstance)
+		
+		-- 3. Update wire references
+		for _, wire in ipairs(visualWires) do
+			if wire.fromNode == nodeInstance or wire.toNode == nodeInstance then
+				-- We need to re-find the pin GuiObjects
+				local vOut, vIn = nil, nil
+				
+				-- Find fromNode visual
+				local vFromNode = nil
+				for _, vn in ipairs(visualNodes) do
+					if vn.nodeData == wire.fromNode then vFromNode = vn; break end
+				end
+				if vFromNode then
+					for _, pInfo in ipairs(vFromNode:GetPins()) do
+						if pInfo.isOutput and pInfo.pinData.Name == wire.fromPinName then
+							vOut = pInfo.pinGui
+							break
+						end
+					end
+				end
+				
+				-- Find toNode visual
+				local vToNode = nil
+				for _, vn in ipairs(visualNodes) do
+					if vn.nodeData == wire.toNode then vToNode = vn; break end
+				end
+				if vToNode then
+					for _, pInfo in ipairs(vToNode:GetPins()) do
+						if not pInfo.isOutput and pInfo.pinData.Name == wire.toPinName then
+							vIn = pInfo.pinGui
+							break
+						end
+					end
+				end
+				
+				-- We just need to trigger a redraw for this wire's node
+				if vOut or vIn then
+					-- Redraw triggered below
+				end
+			end
+		end
+		
+		-- Re-apply wire connections for this node
+		-- Clear old wires for this node
+		for i = #visualWires, 1, -1 do
+			local wire = visualWires[i]
+			if wire.fromNode == nodeInstance or wire.toNode == nodeInstance then
+				wire.line:Destroy()
+				if wire.hbConn then wire.hbConn:Disconnect() end
+				table.remove(visualWires, i)
+			end
+		end
+		
+		-- Redraw wires for this node
+		-- We can iterate over currentGraph edges
+		for _, edge in ipairs(currentGraph.exec_edges) do
+			if edge.FromNode == nodeInstance or edge.ToNode == nodeInstance then
+				-- logic to redraw a single edge (extract it to a function?)
+			end
+		end
+		-- This is getting complex. Let's just redraw ALL wires for now.
+		for i = #visualWires, 1, -1 do
+			local wire = visualWires[i]
+			wire.line:Destroy()
+			if wire.hbConn then wire.hbConn:Disconnect() end
+			table.remove(visualWires, i)
+		end
+		
+		-- Re-render graph (but skip nodes, only wires)
+		renderWiresOnly(currentGraph)
 	end)
 
 	visualNode.OnPinDragStart.Event:Connect(function(nodeId, pinData, isOutput, pinGui, inputPos)
@@ -466,6 +716,7 @@ local function onVariableAction(varName, actionType)
 	end)
 end
 
+
 local function renderGraph(graph)
 	for _, node in pairs(graph.nodes) do
 		local visualNode = NodeComponent.new(canvas:GetNodeContainer(), node)
@@ -473,154 +724,7 @@ local function renderGraph(graph)
 		hookUpNodeEvents(visualNode, node)
 	end
 	
-	-- Render Exec edges
-	for _, edge in ipairs(graph.exec_edges) do
-		local outNode = edge.FromNode
-		local inNode = edge.ToNode
-		
-		-- Find visual pins
-		local vOut, vIn
-		for _, vNode in ipairs(visualNodes) do
-			if vNode.nodeData == outNode then
-				for _, pInfo in ipairs(vNode:GetPins()) do
-					if pInfo.isOutput and pInfo.pinData.Name == edge.FromPort then
-						vOut = pInfo.pinGui
-						break
-					end
-				end
-			elseif vNode.nodeData == inNode then
-				for _, pInfo in ipairs(vNode:GetPins()) do
-					if not pInfo.isOutput and pInfo.pinData.Name == edge.ToPort then
-						vIn = pInfo.pinGui
-						break
-					end
-				end
-			end
-		end
-		
-		if vOut and vIn then
-			local function updatePermanentWire()
-				local cPos = canvas:GetNodeContainer().AbsolutePosition
-				local p1 = vOut.AbsolutePosition + (vOut.AbsoluteSize / 2) - cPos
-				local p2 = vIn.AbsolutePosition + (vIn.AbsoluteSize / 2) - cPos
-				return p1, p2
-			end
-			local p1, p2 = updatePermanentWire()
-			local line = drawWireLine(wiresFrame, p1, p2, Color3.fromRGB(240, 240, 240))
-			
-			local wireObj = { 
-				line = line, 
-				fromNode = outNode, 
-				toNode = inNode, 
-				fromPinName = edge.FromPort,
-				toPinName = edge.ToPort,
-				toPinId = nil,
-				isExec = true,
-				hbConn = nil 
-			}
-			for _, inp in ipairs(inNode:getInputs()) do
-				if inp.Name == edge.ToPort then
-					wireObj.toPinId = inp.Id
-					break
-				end
-			end
-
-			wireObj.hbConn = RunService.Heartbeat:Connect(function()
-				local np1, np2 = updatePermanentWire()
-				local distance = (np2 - np1).Magnitude
-				local center = (np1 + np2) / 2
-				local angle = math.atan2(np2.Y - np1.Y, np2.X - np1.X)
-				line.Position = UDim2.fromOffset(center.X, center.Y)
-				local h = (hoveredWire == wireObj) and 5 or 3
-				line.Size = UDim2.fromOffset(distance, h)
-				line.Rotation = math.deg(angle)
-			end)
-			table.insert(visualWires, wireObj)
-			registerWireHover(wireObj)
-			if wireObj.toPinId then
-				for _, vNode in ipairs(visualNodes) do
-					if vNode.nodeData == inNode then
-						vNode:UpdatePinState(wireObj.toPinId, true)
-						break
-					end
-				end
-			end
-		end
-	end
-	
-	-- Render Data edges
-	for _, edge in ipairs(graph.data_edges) do
-		local outNode = edge.FromNode
-		local inNode = edge.ToNode
-		
-		local vOut, vIn
-		for _, vNode in ipairs(visualNodes) do
-			if vNode.nodeData == outNode then
-				for _, pInfo in ipairs(vNode:GetPins()) do
-					if pInfo.isOutput and pInfo.pinData.Name == edge.FromPort then
-						vOut = pInfo.pinGui
-						break
-					end
-				end
-			elseif vNode.nodeData == inNode then
-				for _, pInfo in ipairs(vNode:GetPins()) do
-					if not pInfo.isOutput and pInfo.pinData.Name == edge.ToPort then
-						vIn = pInfo.pinGui
-						break
-					end
-				end
-			end
-		end
-		
-		if vOut and vIn then
-			local function updatePermanentWire()
-				local cPos = canvas:GetNodeContainer().AbsolutePosition
-				local p1 = vOut.AbsolutePosition + (vOut.AbsoluteSize / 2) - cPos
-				local p2 = vIn.AbsolutePosition + (vIn.AbsoluteSize / 2) - cPos
-				return p1, p2
-			end
-			local p1, p2 = updatePermanentWire()
-			local line = drawWireLine(wiresFrame, p1, p2, Color3.fromRGB(110, 180, 240))
-			
-			local wireObj = { 
-				line = line, 
-				fromNode = outNode, 
-				toNode = inNode, 
-				fromPinName = edge.FromPort,
-				toPinName = edge.ToPort,
-				toPinId = nil,
-				isExec = false,
-				hbConn = nil 
-			}
-			for _, inp in ipairs(inNode:getInputs()) do
-				if inp.Name == edge.ToPort then
-					wireObj.toPinId = inp.Id
-					break
-				end
-			end
-
-			wireObj.hbConn = RunService.Heartbeat:Connect(function()
-				local np1, np2 = updatePermanentWire()
-				local distance = (np2 - np1).Magnitude
-				local center = (np1 + np2) / 2
-				local angle = math.atan2(np2.Y - np1.Y, np2.X - np1.X)
-				line.Position = UDim2.fromOffset(center.X, center.Y)
-				local h = (hoveredWire == wireObj) and 5 or 3
-				line.Size = UDim2.fromOffset(distance, h)
-				line.Rotation = math.deg(angle)
-			end)
-			table.insert(visualWires, wireObj)
-			registerWireHover(wireObj)
-			if wireObj.toPinId then
-				for _, vNode in ipairs(visualNodes) do
-					if vNode.nodeData == inNode then
-						vNode:UpdatePinState(wireObj.toPinId, true)
-						break
-					end
-				end
-			end
-		end
-	end
+	renderWiresOnly(graph)
 end
 
 local function switchScript(handle)
