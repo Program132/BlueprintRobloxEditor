@@ -133,10 +133,10 @@ local function _run_node(node: Node, visited: { [Node]: boolean }, block: Block,
 	
 	-- 2. Execute the current node
 	local nodeCode = node:toLuau()
+	-- print(currentIndent .. "  [Compiler] Executed " .. (node.Title or node.Name) .. " (Type: " .. node.Type .. ")")
 	if nodeCode and nodeCode ~= "" then
 		code = code .. nodeCode .. "\n"
 	end
-	-- print(currentIndent .. "  [Compiler] Generated code for " .. (node.Title or node.Name) .. ": " .. (nodeCode ~= "" and "yes" or "no"))
 	
 	-- 3. Transfer data from this node's outputs to connected nodes' inputs
 	for _, edge in ipairs(block.data_edges) do
@@ -145,7 +145,7 @@ local function _run_node(node: Node, visited: { [Node]: boolean }, block: Block,
 			local inputObj = edge.ToNode:getInput(edge.ToPort)
 			if outputObj and inputObj then
 				inputObj.Value = outputObj.Value
-				-- print(currentIndent .. "  [Compiler] Data transfer: " .. (node.Title or node.Name) .. "." .. edge.FromPort .. " -> " .. (edge.ToNode.Title or edge.ToNode.Name) .. "." .. edge.ToPort .. " (" .. tostring(outputObj.Value) .. ")")
+				-- print(currentIndent .. "  [Compiler] Data Transfer: " .. (node.Title or node.Name) .. "." .. edge.FromPort .. " -> " .. (edge.ToNode.Title or edge.ToNode.Name) .. "." .. edge.ToPort .. " = " .. tostring(outputObj.Value))
 			end
 		end
 	end

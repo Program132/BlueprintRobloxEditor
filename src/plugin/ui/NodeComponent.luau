@@ -113,6 +113,7 @@ function NodeComponent.new(canvasParent, nodeData)
 	headerSquare.BorderSizePixel = 0
 	headerSquare.ZIndex = 11
 	headerSquare.Parent = header
+	makeCorner(headerSquare, 0)
 
 	local title = Instance.new("TextLabel")
 	title.Size = UDim2.new(1, -20, 1, 0)
@@ -171,6 +172,7 @@ function NodeComponent.new(canvasParent, nodeData)
 
 	-- Create Inputs
 	for _, input in ipairs(nodeData:getInputs()) do
+		if input.Name:sub(1, 2) == "__" then continue end
 		local isExec = (input.Name == "Exec")
 		local pinObj = makePin(leftFrame, input.Name, false, isExec)
 		self.pins[input.Id] = pinObj
@@ -184,13 +186,11 @@ function NodeComponent.new(canvasParent, nodeData)
 
 		pinObj.row.InputBegan:Connect(function(inp)
 			if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-				--print("[Pin] Firing OnPinDragStart for INPUT " .. input.Name)
-				self.OnPinDragStart:Fire(self.nodeData, input, false, pinObj.pin, inp.Position)
+				self.OnPinDragStart:Fire(self.nodeData.Id, input, false, pinObj.pin, inp.Position)
 				
 				local endConn
 				endConn = inp.Changed:Connect(function()
 					if inp.UserInputState == Enum.UserInputState.End then
-						--print("[Pin] Firing OnPinDragEnd for INPUT " .. input.Name)
 						self.OnPinDragEnd:Fire()
 						endConn:Disconnect()
 					end
@@ -198,7 +198,7 @@ function NodeComponent.new(canvasParent, nodeData)
 			end
 		end)
 		pinObj.pin.MouseEnter:Connect(function()
-			self.OnPinHover:Fire(self.nodeData, input, false, pinObj.pin)
+			self.OnPinHover:Fire(self.nodeData.Id, input, false, pinObj.pin)
 		end)
 		pinObj.pin.MouseLeave:Connect(function()
 			self.OnPinHoverEnd:Fire(self.nodeData, input, false, pinObj.pin)
@@ -207,19 +207,18 @@ function NodeComponent.new(canvasParent, nodeData)
 
 	-- Create Outputs
 	for _, output in ipairs(nodeData:getOutputs()) do
+		if output.Name:sub(1, 2) == "__" then continue end
 		local isExec = (output.Name == "Exec")
 		local pinObj = makePin(rightFrame, output.Name, true, isExec)
 		self.pins[output.Id] = pinObj
 		
 		pinObj.row.InputBegan:Connect(function(inp)
 			if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-				--print("[Pin] Firing OnPinDragStart for OUTPUT " .. output.Name)
-				self.OnPinDragStart:Fire(self.nodeData, output, true, pinObj.pin, inp.Position)
+				self.OnPinDragStart:Fire(self.nodeData.Id, output, true, pinObj.pin, inp.Position)
 				
 				local endConn
 				endConn = inp.Changed:Connect(function()
 					if inp.UserInputState == Enum.UserInputState.End then
-						--print("[Pin] Firing OnPinDragEnd for OUTPUT " .. output.Name)
 						self.OnPinDragEnd:Fire()
 						endConn:Disconnect()
 					end
@@ -227,7 +226,7 @@ function NodeComponent.new(canvasParent, nodeData)
 			end
 		end)
 		pinObj.pin.MouseEnter:Connect(function()
-			self.OnPinHover:Fire(self.nodeData, output, true, pinObj.pin)
+			self.OnPinHover:Fire(self.nodeData.Id, output, true, pinObj.pin)
 		end)
 		pinObj.pin.MouseLeave:Connect(function()
 			self.OnPinHoverEnd:Fire(self.nodeData, output, true, pinObj.pin)
@@ -260,7 +259,6 @@ function NodeComponent.new(canvasParent, nodeData)
 		end
 	end)
 
-	-- We can toggle selection on click
 	self.header.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.Keyboard then
 			self.OnKeyDown:Fire(input.KeyCode)

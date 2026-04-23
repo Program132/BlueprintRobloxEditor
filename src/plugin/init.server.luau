@@ -202,14 +202,17 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 		handleKeyDown(keyCode)
 	end)
 
-	visualNode.OnPinDragStart.Event:Connect(function(nodeData, pinData, isOutput, pinGui, inputPos)
+	visualNode.OnPinDragStart.Event:Connect(function(nodeId, pinData, isOutput, pinGui, inputPos)
 		if tempWireFrame then
 			tempWireFrame:Destroy()
 		end
 		
+		local nodeInstance = currentGraph.nodes[nodeId]
+		if not nodeInstance then return end
+
 		wireDragging = true
 		dragMousePos = Vector2.new(inputPos.X, inputPos.Y)
-		wireStartInfo = { nodeData = nodeData, pinData = pinData, isOutput = isOutput, pinGui = pinGui }
+		wireStartInfo = { nodeData = nodeInstance, pinData = pinData, isOutput = isOutput, pinGui = pinGui }
 		
 		tempWireFrame = Instance.new("Frame")
 		tempWireFrame.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -217,6 +220,16 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 		tempWireFrame.BorderSizePixel = 0
 		tempWireFrame.ZIndex = 10
 		tempWireFrame.Parent = wiresFrame
+	end)
+
+	visualNode.OnPinHover.Event:Connect(function(nodeId, pinData, isOutput, pinGui)
+		local nodeInstance = currentGraph.nodes[nodeId]
+		if not nodeInstance then return end
+		hoveredPin = { nodeData = nodeInstance, pinData = pinData, isOutput = isOutput, pinGui = pinGui }
+	end)
+	
+	visualNode.OnPinHoverEnd.Event:Connect(function()
+		hoveredPin = nil
 	end)
 	
 	visualNode.OnPinDragEnd.Event:Connect(function()
@@ -319,8 +332,22 @@ local function spawnNode(nodeId, screenPosition, configFunc)
 	local nodeInstance
 	if nodeId == "Function Entry" then
 		nodeInstance = FunctionEntry.new(currentScriptHandle.data.inputs)
+	elseif nodeId:sub(1, 12) == "MethodEntry:" then
+		local mName = nodeId:sub(13)
+		local mData
+		for _, m in ipairs(currentScriptHandle.data.methods or {}) do
+			if m.name == mName then mData = m; break end
+		end
+		nodeInstance = FunctionEntry.new(mData and mData.inputs or {}, mName)
 	elseif nodeId == "Function Return" then
 		nodeInstance = FunctionReturn.new(currentScriptHandle.data.outputs)
+	elseif nodeId:sub(1, 13) == "MethodReturn:" then
+		local mName = nodeId:sub(14)
+		local mData
+		for _, m in ipairs(currentScriptHandle.data.methods or {}) do
+			if m.name == mName then mData = m; break end
+		end
+		nodeInstance = FunctionReturn.new(mData and mData.outputs or {}, mName)
 	elseif nodeId:sub(1, 4) == "Call" then
 		-- Extract script name from "Call MyFunction"
 		local fnName = nodeId:sub(6)
@@ -373,7 +400,7 @@ local function onVariableAction(varName, actionType)
 end
 
 local function renderGraph(graph)
-	for node, _ in pairs(graph.nodes) do
+	for _, node in pairs(graph.nodes) do
 		local visualNode = NodeComponent.new(canvas:GetNodeContainer(), node)
 		table.insert(visualNodes, visualNode)
 		hookUpNodeEvents(visualNode, node)
@@ -418,8 +445,8 @@ local function renderGraph(graph)
 				line = line, 
 				fromNode = outNode, 
 				toNode = inNode, 
-				fromPinName = edge.FromPin,
-				toPinName = edge.ToPin,
+				fromPinName = edge.FromPort,
+				toPinName = edge.ToPort,
 				toPinId = nil,
 				isExec = true,
 				hbConn = nil 
@@ -670,7 +697,7 @@ local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 	
 	-- 2. Resolve dependencies (functions called by this script)
 	local dependenciesCode = ""
-	for node, _ in pairs(graph.nodes) do
+	for _, node in pairs(graph.nodes) do
 		if node.Name == "Function Call" then
 			local fnNameInput = node:getInput("__functionName")
 			local fnName = fnNameInput and fnNameInput.Value or ""
@@ -714,7 +741,40 @@ local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 		local paramStr = table.concat(params, ", ")
 		return dependenciesCode .. "local function " .. sData.name .. "(" .. paramStr .. ")\n" .. code .. "\nend\n"
 	elseif sData.type == "Module" then
-		return dependenciesCode .. "local " .. sData.name .. " = {}\n\n" .. code .. "\nreturn " .. sData.name .. "\n"
+		local moduleName = sData.name
+		local moduleHeader = "local " .. moduleName .. " = {}\n"
+		
+		-- Attributes
+		for _, attr in ipairs(sData.attributes or {}) do
+			moduleHeader ..= moduleName .. "." .. attr.name .. " = " .. (attr.value or "nil") .. "\n"
+		end
+		moduleHeader ..= "\n"
+		
+		-- We need to rebuild the code to wrap each method block
+		local moduleBody = ""
+		local blocks = graph:build_blocks()
+		for _, b in ipairs(blocks) do
+			local pNode = b.parent_node
+			if pNode.Name == "Function Entry" then
+				local mNameInput = pNode:getInput("__methodName")
+				local mName = mNameInput and mNameInput.Value or ""
+				if mName ~= "" then
+					-- Find the method data to get params
+					local mData = nil
+					for _, m in ipairs(sData.methods or {}) do
+						if m.name == mName then mData = m; break end
+					end
+					local params = {}
+					for _, inp in ipairs(mData and mData.inputs or {}) do
+						table.insert(params, inp.name)
+					end
+					local paramStr = table.concat(params, ", ")
+					moduleBody ..= "function " .. moduleName .. ":" .. mName .. "(" .. paramStr .. ")\n" .. b:run() .. "end\n\n"
+				end
+			end
+		end
+		
+		return dependenciesCode .. moduleHeader .. moduleBody .. "return " .. moduleName .. "\n"
 	else
 		-- Default scripts just get the dependencies + their code
 		return dependenciesCode .. code
@@ -896,6 +956,17 @@ canvas:OnRightClick(function(position)
 				{ id = "Function Entry", name = "Function Entry", type = "Event" },
 				{ id = "Function Return", name = "Function Return", type = "Method" },
 			}
+		})
+	elseif currentScriptHandle and currentScriptHandle.data.type == "Module" then
+		local methodItems = {}
+		for _, m in ipairs(currentScriptHandle.data.methods or {}) do
+			table.insert(methodItems, { id = "MethodEntry:" .. m.name, name = "Function Entry (" .. m.name .. ")", type = "Event" })
+			table.insert(methodItems, { id = "MethodReturn:" .. m.name, name = "Function Return (" .. m.name .. ")", type = "Method" })
+		end
+		table.insert(extraNodes, {
+			category = "Module Methods",
+			color = Color3.fromRGB(200, 100, 50),
+			items = methodItems
 		})
 	end
 	
