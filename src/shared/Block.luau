@@ -99,31 +99,49 @@ function Block:transfer_data()
 		local inputObj = edge.ToNode:getInput(edge.ToPort)
 		if outputObj and inputObj then
 			inputObj.Value = outputObj.Value
-		else
-			warn("transfer_data: Invalid ports", edge.FromPort, "->", edge.ToPort)
 		end
 	end
+end
+
+function Block:transfer_data_from_node(node: Node)
+	for _, edge in ipairs(self.data_edges) do
+		if rawequal(edge.FromNode, node) then
+			local outputObj = edge.FromNode:getOutput(edge.FromPort)
+			local inputObj = edge.ToNode:getInput(edge.ToPort)
+			if outputObj and inputObj then
+				inputObj.Value = outputObj.Value
+			end
+		end
+	end
+end
+
+local function indentCode(code: string): string
+	if not code or code == "" then return "" end
+	local lines = code:split("\n")
+	local indented = ""
+	for _, line in ipairs(lines) do
+		if line:gsub("%s+", "") ~= "" then
+			indented ..= "\t" .. line .. "\n"
+		end
+	end
+	return indented
 end
 
 -- Internal recursive execution helper
 local function _run_node(node: Node, visited: { [Node]: boolean }, block: Block, indent: string?): string
 	local currentIndent = indent or ""
-	-- print(currentIndent .. "[Compiler] Processing node: " .. (node.Title or node.Name))
-
+	
 	if visited[node] then
-		-- print(currentIndent .. "  [Compiler] Node already visited, skipping execution.")
 		return ""
 	end
 	
 	local code = ""
 
-	-- 1. Resolve data dependencies first (Topological order for pure nodes)
-	-- Pure nodes (FUNCTION and VARIABLE type) must be evaluated before the current node uses their data.
+	-- 1. Resolve data dependencies first
 	for _, edge in ipairs(block.data_edges) do
 		if edge.ToNode == node then
 			local sourceNode = edge.FromNode
 			if sourceNode.Type == NodeTypeModule.FUNCTION or sourceNode.Type == NodeTypeModule.VARIABLE then
-				-- print(currentIndent .. "  [Compiler] Resolving pure dependency: " .. (sourceNode.Title or sourceNode.Name) .. " -> " .. (node.Title or node.Name))
 				code = code .. _run_node(sourceNode, visited, block, currentIndent .. "    ")
 			end
 		end
@@ -132,32 +150,48 @@ local function _run_node(node: Node, visited: { [Node]: boolean }, block: Block,
 	visited[node] = true
 	
 	-- 2. Execute the current node
-	local nodeCode = node:toLuau()
-	-- print(currentIndent .. "  [Compiler] Executed " .. (node.Title or node.Name) .. " (Type: " .. node.Type .. ")")
+	local nodeCode = ""
+	if node.Type == NodeTypeModule.CONTROL then
+		-- Control nodes handle their own execution flow branches
+		nodeCode = (node :: any):toLuau(block, visited, indentCode)
+	else
+		nodeCode = node:toLuau()
+	end
+	
 	if nodeCode and nodeCode ~= "" then
 		code = code .. nodeCode .. "\n"
 	end
 	
-	-- 3. Transfer data from this node's outputs to connected nodes' inputs
+	-- 3. Transfer data from this node's outputs
 	for _, edge in ipairs(block.data_edges) do
 		if edge.FromNode == node then
 			local outputObj = edge.FromNode:getOutput(edge.FromPort)
 			local inputObj = edge.ToNode:getInput(edge.ToPort)
 			if outputObj and inputObj then
 				inputObj.Value = outputObj.Value
-				-- print(currentIndent .. "  [Compiler] Data Transfer: " .. (node.Title or node.Name) .. "." .. edge.FromPort .. " -> " .. (edge.ToNode.Title or edge.ToNode.Name) .. "." .. edge.ToPort .. " = " .. tostring(outputObj.Value))
 			end
 		end
 	end
 	
-	-- 4. Follow execution flow
-	for _, edge in ipairs(block.exec_edges) do
-		if edge.FromNode == node then
-			-- print(currentIndent .. "  [Compiler] Following exec: " .. (node.Title or node.Name) .. " -> " .. (edge.ToNode.Title or edge.ToNode.Name))
-			code = code .. _run_node(edge.ToNode, visited, block, currentIndent)
+	-- 4. Follow execution flow (Only if NOT a control node, as they manage their own branches)
+	if node.Type ~= NodeTypeModule.CONTROL then
+		for _, edge in ipairs(block.exec_edges) do
+			if edge.FromNode == node then
+				code = code .. _run_node(edge.ToNode, visited, block, currentIndent)
+			end
 		end
 	end
 	
+	return code
+end
+
+function Block:run_from_port(node: Node, portName: string, visited: { [Node]: boolean }): string
+	local code = ""
+	for _, edge in ipairs(self.exec_edges) do
+		if edge.FromNode == node and edge.FromPort == portName then
+			code = code .. _run_node(edge.ToNode, visited, self)
+		end
+	end
 	return code
 end
 

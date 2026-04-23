@@ -25,7 +25,7 @@ function FunctionCall.new(nameOrData, inputsOrContext, outputs)
 				if s.name == name then
 					inputs = s.inputs
 					finalOutputs = s.outputs
-					found = true
+					local _found = true
 					break
 				end
 			end

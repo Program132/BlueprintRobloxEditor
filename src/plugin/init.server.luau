@@ -27,6 +27,9 @@ local Nodes = {
 	["Add"]         = require(Shared.nodes.math.Add),
 	["Get Variable"] = require(Shared.nodes.variables.Get),
 	["Set Variable"] = require(Shared.nodes.variables.Set),
+	["If"]          = require(Shared.nodes.control.If),
+	["While"]       = require(Shared.nodes.control.While),
+	["For"]         = require(Shared.nodes.control.For),
 	-- Special nodes handled dynamically
 	["Function Entry"] = FunctionEntry,
 	["Function Return"] = FunctionReturn,
@@ -277,7 +280,7 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 		
 		tempWireFrame = Instance.new("Frame")
 		tempWireFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-		tempWireFrame.BackgroundColor3 = (pinData.Name == "Exec") and Color3.fromRGB(240, 240, 240) or Color3.fromRGB(110, 180, 240)
+		tempWireFrame.BackgroundColor3 = pinData.IsExec and Color3.fromRGB(240, 240, 240) or Color3.fromRGB(110, 180, 240)
 		tempWireFrame.BorderSizePixel = 0
 		tempWireFrame.ZIndex = 10
 		tempWireFrame.Parent = wiresFrame
@@ -305,8 +308,8 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 				--print("[Wire] Dropped on pin: " .. hoveredPin.pinData.Name .. " of node: " .. hoveredPin.nodeData.Name)
 				-- Check if valid: one output, one input
 				if wireStartInfo.isOutput ~= hoveredPin.isOutput then
-					local isExec1 = (wireStartInfo.pinData.Name == "Exec")
-					local isExec2 = (hoveredPin.pinData.Name == "Exec")
+					local isExec1 = wireStartInfo.pinData.IsExec
+					local isExec2 = hoveredPin.pinData.IsExec
 					if isExec1 == isExec2 then
 						--print(string.format("[Wire] VALID CONNECTION! %s -> %s", wireStartInfo.nodeData.Name, hoveredPin.nodeData.Name))
 						-- valid connection
@@ -314,7 +317,7 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 						local inInfo = not wireStartInfo.isOutput and wireStartInfo or hoveredPin
 						
 						if isExec1 then
-							currentGraph:connect_exec(outInfo.nodeData, inInfo.nodeData, outInfo.pinData.Name)
+							currentGraph:connect_exec(outInfo.nodeData, inInfo.nodeData, outInfo.pinData.Name, inInfo.pinData.Name)
 						else
 							currentGraph:connect_data(outInfo.nodeData, inInfo.nodeData, outInfo.pinData.Name, inInfo.pinData.Name)
 						end

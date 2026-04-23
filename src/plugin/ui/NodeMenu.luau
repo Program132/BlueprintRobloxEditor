@@ -36,6 +36,15 @@ local NODES_DATA = {
 			{ id = "Get Variable", name = "GET (Variable)", type = "Variable" },
 			{ id = "Set Variable", name = "SET (Variable)", type = "Variable" }
 		}
+	},
+	{
+		category = "Control",
+		color = Color3.fromRGB(130, 40, 180),
+		items = {
+			{ id = "If", name = "If / Branch", type = "Control" },
+			{ id = "While", name = "While Loop", type = "Control" },
+			{ id = "For", name = "For Loop", type = "Control" }
+		}
 	}
 }
 

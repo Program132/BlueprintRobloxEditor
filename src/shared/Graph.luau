@@ -39,16 +39,17 @@ function Graph:remove_node(node)
 end
 
 --- Connect two nodes with an execution edge.
-function Graph:connect_exec(from_node, to_node, exec_pin)
-    local pin = exec_pin or "Exec"
+function Graph:connect_exec(from_node, to_node, from_pin, to_pin)
+    local fPin = from_pin or "Exec"
+    local tPin = to_pin or "Exec"
     -- Enforce single outgoing connection for exec pins
     for i = #self.exec_edges, 1, -1 do
         local edge = self.exec_edges[i]
-        if rawequal(edge.FromNode, from_node) and edge.FromPin == pin then
+        if rawequal(edge.FromNode, from_node) and edge.FromPort == fPin then
             table.remove(self.exec_edges, i)
         end
     end
-    local edge = Block.ExecEdge.new(from_node, to_node, pin, pin)
+    local edge = Block.ExecEdge.new(from_node, to_node, fPin, tPin)
     table.insert(self.exec_edges, edge)
 end
 
@@ -100,7 +101,8 @@ function Graph:disconnect(from_node, to_node, from_port, to_port, is_exec)
     if is_exec then
         for i = #self.exec_edges, 1, -1 do
             local edge = self.exec_edges[i]
-            if rawequal(edge.FromNode, from_node) and rawequal(edge.ToNode, to_node) and edge.FromPort == from_port then
+            if rawequal(edge.FromNode, from_node) and rawequal(edge.ToNode, to_node) 
+               and edge.FromPort == from_port and edge.ToPort == to_port then
                 table.remove(self.exec_edges, i)
                 return true
             end
@@ -293,7 +295,7 @@ function Graph.from_data(data, Nodes, context)
         local fromNode = graph.nodes[eData.fromId]
         local toNode = graph.nodes[eData.toId]
         if fromNode and toNode then
-            graph:connect_exec(fromNode, toNode, eData.fromPin)
+            graph:connect_exec(fromNode, toNode, eData.fromPin, eData.toPin)
         end
     end
     

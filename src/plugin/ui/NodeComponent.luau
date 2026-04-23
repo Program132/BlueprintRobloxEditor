@@ -173,7 +173,7 @@ function NodeComponent.new(canvasParent, nodeData)
 	-- Create Inputs
 	for _, input in ipairs(nodeData:getInputs()) do
 		if input.Name:sub(1, 2) == "__" then continue end
-		local isExec = (input.Name == "Exec")
+		local isExec = input.IsExec
 		local pinObj = makePin(leftFrame, input.Name, false, isExec)
 		self.pins[input.Id] = pinObj
 		
@@ -208,7 +208,7 @@ function NodeComponent.new(canvasParent, nodeData)
 	-- Create Outputs
 	for _, output in ipairs(nodeData:getOutputs()) do
 		if output.Name:sub(1, 2) == "__" then continue end
-		local isExec = (output.Name == "Exec")
+		local isExec = output.IsExec
 		local pinObj = makePin(rightFrame, output.Name, true, isExec)
 		self.pins[output.Id] = pinObj
 		
