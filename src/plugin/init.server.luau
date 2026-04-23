@@ -271,9 +271,10 @@ local function renderWiresOnly(graph)
 		
 		if vOut and vIn then
 			local function updatePermanentWire()
+				local zoom = canvas:GetZoom()
 				local cPos = canvas:GetNodeContainer().AbsolutePosition
-				local p1 = vOut.AbsolutePosition + (vOut.AbsoluteSize / 2) - cPos
-				local p2 = vIn.AbsolutePosition + (vIn.AbsoluteSize / 2) - cPos
+				local p1 = (vOut.AbsolutePosition + (vOut.AbsoluteSize / 2) - cPos) / zoom
+				local p2 = (vIn.AbsolutePosition + (vIn.AbsoluteSize / 2) - cPos) / zoom
 				return p1, p2
 			end
 			local p1, p2 = updatePermanentWire()
@@ -345,9 +346,10 @@ local function renderWiresOnly(graph)
 		
 		if vOut and vIn then
 			local function updatePermanentWire()
+				local zoom = canvas:GetZoom()
 				local cPos = canvas:GetNodeContainer().AbsolutePosition
-				local p1 = vOut.AbsolutePosition + (vOut.AbsoluteSize / 2) - cPos
-				local p2 = vIn.AbsolutePosition + (vIn.AbsoluteSize / 2) - cPos
+				local p1 = (vOut.AbsolutePosition + (vOut.AbsoluteSize / 2) - cPos) / zoom
+				local p2 = (vIn.AbsolutePosition + (vIn.AbsoluteSize / 2) - cPos) / zoom
 				return p1, p2
 			end
 			local p1, p2 = updatePermanentWire()
@@ -575,9 +577,10 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 						-- Draw permanent wire
 						local color = isExec1 and Color3.fromRGB(240, 240, 240) or Color3.fromRGB(110, 180, 240)
 						local function updatePermanentWire()
+							local zoom = canvas:GetZoom()
 							local cPos = canvas:GetNodeContainer().AbsolutePosition
-							local p1 = outInfo.pinGui.AbsolutePosition + (outInfo.pinGui.AbsoluteSize / 2) - cPos
-							local p2 = inInfo.pinGui.AbsolutePosition + (inInfo.pinGui.AbsoluteSize / 2) - cPos
+							local p1 = (outInfo.pinGui.AbsolutePosition + (outInfo.pinGui.AbsoluteSize / 2) - cPos) / zoom
+							local p2 = (inInfo.pinGui.AbsolutePosition + (inInfo.pinGui.AbsoluteSize / 2) - cPos) / zoom
 							return p1, p2
 						end
 						
@@ -1071,10 +1074,11 @@ end)
 
 RunService.Heartbeat:Connect(function()
 	if wireDragging and tempWireFrame and wireStartInfo then
+		local zoom = canvas:GetZoom()
 		local containerPos = canvas:GetNodeContainer().AbsolutePosition
 		local mousePos = dragMousePos
 		
-		local p1 = wireStartInfo.pinGui.AbsolutePosition + (wireStartInfo.pinGui.AbsoluteSize / 2) - containerPos
+		local p1 = (wireStartInfo.pinGui.AbsolutePosition + (wireStartInfo.pinGui.AbsoluteSize / 2) - containerPos) / zoom
 		
 		-- Distance-based snapping
 		hoveredPin = nil
@@ -1099,10 +1103,10 @@ RunService.Heartbeat:Connect(function()
 			end
 		end
 
-		local p2 = mousePos - containerPos
+		local p2 = (mousePos - containerPos) / zoom
 		if hoveredPin then
 			-- Snap exactly to the hovered pin center
-			p2 = hoveredPin.pinGui.AbsolutePosition + (hoveredPin.pinGui.AbsoluteSize / 2) - containerPos
+			p2 = (hoveredPin.pinGui.AbsolutePosition + (hoveredPin.pinGui.AbsoluteSize / 2) - containerPos) / zoom
 		end
 		
 		local distance = (p2 - p1).Magnitude
