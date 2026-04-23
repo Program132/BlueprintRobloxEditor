@@ -77,17 +77,17 @@ function Canvas:_setupPanning()
 	}
 
 	self._group.MouseEnter:Connect(function() 
-		print("[Canvas] Mouse entered canvas area")
+		--print("[Canvas] Mouse entered canvas area")
 		mouseInCanvas = true 
 	end)
 	self._group.MouseLeave:Connect(function() 
-		print("[Canvas] Mouse left canvas area")
+		--print("[Canvas] Mouse left canvas area")
 		mouseInCanvas = false 
 	end)
 
 	self._group.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton2 or input.UserInputType == Enum.UserInputType.MouseButton3 then
-			print("[Canvas] Panning started (Right/Middle click)")
+			--print("[Canvas] Panning started (Right/Middle click)")
 			panning = true
 			panStartPos = input.Position
 			startPanX = self._panX
@@ -103,14 +103,14 @@ function Canvas:_setupPanning()
 					if input.UserInputType == Enum.UserInputType.MouseButton2 then
 						local delta = input.Position - panStartPos
 						if delta.Magnitude < 5 and self._onRightClickCallback then
-							print("[Canvas] Firing Right-Click Context Menu")
+							--print("[Canvas] Firing Right-Click Context Menu")
 							self._onRightClickCallback(Vector2.new(input.Position.X, input.Position.Y))
 						end
 					end
 				end
 			end)
 		elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
-			print("[Canvas] Left click detected inside canvas")
+			--print("[Canvas] Left click detected inside canvas")
 			if self._onLeftClickCallback then
 				self._onLeftClickCallback()
 			end
@@ -148,7 +148,7 @@ function Canvas:_setupPanning()
 		
 		if keys[input.KeyCode] ~= nil then
 			keys[input.KeyCode] = true
-			print("[Canvas] Key pressed:", input.KeyCode.Name)
+			--print("[Canvas] Key pressed:", input.KeyCode.Name)
 		end
 	end)
 

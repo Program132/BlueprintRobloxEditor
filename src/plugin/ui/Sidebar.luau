@@ -342,13 +342,13 @@ function Sidebar:AddVariable(name)
 	-- GET button: will create a "get" node on the canvas
 	getBtn.MouseButton1Click:Connect(function()
 		-- TODO: spawn a "get" node for this variable on canvas
-		print("[Blueprint] GET node for '" .. name .. "'")
+		--print("[Blueprint] GET node for '" .. name .. "'")
 	end)
 
 	-- SET button: will create a "set" node on the canvas
 	setBtn.MouseButton1Click:Connect(function()
 		-- TODO: spawn a "set" node for this variable on canvas
-		print("[Blueprint] SET node for '" .. name .. "'")
+		--print("[Blueprint] SET node for '" .. name .. "'")
 	end)
 
 	-- X button: remove this variable

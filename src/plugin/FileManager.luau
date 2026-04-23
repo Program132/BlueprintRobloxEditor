@@ -96,4 +96,30 @@ function FileManager:ExportToStringValue(data, name)
 	return sv
 end
 
+-- ── Export to Roblox Script ──────────────────────────────────────────────────
+
+function FileManager:ExportToScript(scriptName, scriptType, code)
+	local parent = workspace:FindFirstChild("__BlueprintExport")
+	if not parent then
+		parent = Instance.new("Folder")
+		parent.Name = "__BlueprintExport"
+		parent.Parent = workspace
+	end
+
+	local scriptInstance
+	if scriptType == "LocalScript" then
+		scriptInstance = Instance.new("LocalScript")
+	elseif scriptType == "Module" or scriptType == "ModuleScript" then
+		scriptInstance = Instance.new("ModuleScript")
+	else
+		scriptInstance = Instance.new("Script")
+	end
+
+	scriptInstance.Name = scriptName or "Script"
+	scriptInstance.Source = code or ""
+	scriptInstance.Parent = parent
+
+	return scriptInstance
+end
+
 return FileManager

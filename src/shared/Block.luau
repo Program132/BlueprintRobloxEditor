@@ -106,36 +106,58 @@ function Block:transfer_data()
 end
 
 -- Internal recursive execution helper
-local function _run_node(node: Node, visited: { [Node]: boolean }, block: Block): string
+local function _run_node(node: Node, visited: { [Node]: boolean }, block: Block, indent: string?): string
+	local currentIndent = indent or ""
+	-- print(currentIndent .. "[Compiler] Processing node: " .. (node.Title or node.Name))
+
 	if visited[node] then
+		-- print(currentIndent .. "  [Compiler] Node already visited, skipping execution.")
 		return ""
 	end
+	
+	local code = ""
+
+	-- 1. Resolve data dependencies first (Topological order for pure nodes)
+	-- Pure nodes (FUNCTION type) must be evaluated before the current node uses their data.
+	for _, edge in ipairs(block.data_edges) do
+		if edge.ToNode == node then
+			local sourceNode = edge.FromNode
+			if sourceNode.Type == NodeTypeModule.FUNCTION then
+				-- print(currentIndent .. "  [Compiler] Resolving pure dependency: " .. (sourceNode.Title or sourceNode.Name) .. " -> " .. (node.Title or node.Name))
+				code = code .. _run_node(sourceNode, visited, block, currentIndent .. "    ")
+			end
+		end
+	end
+
 	visited[node] = true
 	
-	-- Execute the node to compute its outputs
-	local code = ""
+	-- 2. Execute the current node
 	local nodeCode = node:toLuau()
 	if nodeCode and nodeCode ~= "" then
 		code = code .. nodeCode .. "\n"
 	end
+	-- print(currentIndent .. "  [Compiler] Generated code for " .. (node.Title or node.Name) .. ": " .. (nodeCode ~= "" and "yes" or "no"))
 	
-	-- Transfer data from this node's outputs to connected nodes' inputs
+	-- 3. Transfer data from this node's outputs to connected nodes' inputs
 	for _, edge in ipairs(block.data_edges) do
 		if edge.FromNode == node then
 			local outputObj = edge.FromNode:getOutput(edge.FromPort)
 			local inputObj = edge.ToNode:getInput(edge.ToPort)
 			if outputObj and inputObj then
 				inputObj.Value = outputObj.Value
+				-- print(currentIndent .. "  [Compiler] Data transfer: " .. (node.Title or node.Name) .. "." .. edge.FromPort .. " -> " .. (edge.ToNode.Title or edge.ToNode.Name) .. "." .. edge.ToPort .. " (" .. tostring(outputObj.Value) .. ")")
 			end
 		end
 	end
 	
-	-- Follow exec edges originating from this node
+	-- 4. Follow execution flow
 	for _, edge in ipairs(block.exec_edges) do
 		if edge.FromNode == node then
-			code = code .. _run_node(edge.ToNode, visited, block)
+			-- print(currentIndent .. "  [Compiler] Following exec: " .. (node.Title or node.Name) .. " -> " .. (edge.ToNode.Title or edge.ToNode.Name))
+			code = code .. _run_node(edge.ToNode, visited, block, currentIndent)
 		end
 	end
+	
 	return code
 end
 

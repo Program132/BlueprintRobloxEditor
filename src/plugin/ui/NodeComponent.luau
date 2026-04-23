@@ -183,13 +183,13 @@ function NodeComponent.new(canvasParent, nodeData)
 
 		pinObj.row.InputBegan:Connect(function(inp)
 			if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-				print("[Pin] Firing OnPinDragStart for INPUT " .. input.Name)
+				--print("[Pin] Firing OnPinDragStart for INPUT " .. input.Name)
 				self.OnPinDragStart:Fire(self.nodeData, input, false, pinObj.pin, inp.Position)
 				
 				local endConn
 				endConn = inp.Changed:Connect(function()
 					if inp.UserInputState == Enum.UserInputState.End then
-						print("[Pin] Firing OnPinDragEnd for INPUT " .. input.Name)
+						--print("[Pin] Firing OnPinDragEnd for INPUT " .. input.Name)
 						self.OnPinDragEnd:Fire()
 						endConn:Disconnect()
 					end
@@ -212,13 +212,13 @@ function NodeComponent.new(canvasParent, nodeData)
 		
 		pinObj.row.InputBegan:Connect(function(inp)
 			if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-				print("[Pin] Firing OnPinDragStart for OUTPUT " .. output.Name)
+				--print("[Pin] Firing OnPinDragStart for OUTPUT " .. output.Name)
 				self.OnPinDragStart:Fire(self.nodeData, output, true, pinObj.pin, inp.Position)
 				
 				local endConn
 				endConn = inp.Changed:Connect(function()
 					if inp.UserInputState == Enum.UserInputState.End then
-						print("[Pin] Firing OnPinDragEnd for OUTPUT " .. output.Name)
+						--print("[Pin] Firing OnPinDragEnd for OUTPUT " .. output.Name)
 						self.OnPinDragEnd:Fire()
 						endConn:Disconnect()
 					end

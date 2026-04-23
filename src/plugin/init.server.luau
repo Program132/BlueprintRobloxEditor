@@ -1,5 +1,5 @@
 -- Import backend modules
-local HttpService = game:GetService("HttpService")
+-- Import backend modules
 local Shared = script.Parent:WaitForChild("Shared")
 local Graph  = require(Shared.Graph)
 
@@ -13,6 +13,7 @@ local Canvas  = require(UI.Canvas)
 local Sidebar = require(UI.Sidebar)
 local Modal   = require(UI.Modal)
 local ScriptModal = require(UI.ScriptModal)
+local ChoiceModal = require(UI.ChoiceModal)
 local NodeMenu = require(UI.NodeMenu)
 local NodeComponent = require(UI.NodeComponent)
 
@@ -54,6 +55,8 @@ canvas:SetLeftOffset(sidebar:GetWidth())
 local newProjectBtn  = topBar:AddButton("NewProjectBtn",  "+ New Project")
 local openProjectBtn = topBar:AddButton("OpenProjectBtn", "Open Project")
 local saveProjectBtn = topBar:AddButton("SaveProjectBtn", "Save Project")
+local exportBtn      = topBar:AddButton("ExportBtn",      "Export Current")
+local exportAllBtn   = topBar:AddButton("ExportAllBtn",   "Export All")
 
 -- Initialise services
 local fm           = FileManager.new(plugin)
@@ -76,7 +79,7 @@ local function handleKeyDown(keyCode)
 	
 	if (keyCode == Enum.KeyCode.Delete or keyCode == Enum.KeyCode.Backspace) then
 		if hoveredNode then
-			print("[Editor] Deleting node: " .. hoveredNode.nodeData.Name)
+			--print("[Editor] Deleting node: " .. hoveredNode.nodeData.Name)
 			
 			-- 1. Remove from Graph
 			currentGraph:remove_node(hoveredNode.nodeData)
@@ -113,7 +116,7 @@ local function handleKeyDown(keyCode)
 			hoveredNode:Destroy()
 			hoveredNode = nil
 		else
-			print("[Editor] Delete pressed but no node hovered")
+			--print("[Editor] Delete pressed but no node hovered")
 		end
 	end
 end
@@ -149,26 +152,6 @@ local function drawWireLine(parent, p1, p2, color)
 	return line
 end
 
-local function drawWireLine(parent, p1, p2, color)
-	local line = Instance.new("Frame")
-	line.Name = "Wire"
-	line.AnchorPoint = Vector2.new(0.5, 0.5)
-	line.BackgroundColor3 = color
-	line.BorderSizePixel = 0
-	line.ZIndex = 5
-	line.Parent = parent
-	
-	local distance = (p2 - p1).Magnitude
-	local center = (p1 + p2) / 2
-	local angle = math.atan2(p2.Y - p1.Y, p2.X - p1.X)
-	
-	line.Position = UDim2.fromOffset(center.X, center.Y)
-	line.Size = UDim2.fromOffset(distance, 3)
-	line.Rotation = math.deg(angle)
-	
-	return line
-end
-
 local function clearCanvas()
 	for _, vNode in ipairs(visualNodes) do
 		vNode:Destroy()
@@ -194,13 +177,13 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 	end)
 	
 	visualNode.OnHover.Event:Connect(function()
-		print("[Editor] Hovering node: " .. nodeInstance.Name)
+		--print("[Editor] Hovering node: " .. nodeInstance.Name)
 		hoveredNode = visualNode
 	end)
 	
 	visualNode.OnHoverEnd.Event:Connect(function()
 		if hoveredNode == visualNode then
-			print("[Editor] Stopped hovering node: " .. nodeInstance.Name)
+			--print("[Editor] Stopped hovering node: " .. nodeInstance.Name)
 			hoveredNode = nil
 		end
 	end)
@@ -235,13 +218,13 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 			end
 			
 			if hoveredPin and wireStartInfo then
-				print("[Wire] Dropped on pin: " .. hoveredPin.pinData.Name .. " of node: " .. hoveredPin.nodeData.Name)
+				--print("[Wire] Dropped on pin: " .. hoveredPin.pinData.Name .. " of node: " .. hoveredPin.nodeData.Name)
 				-- Check if valid: one output, one input
 				if wireStartInfo.isOutput ~= hoveredPin.isOutput then
 					local isExec1 = (wireStartInfo.pinData.Name == "Exec")
 					local isExec2 = (hoveredPin.pinData.Name == "Exec")
 					if isExec1 == isExec2 then
-						print(string.format("[Wire] VALID CONNECTION! %s -> %s", wireStartInfo.nodeData.Name, hoveredPin.nodeData.Name))
+						--print(string.format("[Wire] VALID CONNECTION! %s -> %s", wireStartInfo.nodeData.Name, hoveredPin.nodeData.Name))
 						-- valid connection
 						local outInfo = wireStartInfo.isOutput and wireStartInfo or hoveredPin
 						local inInfo = not wireStartInfo.isOutput and wireStartInfo or hoveredPin
@@ -446,7 +429,7 @@ local function switchScript(handle)
 	
 	-- 4. Render
 	renderGraph(currentGraph)
-	print("[Editor] Switched to script: " .. handle.data.name)
+	--print("[Editor] Switched to script: " .. handle.data.name)
 end
 
 
@@ -548,6 +531,84 @@ saveProjectBtn:OnClick(function()
 	task.delay(3, function()
 		if projectActive then canvas:HidePlaceholder() end
 	end)
+end)
+
+-- ── Export Logic ──────────────────────────────────────────────────────────────
+
+local function compileScriptData(sData)
+	if not sData.graph then return "-- No graph data\n" end
+	
+	-- We need to temporarily restore the graph to build blocks
+	local graph = Graph.from_data(sData.graph, Nodes)
+	local blocks = {}
+	local ok, err = pcall(function()
+		blocks = graph:build_blocks()
+	end)
+	
+	if not ok then
+		warn("[Compiler] Failed to build blocks: " .. tostring(err))
+		return "-- Compilation Error: " .. tostring(err) .. "\n"
+	end
+	
+	local code = ""
+	for _, b in ipairs(blocks) do
+		code ..= b:run() .. "\n"
+	end
+	return code
+end
+
+local function performExport(sData, callback)
+	if sData.type == "Default" then
+		ChoiceModal.prompt(widget, "Export '" .. sData.name .. "' as:", {"Script", "LocalScript"}, function(choice)
+			local code = compileScriptData(sData)
+			local instance = fm:ExportToScript(sData.name, choice, code)
+			if callback then callback(instance) end
+		end)
+	else
+		local code = compileScriptData(sData)
+		local instance = fm:ExportToScript(sData.name, sData.type, code)
+		if callback then callback(instance) end
+	end
+end
+
+exportBtn:OnClick(function()
+	if not projectActive or not currentScriptHandle then return end
+	
+	-- Save current state first
+	currentScriptHandle.data.graph = currentGraph:serialize()
+	
+	performExport(currentScriptHandle.data, function(inst)
+		canvas:SetPlaceholder("Exported '" .. inst.Name .. "' to workspace.__BlueprintExport")
+		task.delay(2, function() if projectActive then canvas:HidePlaceholder() end end)
+	end)
+end)
+
+exportAllBtn:OnClick(function()
+	if not projectActive then return end
+	
+	-- Save current state first
+	if currentScriptHandle then
+		currentScriptHandle.data.graph = currentGraph:serialize()
+	end
+	
+	local allScripts = sidebar:GetScripts()
+	local exportedCount = 0
+	
+	local function exportNext(index)
+		if index > #allScripts then
+			canvas:SetPlaceholder("Exported " .. exportedCount .. " scripts to workspace.__BlueprintExport")
+			task.delay(3, function() if projectActive then canvas:HidePlaceholder() end end)
+			return
+		end
+		
+		local sData = allScripts[index]
+		performExport(sData, function()
+			exportedCount += 1
+			exportNext(index + 1)
+		end)
+	end
+	
+	exportNext(1)
 end)
 
 
