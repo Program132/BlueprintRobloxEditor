@@ -30,7 +30,7 @@ pluginButton.ClickableWhenViewportHidden = true
 
 -- Docking widget
 local widgetInfo = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, true, false, 800, 500, 400, 300)
-local widget     = plugin:CreateDockWidgetPluginGui("BlueprintEditorWidget", widgetInfo)
+local widget     = plugin:CreateDockWidgetPluginGuiAsync("BlueprintEditorWidget", widgetInfo)
 widget.Title     = "Blueprint Editor"
 widget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
@@ -64,7 +64,7 @@ local fm           = FileManager.new(plugin)
 -- Project state
 local projectActive      = false
 local currentProjectName = nil
-local currentProjectData = nil
+local _currentProjectData = nil
 local currentGraph       = Graph.new()
 local visualNodes        = {}
 local visualWires        = {} -- stores drawn wire frames with metadata
@@ -299,11 +299,17 @@ local function renderGraph(graph)
 		for _, vNode in ipairs(visualNodes) do
 			if vNode.nodeData == outNode then
 				for _, pInfo in ipairs(vNode:GetPins()) do
-					if pInfo.isOutput and pInfo.pinData.Name == edge.FromPort then vOut = pInfo.pinGui break end
+					if pInfo.isOutput and pInfo.pinData.Name == edge.FromPort then
+						vOut = pInfo.pinGui
+						break
+					end
 				end
 			elseif vNode.nodeData == inNode then
 				for _, pInfo in ipairs(vNode:GetPins()) do
-					if not pInfo.isOutput and pInfo.pinData.Name == edge.ToPort then vIn = pInfo.pinGui break end
+					if not pInfo.isOutput and pInfo.pinData.Name == edge.ToPort then
+						vIn = pInfo.pinGui
+						break
+					end
 				end
 			end
 		end
@@ -326,7 +332,10 @@ local function renderGraph(graph)
 				hbConn = nil 
 			}
 			for _, inp in ipairs(inNode:getInputs()) do
-				if inp.Name == edge.ToPort then wireObj.toPinId = inp.Id break end
+				if inp.Name == edge.ToPort then
+					wireObj.toPinId = inp.Id
+					break
+				end
 			end
 
 			wireObj.hbConn = RunService.Heartbeat:Connect(function()
@@ -341,7 +350,10 @@ local function renderGraph(graph)
 			table.insert(visualWires, wireObj)
 			if wireObj.toPinId then
 				for _, vNode in ipairs(visualNodes) do
-					if vNode.nodeData == inNode then vNode:UpdatePinState(wireObj.toPinId, true) break end
+					if vNode.nodeData == inNode then
+						vNode:UpdatePinState(wireObj.toPinId, true)
+						break
+					end
 				end
 			end
 		end
@@ -356,11 +368,17 @@ local function renderGraph(graph)
 		for _, vNode in ipairs(visualNodes) do
 			if vNode.nodeData == outNode then
 				for _, pInfo in ipairs(vNode:GetPins()) do
-					if pInfo.isOutput and pInfo.pinData.Name == edge.FromPort then vOut = pInfo.pinGui break end
+					if pInfo.isOutput and pInfo.pinData.Name == edge.FromPort then
+						vOut = pInfo.pinGui
+						break
+					end
 				end
 			elseif vNode.nodeData == inNode then
 				for _, pInfo in ipairs(vNode:GetPins()) do
-					if not pInfo.isOutput and pInfo.pinData.Name == edge.ToPort then vIn = pInfo.pinGui break end
+					if not pInfo.isOutput and pInfo.pinData.Name == edge.ToPort then
+						vIn = pInfo.pinGui
+						break
+					end
 				end
 			end
 		end
@@ -383,7 +401,10 @@ local function renderGraph(graph)
 				hbConn = nil 
 			}
 			for _, inp in ipairs(inNode:getInputs()) do
-				if inp.Name == edge.ToPort then wireObj.toPinId = inp.Id break end
+				if inp.Name == edge.ToPort then
+					wireObj.toPinId = inp.Id
+					break
+				end
 			end
 
 			wireObj.hbConn = RunService.Heartbeat:Connect(function()
@@ -398,7 +419,10 @@ local function renderGraph(graph)
 			table.insert(visualWires, wireObj)
 			if wireObj.toPinId then
 				for _, vNode in ipairs(visualNodes) do
-					if vNode.nodeData == inNode then vNode:UpdatePinState(wireObj.toPinId, true) break end
+					if vNode.nodeData == inNode then
+						vNode:UpdatePinState(wireObj.toPinId, true)
+						break
+					end
 				end
 			end
 		end
@@ -451,7 +475,7 @@ end
 local function activateProject(data, name)
 	projectActive      = true
 	currentProjectName = name or data.name or "Untitled"
-	currentProjectData = data
+	_currentProjectData = data
 
 	clearCanvas()
 	sidebar:Clear()
