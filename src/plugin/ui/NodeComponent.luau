@@ -1,6 +1,8 @@
 local NodeComponent = {}
 NodeComponent.__index = NodeComponent
 
+local TextService = game:GetService("TextService")
+
 local function makeCorner(parent, radius)
 	local c = Instance.new("UICorner")
 	c.CornerRadius = UDim.new(0, radius)
@@ -146,6 +148,28 @@ function NodeComponent.new(canvasParent, nodeData)
 		end)
 	end
 
+	-- Calculate adaptive width
+	local titleWidth = TextService:GetTextSize(nodeData.Title or nodeData.Name, 13, Enum.Font.GothamBold, Vector2.new(1000, 1000)).X + 70
+	
+	local maxLeftWidth = 0
+	for _, input in ipairs(nodeData:getInputs()) do
+		if input.Name:sub(1, 2) == "__" then continue end
+		local w = TextService:GetTextSize(input.Name, 11, Enum.Font.GothamMedium, Vector2.new(1000, 1000)).X
+		if not input.IsExec then
+			w += 65 -- space for input field (50 size + padding)
+		end
+		maxLeftWidth = math.max(maxLeftWidth, w + 25)
+	end
+	
+	local maxRightWidth = 0
+	for _, output in ipairs(nodeData:getOutputs()) do
+		if output.Name:sub(1, 2) == "__" then continue end
+		local w = TextService:GetTextSize(output.Name, 11, Enum.Font.GothamMedium, Vector2.new(1000, 1000)).X
+		maxRightWidth = math.max(maxRightWidth, w + 25)
+	end
+	
+	local calculatedWidth = math.max(160, titleWidth, maxLeftWidth + maxRightWidth + 30)
+
 	-- Body
 	local body = Instance.new("Frame")
 	body.Size = UDim2.new(1, 0, 1, -28)
@@ -160,8 +184,8 @@ function NodeComponent.new(canvasParent, nodeData)
 	leftLayout.Padding = UDim.new(0, 2)
 	
 	local leftFrame = Instance.new("Frame")
-	leftFrame.Size = UDim2.new(0.5, 0, 1, -10)
-	leftFrame.Position = UDim2.new(0, 0, 0, 5)
+	leftFrame.Size = UDim2.new(0, maxLeftWidth, 1, -10)
+	leftFrame.Position = UDim2.new(0, 5, 0, 5)
 	leftFrame.BackgroundTransparency = 1
 	leftFrame.Parent = body
 	leftLayout.Parent = leftFrame
@@ -172,8 +196,8 @@ function NodeComponent.new(canvasParent, nodeData)
 	rightLayout.Padding = UDim.new(0, 2)
 	
 	local rightFrame = Instance.new("Frame")
-	rightFrame.Size = UDim2.new(0.5, 0, 1, -10)
-	rightFrame.Position = UDim2.new(0.5, 0, 0, 5)
+	rightFrame.Size = UDim2.new(0, maxRightWidth, 1, -10)
+	rightFrame.Position = UDim2.new(1, -maxRightWidth - 5, 0, 5)
 	rightFrame.BackgroundTransparency = 1
 	rightFrame.Parent = body
 	rightLayout.Parent = rightFrame
@@ -256,7 +280,7 @@ function NodeComponent.new(canvasParent, nodeData)
 	-- Auto-size frame based on pins
 	local maxPins = math.max(#nodeData:getInputs(), #nodeData:getOutputs())
 	local bodyHeight = math.max(40, maxPins * 26 + 10)
-	frame.Size = UDim2.new(0, 180, 0, bodyHeight + 28)
+	frame.Size = UDim2.new(0, calculatedWidth, 0, bodyHeight + 28)
 
 	self.frame = frame
 	self.header = header
