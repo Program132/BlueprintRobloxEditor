@@ -79,6 +79,7 @@ local currentGraph       = Graph.new()
 local visualNodes        = {}
 local visualWires        = {} -- stores drawn wire frames with metadata
 local hoveredNode        = nil
+local hoveredWire        = nil
 local currentScriptHandle = nil
 
 local UserInputService = game:GetService("UserInputService")
@@ -125,8 +126,36 @@ local function handleKeyDown(keyCode)
 			-- 4. Destroy UI
 			hoveredNode:Destroy()
 			hoveredNode = nil
+		elseif hoveredWire then
+			-- Deleting a connection
+			-- 1. Remove from Graph
+			currentGraph:disconnect(hoveredWire.fromNode, hoveredWire.toNode, hoveredWire.fromPinName, hoveredWire.toPinName, hoveredWire.isExec)
+			
+			-- 2. Show input field again if it was a data target pin
+			if not hoveredWire.isExec and hoveredWire.toPinId then
+				for _, vNode in ipairs(visualNodes) do
+					if vNode.nodeData == hoveredWire.toNode then
+						vNode:UpdatePinState(hoveredWire.toPinId, false)
+						break
+					end
+				end
+			end
+			
+			-- 3. Destroy UI
+			hoveredWire.line:Destroy()
+			if hoveredWire.hbConn then hoveredWire.hbConn:Disconnect() end
+			
+			-- 4. Remove from visualWires
+			for i, w in ipairs(visualWires) do
+				if w == hoveredWire then
+					table.remove(visualWires, i)
+					break
+				end
+			end
+			
+			hoveredWire = nil
 		else
-			--print("[Editor] Delete pressed but no node hovered")
+			--print("[Editor] Delete pressed but nothing hovered")
 		end
 	end
 end
@@ -159,7 +188,39 @@ local function drawWireLine(parent, p1, p2, color)
 	line.BorderSizePixel = 0
 	line.ZIndex = 5
 	line.Parent = parent
+
+	-- Invisible hitbox for easier selection
+	local hitbox = Instance.new("TextButton")
+	hitbox.Name = "WireHitbox"
+	hitbox.Size = UDim2.new(1, 0, 1, 10)
+	hitbox.Position = UDim2.new(0, 0, 0.5, -5)
+	hitbox.BackgroundTransparency = 1
+	hitbox.Text = ""
+	hitbox.ZIndex = 6
+	hitbox.Parent = line
+
 	return line
+end
+
+local function registerWireHover(wireObj)
+	local line = wireObj.line
+	local hitbox = line:WaitForChild("WireHitbox")
+	local baseColor = line.BackgroundColor3
+	local highlightColor = Color3.fromRGB(255, 210, 80)
+	
+	hitbox.MouseEnter:Connect(function()
+		hoveredWire = wireObj
+		line.BackgroundColor3 = highlightColor
+		line.Size = UDim2.new(line.Size.X.Scale, line.Size.X.Offset, 0, 5)
+	end)
+	
+	hitbox.MouseLeave:Connect(function()
+		if hoveredWire == wireObj then
+			hoveredWire = nil
+			line.BackgroundColor3 = baseColor
+			line.Size = UDim2.new(line.Size.X.Scale, line.Size.X.Offset, 0, 3)
+		end
+	end)
 end
 
 local function clearCanvas()
@@ -308,11 +369,14 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 							local center = (np1 + np2) / 2
 							local angle = math.atan2(np2.Y - np1.Y, np2.X - np1.X)
 							line.Position = UDim2.fromOffset(center.X, center.Y)
-							line.Size = UDim2.fromOffset(distance, 3)
+							-- Keep the height if hovered
+							local h = (hoveredWire == wireObj) and 5 or 3
+							line.Size = UDim2.fromOffset(distance, h)
 							line.Rotation = math.deg(angle)
 						end)
 						
 						table.insert(visualWires, wireObj)
+						registerWireHover(wireObj)
 						
 						-- Hide manual input field on target pin
 						for _, vNode in ipairs(visualNodes) do
@@ -464,10 +528,12 @@ local function renderGraph(graph)
 				local center = (np1 + np2) / 2
 				local angle = math.atan2(np2.Y - np1.Y, np2.X - np1.X)
 				line.Position = UDim2.fromOffset(center.X, center.Y)
-				line.Size = UDim2.fromOffset(distance, 3)
+				local h = (hoveredWire == wireObj) and 5 or 3
+				line.Size = UDim2.fromOffset(distance, h)
 				line.Rotation = math.deg(angle)
 			end)
 			table.insert(visualWires, wireObj)
+			registerWireHover(wireObj)
 			if wireObj.toPinId then
 				for _, vNode in ipairs(visualNodes) do
 					if vNode.nodeData == inNode then
@@ -536,10 +602,12 @@ local function renderGraph(graph)
 				local center = (np1 + np2) / 2
 				local angle = math.atan2(np2.Y - np1.Y, np2.X - np1.X)
 				line.Position = UDim2.fromOffset(center.X, center.Y)
-				line.Size = UDim2.fromOffset(distance, 3)
+				local h = (hoveredWire == wireObj) and 5 or 3
+				line.Size = UDim2.fromOffset(distance, h)
 				line.Rotation = math.deg(angle)
 			end)
 			table.insert(visualWires, wireObj)
+			registerWireHover(wireObj)
 			if wireObj.toPinId then
 				for _, vNode in ipairs(visualNodes) do
 					if vNode.nodeData == inNode then

@@ -1,4 +1,4 @@
-local Node = require(script.Parent.Node)
+local _Node = require(script.Parent.Node)
 local NodeType = require(script.Parent.NodeType)
 local IO = require(script.Parent.IO)
 local Block = require(script.Parent.Block)
@@ -93,6 +93,28 @@ function Graph:connect_data(from_node, to_node, output_name, input_name)
     else
         -- warn("Graph: Failed to connect data pins: " .. output_name .. " -> " .. input_name .. " (Pins not found on " .. to_node.Name .. ")")
     end
+end
+
+--- Disconnect a specific edge.
+function Graph:disconnect(from_node, to_node, from_port, to_port, is_exec)
+    if is_exec then
+        for i = #self.exec_edges, 1, -1 do
+            local edge = self.exec_edges[i]
+            if rawequal(edge.FromNode, from_node) and rawequal(edge.ToNode, to_node) and edge.FromPort == from_port then
+                table.remove(self.exec_edges, i)
+                return true
+            end
+        end
+    else
+        for i = #self.data_edges, 1, -1 do
+            local edge = self.data_edges[i]
+            if rawequal(edge.FromNode, from_node) and rawequal(edge.ToNode, to_node) and edge.FromPort == from_port and edge.ToPort == to_port then
+                table.remove(self.data_edges, i)
+                return true
+            end
+        end
+    end
+    return false
 end
 
 --- Internal helper: compute reachable nodes and relevant edges for a start node.
