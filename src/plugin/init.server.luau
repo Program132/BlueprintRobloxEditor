@@ -716,11 +716,13 @@ canvas:OnRightClick(function(position)
 		local nodeInstance = nodeClass.new()
 		
 		-- Place it under the mouse cursor in the canvas
-		-- We need to offset the screen position by the canvas absolute position and pan offset
+		-- We need to offset the screen position by the canvas absolute position, pan offset and ZOOM
 		local canvasPos = canvas:GetInstance().AbsolutePosition
 		local panOffset = canvas:GetPanOffset()
-		local relativeX = position.X - canvasPos.X - panOffset.X
-		local relativeY = position.Y - canvasPos.Y - panOffset.Y
+		local zoom      = canvas:GetZoom()
+		
+		local relativeX = (position.X - canvasPos.X) / zoom - panOffset.X
+		local relativeY = (position.Y - canvasPos.Y) / zoom - panOffset.Y
 		
 		nodeInstance:editPosition(Vector2.new(relativeX, relativeY))
 		currentGraph:add_node(nodeInstance)
