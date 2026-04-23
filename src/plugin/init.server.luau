@@ -16,13 +16,21 @@ local ScriptModal = require(UI.ScriptModal)
 local ChoiceModal = require(UI.ChoiceModal)
 local NodeMenu = require(UI.NodeMenu)
 local NodeComponent = require(UI.NodeComponent)
+local FunctionEntry = require(Shared.nodes.FunctionEntry)
+local FunctionReturn = require(Shared.nodes.FunctionReturn)
+local FunctionCall = require(Shared.nodes.FunctionCall)
 
 local Nodes = {
 	["Start Event"] = require(Shared.nodes.events.Start),
+	["Return"]      = require(Shared.nodes.Return),
 	["Print"]       = require(Shared.nodes.Print),
 	["Add"]         = require(Shared.nodes.math.Add),
 	["Get Variable"] = require(Shared.nodes.variables.Get),
 	["Set Variable"] = require(Shared.nodes.variables.Set),
+	-- Special nodes handled dynamically
+	["Function Entry"] = FunctionEntry,
+	["Function Return"] = FunctionReturn,
+	["Function Call"] = FunctionCall,
 }
 
 -- Toolbar button (toggle widget only)
@@ -308,10 +316,30 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 end
 
 local function spawnNode(nodeId, screenPosition, configFunc)
-	local nodeClass = Nodes[nodeId]
-	if not nodeClass then return end
-	
-	local nodeInstance = nodeClass.new()
+	local nodeInstance
+	if nodeId == "Function Entry" then
+		nodeInstance = FunctionEntry.new(currentScriptHandle.data.inputs)
+	elseif nodeId == "Function Return" then
+		nodeInstance = FunctionReturn.new(currentScriptHandle.data.outputs)
+	elseif nodeId:sub(1, 4) == "Call" then
+		-- Extract script name from "Call MyFunction"
+		local fnName = nodeId:sub(6)
+		local allScripts = sidebar:GetScripts()
+		local targetScript
+		for _, s in ipairs(allScripts) do
+			if s.name == fnName then targetScript = s; break end
+		end
+		if targetScript then
+			nodeInstance = FunctionCall.new(fnName, targetScript.inputs, targetScript.outputs)
+		else
+			-- Fallback if not found (shouldn't happen with correct menu)
+			nodeInstance = FunctionCall.new(fnName)
+		end
+	else
+		local nodeClass = Nodes[nodeId]
+		if not nodeClass then return end
+		nodeInstance = nodeClass.new()
+	end
 	
 	-- Place it under the mouse cursor in the canvas
 	local canvasPos = canvas:GetInstance().AbsolutePosition
@@ -514,7 +542,8 @@ local function switchScript(handle)
 	currentScriptHandle:Select()
 	
 	if handle.data.graph then
-		currentGraph = Graph.from_data(handle.data.graph, Nodes)
+		local context = { script = handle.data, projectScripts = sidebar:GetScripts() }
+		currentGraph = Graph.from_data(handle.data.graph, Nodes, context)
 	else
 		currentGraph = Graph.new()
 	end
@@ -630,32 +659,78 @@ end)
 
 -- ── Export Logic ──────────────────────────────────────────────────────────────
 
-local function compileScriptData(sData, variables)
-	if not sData.graph then return "-- No graph data\n" end
+local function compileScriptData(sData, variables, allScripts, alreadyInlined)
+	alreadyInlined = alreadyInlined or {}
+	if not sData.graph then return "-- No graph data for " .. sData.name .. "\n" end
+	if alreadyInlined[sData.name] then return "" end -- Already inlined
 	
-	-- We need to temporarily restore the graph to generate Luau
-	local graph = Graph.from_data(sData.graph, Nodes)
-	local ok, result = pcall(function()
-		return graph:toLuau(variables)
+	-- 1. Restore the graph to find dependencies
+	local context = { script = sData, projectScripts = allScripts }
+	local graph = Graph.from_data(sData.graph, Nodes, context)
+	
+	-- 2. Resolve dependencies (functions called by this script)
+	local dependenciesCode = ""
+	for node, _ in pairs(graph.nodes) do
+		if node.Name == "Function Call" then
+			local fnNameInput = node:getInput("__functionName")
+			local fnName = fnNameInput and fnNameInput.Value or ""
+			
+			if fnName ~= "" and not alreadyInlined[fnName] then
+				-- Find the script data for this function
+				local depScript = nil
+				for _, s in ipairs(allScripts) do
+					if s.name == fnName then depScript = s; break end
+				end
+				
+				if depScript then
+					dependenciesCode ..= compileScriptData(depScript, nil, allScripts, alreadyInlined) .. "\n"
+				end
+			end
+		end
+	end
+	
+	-- 3. Mark this one as processed AFTER dependencies so they come first in the code
+	alreadyInlined[sData.name] = true
+	
+	-- 4. Generate Luau for this specific graph
+	local code = ""
+	local ok, err = pcall(function()
+		code = graph:toLuau(variables)
 	end)
 	
 	if not ok then
-		warn("[Compiler] Failed to compile: " .. tostring(result))
-		return "-- Compilation Error: " .. tostring(result) .. "\n"
+		warn("[Compiler] Failed to compile " .. sData.name .. ": " .. tostring(err))
+		return "-- Compilation Error: " .. tostring(err) .. "\n"
 	end
 	
-	return result
+	-- 5. Wrap based on type
+	if sData.type == "Function" then
+		local params = {}
+		for _, inp in ipairs(sData.inputs or {}) do
+			if inp.name and inp.name ~= "" then
+				table.insert(params, inp.name)
+			end
+		end
+		local paramStr = table.concat(params, ", ")
+		return dependenciesCode .. "local function " .. sData.name .. "(" .. paramStr .. ")\n" .. code .. "\nend\n"
+	elseif sData.type == "Module" then
+		return dependenciesCode .. "local " .. sData.name .. " = {}\n\n" .. code .. "\nreturn " .. sData.name .. "\n"
+	else
+		-- Default scripts just get the dependencies + their code
+		return dependenciesCode .. code
+	end
 end
 
 local function performExport(sData, variables, callback)
+	local allScripts = sidebar:GetScripts()
 	if sData.type == "Default" then
 		ChoiceModal.prompt(widget, "Export '" .. sData.name .. "' as:", {"Script", "LocalScript"}, function(choice)
-			local code = compileScriptData(sData, variables)
+			local code = compileScriptData(sData, variables, allScripts)
 			local instance = fm:ExportToScript(sData.name, choice, code)
 			if callback then callback(instance) end
 		end)
 	else
-		local code = compileScriptData(sData, variables)
+		local code = compileScriptData(sData, variables, allScripts)
 		local instance = fm:ExportToScript(sData.name, sData.type, code)
 		if callback then callback(instance) end
 	end
@@ -693,6 +768,12 @@ exportAllBtn:OnClick(function()
 		end
 		
 		local sData = allScripts[index]
+		if sData.type == "Function" then
+			-- Functions are now inlined into the scripts that call them
+			exportNext(index + 1)
+			return
+		end
+		
 		performExport(sData, variables, function()
 			exportedCount += 1
 			exportNext(index + 1)
@@ -803,7 +884,39 @@ end)
 canvas:OnRightClick(function(position)
 	if not projectActive then return end
 	
-	NodeMenu.prompt(widget, position, function(nodeId)
+	-- Build extra nodes based on context
+	local extraNodes = {}
+	
+	-- 1. If inside a Function script, show Entry/Return
+	if currentScriptHandle and currentScriptHandle.data.type == "Function" then
+		table.insert(extraNodes, {
+			category = "Function Internal",
+			color = Color3.fromRGB(200, 100, 50),
+			items = {
+				{ id = "Function Entry", name = "Function Entry", type = "Event" },
+				{ id = "Function Return", name = "Function Return", type = "Method" },
+			}
+		})
+	end
+	
+	-- 2. Show Call nodes for all Function scripts in the project
+	local allScripts = sidebar:GetScripts()
+	local callItems = {}
+	for _, s in ipairs(allScripts) do
+		if s.type == "Function" then
+			table.insert(callItems, { id = "Call " .. s.name, name = "Call " .. s.name, type = "Call" })
+		end
+	end
+	
+	if #callItems > 0 then
+		table.insert(extraNodes, {
+			category = "Project Functions",
+			color = Color3.fromRGB(100, 200, 255),
+			items = callItems
+		})
+	end
+	
+	NodeMenu.prompt(widget, position, extraNodes, function(nodeId)
 		spawnNode(nodeId, position)
 	end)
 end)

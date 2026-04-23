@@ -239,10 +239,12 @@ function Graph:toLuau(variables: {string}?): string
     local code = {}
     -- 1. Variable declarations
     if variables then
+        local hasVars = false
         for _, varName in ipairs(variables) do
             table.insert(code, string.format("local %s = nil", varName))
+            hasVars = true
         end
-        if #variables > 0 then table.insert(code, "") end
+        if hasVars then table.insert(code, "") end
     end
     
     -- 2. Blocks
@@ -258,7 +260,7 @@ function Graph:toLuau(variables: {string}?): string
 end
 
 --- Static method: create a Graph from serialized data.
-function Graph.from_data(data, NodesFactory)
+function Graph.from_data(data, NodesFactory, context)
     local graph = Graph.new()
     local id_to_node = {}
 
@@ -266,12 +268,13 @@ function Graph.from_data(data, NodesFactory)
     for _, nData in ipairs(data.nodes or {}) do
         local nodeClass = NodesFactory[nData.Class]
         if nodeClass then
-            local node = nodeClass.new()
+            -- Pass nData and context to the constructor so dynamic nodes can rebuild pins
+            local node = nodeClass.new(nData, context)
             node.Id = nData.Id
             node.Title = nData.Title
             node:editPosition(Vector2.new(nData.Position.x, nData.Position.y))
             
-            -- Restore input values
+            -- Restore input values (important: don't overwrite pins already set by constructor)
             if nData.InputsValues then
                 for inpName, val in pairs(nData.InputsValues) do
                     local inp = node:getInput(inpName)

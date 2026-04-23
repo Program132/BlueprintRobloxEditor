@@ -39,7 +39,17 @@ local NODES_DATA = {
 	}
 }
 
-function NodeMenu.prompt(parent, position, onSelect)
+function NodeMenu.prompt(parent, position, extraNodes, onSelect)
+	local menuData = {}
+	for _, cat in ipairs(NODES_DATA) do
+		table.insert(menuData, cat)
+	end
+	if extraNodes then
+		for _, cat in ipairs(extraNodes) do
+			table.insert(menuData, cat)
+		end
+	end
+
 	local overlay = Instance.new("TextButton")
 	overlay.Size = UDim2.new(1, 0, 1, 0)
 	overlay.BackgroundTransparency = 1
@@ -117,7 +127,7 @@ function NodeMenu.prompt(parent, position, onSelect)
 		filter = filter and string.lower(filter) or ""
 
 		local layoutOrder = 0
-		for _, cat in ipairs(NODES_DATA) do
+		for _, cat in ipairs(menuData) do
 			local validItems = {}
 			for _, item in ipairs(cat.items) do
 				if filter == "" or string.find(string.lower(item.name), filter) or string.find(string.lower(item.type), filter) then
