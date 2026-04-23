@@ -277,7 +277,7 @@ function Sidebar:AddScript(data, onEdit)
 end
 
 -- Adds a variable row to the list: [name]  [GET] [SET] [X]
-function Sidebar:AddVariable(name)
+function Sidebar:AddVariable(name, onGet, onSet)
 	local row = Instance.new("Frame")
 	row.Name = "Var_" .. name
 	row.Size = UDim2.new(1, 0, 0, 28)
@@ -339,16 +339,12 @@ function Sidebar:AddVariable(name)
 		setBtn   = setBtn,
 	}
 
-	-- GET button: will create a "get" node on the canvas
 	getBtn.MouseButton1Click:Connect(function()
-		-- TODO: spawn a "get" node for this variable on canvas
-		--print("[Blueprint] GET node for '" .. name .. "'")
+		if onGet then onGet() end
 	end)
 
-	-- SET button: will create a "set" node on the canvas
 	setBtn.MouseButton1Click:Connect(function()
-		-- TODO: spawn a "set" node for this variable on canvas
-		--print("[Blueprint] SET node for '" .. name .. "'")
+		if onSet then onSet() end
 	end)
 
 	-- X button: remove this variable

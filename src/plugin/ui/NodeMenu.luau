@@ -28,6 +28,14 @@ local NODES_DATA = {
 		items = {
 			{ id = "Add", name = "Add", type = "Function" }
 		}
+	},
+	{
+		category = "Variables",
+		color = Color3.fromRGB(180, 130, 40),
+		items = {
+			{ id = "Get Variable", name = "GET (Variable)", type = "Variable" },
+			{ id = "Set Variable", name = "SET (Variable)", type = "Variable" }
+		}
 	}
 }
 

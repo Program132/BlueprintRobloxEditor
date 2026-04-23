@@ -69,7 +69,8 @@ local TYPE_COLORS = {
 	EVENT = Color3.fromRGB(150, 40, 40),
 	METHOD = Color3.fromRGB(40, 100, 150),
 	FUNCTION = Color3.fromRGB(40, 150, 70),
-	ENUM = Color3.fromRGB(150, 150, 40)
+	ENUM = Color3.fromRGB(150, 150, 40),
+	VARIABLE = Color3.fromRGB(80, 80, 80)
 }
 
 function NodeComponent.new(canvasParent, nodeData)

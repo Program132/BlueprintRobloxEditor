@@ -21,6 +21,8 @@ local Nodes = {
 	["Start Event"] = require(Shared.nodes.events.Start),
 	["Print"]       = require(Shared.nodes.Print),
 	["Add"]         = require(Shared.nodes.math.Add),
+	["Get Variable"] = require(Shared.nodes.variables.Get),
+	["Set Variable"] = require(Shared.nodes.variables.Set),
 }
 
 -- Toolbar button (toggle widget only)
@@ -282,6 +284,43 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 	end)
 end
 
+local function spawnNode(nodeId, screenPosition, configFunc)
+	local nodeClass = Nodes[nodeId]
+	if not nodeClass then return end
+	
+	local nodeInstance = nodeClass.new()
+	
+	-- Place it under the mouse cursor in the canvas
+	local canvasPos = canvas:GetInstance().AbsolutePosition
+	local panOffset = canvas:GetPanOffset()
+	local zoom      = canvas:GetZoom()
+	
+	local relativeX = (screenPosition.X - canvasPos.X) / zoom - panOffset.X
+	local relativeY = (screenPosition.Y - canvasPos.Y) / zoom - panOffset.Y
+	
+	nodeInstance:editPosition(Vector2.new(relativeX, relativeY))
+	
+	if configFunc then configFunc(nodeInstance) end
+	
+	currentGraph:add_node(nodeInstance)
+	
+	local visualNode = NodeComponent.new(canvas:GetNodeContainer(), nodeInstance)
+	table.insert(visualNodes, visualNode)
+	hookUpNodeEvents(visualNode, nodeInstance)
+	
+	return nodeInstance, visualNode
+end
+
+local function onVariableAction(varName, actionType)
+	if not projectActive then return end
+	-- Spawn near center of screen
+	local center = canvas:GetInstance().AbsolutePosition + (canvas:GetInstance().AbsoluteSize / 2)
+	spawnNode(actionType .. " Variable", center, function(node)
+		local nameInput = node:getInput("name")
+		if nameInput then nameInput.Value = varName end
+	end)
+end
+
 local function renderGraph(graph)
 	for node, _ in pairs(graph.nodes) do
 		local visualNode = NodeComponent.new(canvas:GetNodeContainer(), node)
@@ -490,7 +529,10 @@ local function activateProject(data, name)
 	
 	-- Populate sidebar with variables
 	for _, vName in ipairs(data.variables or {}) do
-		sidebar:AddVariable(vName)
+		sidebar:AddVariable(vName, 
+			function() onVariableAction(vName, "Get") end, 
+			function() onVariableAction(vName, "Set") end
+		)
 	end
 
 	canvas:ShowGrid()
@@ -559,37 +601,32 @@ end)
 
 -- ── Export Logic ──────────────────────────────────────────────────────────────
 
-local function compileScriptData(sData)
+local function compileScriptData(sData, variables)
 	if not sData.graph then return "-- No graph data\n" end
 	
-	-- We need to temporarily restore the graph to build blocks
+	-- We need to temporarily restore the graph to generate Luau
 	local graph = Graph.from_data(sData.graph, Nodes)
-	local blocks = {}
-	local ok, err = pcall(function()
-		blocks = graph:build_blocks()
+	local ok, result = pcall(function()
+		return graph:toLuau(variables)
 	end)
 	
 	if not ok then
-		warn("[Compiler] Failed to build blocks: " .. tostring(err))
-		return "-- Compilation Error: " .. tostring(err) .. "\n"
+		warn("[Compiler] Failed to compile: " .. tostring(result))
+		return "-- Compilation Error: " .. tostring(result) .. "\n"
 	end
 	
-	local code = ""
-	for _, b in ipairs(blocks) do
-		code ..= b:run() .. "\n"
-	end
-	return code
+	return result
 end
 
-local function performExport(sData, callback)
+local function performExport(sData, variables, callback)
 	if sData.type == "Default" then
 		ChoiceModal.prompt(widget, "Export '" .. sData.name .. "' as:", {"Script", "LocalScript"}, function(choice)
-			local code = compileScriptData(sData)
+			local code = compileScriptData(sData, variables)
 			local instance = fm:ExportToScript(sData.name, choice, code)
 			if callback then callback(instance) end
 		end)
 	else
-		local code = compileScriptData(sData)
+		local code = compileScriptData(sData, variables)
 		local instance = fm:ExportToScript(sData.name, sData.type, code)
 		if callback then callback(instance) end
 	end
@@ -601,7 +638,7 @@ exportBtn:OnClick(function()
 	-- Save current state first
 	currentScriptHandle.data.graph = currentGraph:serialize()
 	
-	performExport(currentScriptHandle.data, function(inst)
+	performExport(currentScriptHandle.data, sidebar:GetVariables(), function(inst)
 		canvas:SetPlaceholder("Exported '" .. inst.Name .. "' to workspace.__BlueprintExport")
 		task.delay(2, function() if projectActive then canvas:HidePlaceholder() end end)
 	end)
@@ -616,6 +653,7 @@ exportAllBtn:OnClick(function()
 	end
 	
 	local allScripts = sidebar:GetScripts()
+	local variables = sidebar:GetVariables()
 	local exportedCount = 0
 	
 	local function exportNext(index)
@@ -626,7 +664,7 @@ exportAllBtn:OnClick(function()
 		end
 		
 		local sData = allScripts[index]
-		performExport(sData, function()
+		performExport(sData, variables, function()
 			exportedCount += 1
 			exportNext(index + 1)
 		end)
@@ -648,7 +686,10 @@ end)
 -- ── Sidebar: Variables ────────────────────────────────────────────────────────
 sidebar:OnAddVariable(function()
 	Modal.prompt(widget, "New Variable", "Variable name...", function(varName)
-		sidebar:AddVariable(varName)
+		sidebar:AddVariable(varName, 
+			function() onVariableAction(varName, "Get") end, 
+			function() onVariableAction(varName, "Set") end
+		)
 	end)
 end)
 
@@ -734,28 +775,7 @@ canvas:OnRightClick(function(position)
 	if not projectActive then return end
 	
 	NodeMenu.prompt(widget, position, function(nodeId)
-		local nodeClass = Nodes[nodeId]
-		if not nodeClass then return end
-		
-		local nodeInstance = nodeClass.new()
-		
-		-- Place it under the mouse cursor in the canvas
-		-- We need to offset the screen position by the canvas absolute position, pan offset and ZOOM
-		local canvasPos = canvas:GetInstance().AbsolutePosition
-		local panOffset = canvas:GetPanOffset()
-		local zoom      = canvas:GetZoom()
-		
-		local relativeX = (position.X - canvasPos.X) / zoom - panOffset.X
-		local relativeY = (position.Y - canvasPos.Y) / zoom - panOffset.Y
-		
-		nodeInstance:editPosition(Vector2.new(relativeX, relativeY))
-		currentGraph:add_node(nodeInstance)
-		
-		-- Render it
-		local visualNode = NodeComponent.new(canvas:GetNodeContainer(), nodeInstance)
-		table.insert(visualNodes, visualNode)
-		
-		hookUpNodeEvents(visualNode, nodeInstance)
+		spawnNode(nodeId, position)
 	end)
 end)
 

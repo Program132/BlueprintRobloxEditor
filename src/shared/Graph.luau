@@ -219,6 +219,29 @@ function Graph:serialize()
     }
 end
 
+--- Generate the full Luau code for this graph.
+function Graph:toLuau(variables: {string}?): string
+    local code = {}
+    -- 1. Variable declarations
+    if variables then
+        for _, varName in ipairs(variables) do
+            table.insert(code, string.format("local %s = nil", varName))
+        end
+        if #variables > 0 then table.insert(code, "") end
+    end
+    
+    -- 2. Blocks
+    local blocks = self:build_blocks()
+    for _, block in ipairs(blocks) do
+        local blockCode = block:run()
+        if blockCode and blockCode ~= "" then
+            table.insert(code, blockCode)
+        end
+    end
+    
+    return table.concat(code, "\n")
+end
+
 --- Static method: create a Graph from serialized data.
 function Graph.from_data(data, NodesFactory)
     local graph = Graph.new()

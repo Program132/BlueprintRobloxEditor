@@ -118,11 +118,11 @@ local function _run_node(node: Node, visited: { [Node]: boolean }, block: Block,
 	local code = ""
 
 	-- 1. Resolve data dependencies first (Topological order for pure nodes)
-	-- Pure nodes (FUNCTION type) must be evaluated before the current node uses their data.
+	-- Pure nodes (FUNCTION and VARIABLE type) must be evaluated before the current node uses their data.
 	for _, edge in ipairs(block.data_edges) do
 		if edge.ToNode == node then
 			local sourceNode = edge.FromNode
-			if sourceNode.Type == NodeTypeModule.FUNCTION then
+			if sourceNode.Type == NodeTypeModule.FUNCTION or sourceNode.Type == NodeTypeModule.VARIABLE then
 				-- print(currentIndent .. "  [Compiler] Resolving pure dependency: " .. (sourceNode.Title or sourceNode.Name) .. " -> " .. (node.Title or node.Name))
 				code = code .. _run_node(sourceNode, visited, block, currentIndent .. "    ")
 			end
