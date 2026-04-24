@@ -97,7 +97,12 @@ function NodeComponent.new(canvasParent, nodeData)
 	stroke.Parent = frame
 
 	-- Header
-	local headerColor = TYPE_COLORS[nodeData.Type] or Color3.fromRGB(80, 80, 80)
+	local headerColor = nil
+	if nodeData.Color then
+		headerColor = nodeData.Color
+	else 
+		headerColor = TYPE_COLORS[nodeData.Type] or Color3.fromRGB(80, 80, 80)
+	end
 	
 	local header = Instance.new("Frame")
 	header.Size = UDim2.new(1, 0, 0, 28)

@@ -32,7 +32,7 @@ function Node.new(name: string?, type: NodeType?): Node
 		Title = name or "Node",
 		Description = "",
 		Position = Vector2.zero,
-		Color = Color3.new(1, 1, 1),
+		Color = nil,
 		Inputs = {},
 		Outputs = {},
 		EventsCounts = 0,

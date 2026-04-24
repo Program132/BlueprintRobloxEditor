@@ -92,6 +92,23 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Table",
+		color = Color3.fromRGB(25, 160, 135),
+		items = {
+			{ id = "Table Insert", name = "Table Insert", type = "Method" },
+			{ id = "Table Remove", name = "Table Remove", type = "Method" },
+			{ id = "Table Clear", name = "Table Clear", type = "Method" },
+			{ id = "Table Clone", name = "Table Clone", type = "Function" },
+			{ id = "Table Concat", name = "Table Concat (to String)", type = "Function" },
+			{ id = "Table Find", name = "Table Find", type = "Function" },
+			{ id = "Table Freeze", name = "Table Freeze", type = "Method" },
+			{ id = "Table Is Frozen", name = "Table Is Frozen?", type = "Function" },
+			{ id = "Table Sort", name = "Table Sort", type = "Method" },
+			{ id = "Table Unpack", name = "Table Unpack", type = "Function" },
+			{ id = "Table Move", name = "Table Move", type = "Method" },
+		}
+	},
+	{
 		category = "Variables",
 		color = Color3.fromRGB(180, 130, 40),
 		items = {
