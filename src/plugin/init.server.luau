@@ -104,6 +104,13 @@ local Nodes = {
 	["OS Time"]     = require(Shared.nodes.os:WaitForChild("Time")),
 	["OS Difftime"] = require(Shared.nodes.os:WaitForChild("Difftime")),
 	["OS Date"]     = require(Shared.nodes.os:WaitForChild("Date")),
+	["DateTime Now"] = require(Shared.nodes.datetime:WaitForChild("Now")),
+	["DateTime FromUnixTimestamp"] = require(Shared.nodes.datetime:WaitForChild("FromUnixTimestamp")),
+	["DateTime FromIsoDate"] = require(Shared.nodes.datetime:WaitForChild("FromIsoDate")),
+	["DateTime ToLocalTime"] = require(Shared.nodes.datetime:WaitForChild("ToLocalTime")),
+	["DateTime ToIsoDate"] = require(Shared.nodes.datetime:WaitForChild("ToIsoDate")),
+	["DateTime FormatLocalTime"] = require(Shared.nodes.datetime:WaitForChild("FormatLocalTime")),
+	["DateTime UnixTimestamp"] = require(Shared.nodes.datetime:WaitForChild("UnixTimestamp")),
 	-- Special nodes handled dynamically
 	["Function Entry"] = FunctionEntry,
 	["Function Return"] = FunctionReturn,

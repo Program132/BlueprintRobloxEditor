@@ -139,6 +139,19 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "DateTime",
+		color = Color3.fromRGB(75, 0, 130),
+		items = {
+			{ id = "DateTime Now", name = "DateTime Now", type = "Function" },
+			{ id = "DateTime FromUnixTimestamp", name = "FromUnixTimestamp", type = "Function" },
+			{ id = "DateTime FromIsoDate", name = "FromIsoDate", type = "Function" },
+			{ id = "DateTime ToLocalTime", name = "ToLocalTime", type = "Function" },
+			{ id = "DateTime ToIsoDate", name = "ToIsoDate", type = "Function" },
+			{ id = "DateTime FormatLocalTime", name = "FormatLocalTime", type = "Function" },
+			{ id = "DateTime UnixTimestamp", name = "UnixTimestamp", type = "Function" },
+		}
+	},
+	{
 		category = "OS",
 		color = Color3.fromRGB(70, 90, 110),
 		items = {
