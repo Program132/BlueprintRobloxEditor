@@ -53,6 +53,19 @@ local Nodes = {
 	["Huge"]        = require(Shared.nodes.math.Huge),
 	["Random"]      = require(Shared.nodes.math.Random),
 	["Random Seed"] = require(Shared.nodes.math.RandomSeed),
+	["String Lower"] = require(Shared.nodes.string.Lower),
+	["String Upper"] = require(Shared.nodes.string.Upper),
+	["String Len"]   = require(Shared.nodes.string.Len),
+	["String Reverse"] = require(Shared.nodes.string.Reverse),
+	["String Sub"]   = require(Shared.nodes.string.Sub),
+	["String Rep"]   = require(Shared.nodes.string.Rep),
+	["String Split"] = require(Shared.nodes.string.Split),
+	["String Find"]  = require(Shared.nodes.string.Find),
+	["String GSub"]  = require(Shared.nodes.string.GSub),
+	["String Match"] = require(Shared.nodes.string.Match),
+	["String Byte"]  = require(Shared.nodes.string.Byte),
+	["String Char"]  = require(Shared.nodes.string.Char),
+	["String Format"] = require(Shared.nodes.string.Format),
 	["Get Variable"] = require(Shared.nodes.variables.Get),
 	["Set Variable"] = require(Shared.nodes.variables.Set),
 	["If"]          = require(Shared.nodes.control.If),
@@ -68,7 +81,7 @@ local Nodes = {
 
 -- Toolbar button (toggle widget only)
 local toolbar      = plugin:CreateToolbar("Blueprint Roblox Editor")
-local pluginButton = toolbar:CreateButton("BRE", "Open the Blueprint Editor", "rbxassetid://95828282243301")
+local pluginButton = toolbar:CreateButton("BRE", "Open the Blueprint Editor", "rbxassetid://89458565936494")
 pluginButton.ClickableWhenViewportHidden = true
 
 -- Docking widget
