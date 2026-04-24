@@ -77,6 +77,21 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Boolean",
+		color = Color3.fromRGB(150, 40, 150),
+		items = {
+			{ id = "Boolean And", name = "AND", type = "Function" },
+			{ id = "Boolean Or", name = "OR", type = "Function" },
+			{ id = "Boolean Not", name = "NOT", type = "Function" },
+			{ id = "Boolean Equal", name = "Equal (==)", type = "Function" },
+			{ id = "Boolean NotEqual", name = "Not Equal (~=)", type = "Function" },
+			{ id = "Boolean GreaterThan", name = "Greater Than (>)", type = "Function" },
+			{ id = "Boolean GreaterOrEqual", name = "Greater or Equal (>=)", type = "Function" },
+			{ id = "Boolean LessThan", name = "Less Than (<)", type = "Function" },
+			{ id = "Boolean LessOrEqual", name = "Less or Equal (<=)", type = "Function" },
+		}
+	},
+	{
 		category = "Variables",
 		color = Color3.fromRGB(180, 130, 40),
 		items = {
