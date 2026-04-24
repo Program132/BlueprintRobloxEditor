@@ -9,6 +9,8 @@ BRE (Blueprint Roblox Editor) is a blueprint editor for creating Roblox games us
 The project uses Rojo, a VS Code extension for managing Roblox projects.
 
 
+DevForum post: https://devforum.roblox.com/t/v11-blueprint-roblox-editor-visual-programming-tools-for-luau/4058664?u=ptitloup132
+
 # Installation
 
 You can clone the repository and build the plugin yourself:

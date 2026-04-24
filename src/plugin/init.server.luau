@@ -39,8 +39,8 @@ local Nodes = {
 }
 
 -- Toolbar button (toggle widget only)
-local toolbar      = plugin:CreateToolbar("Blueprint Editor")
-local pluginButton = toolbar:CreateButton("Edit Blueprint", "Open the Blueprint Editor", "rbxassetid://4458901886")
+local toolbar      = plugin:CreateToolbar("Blueprint Roblox Editor")
+local pluginButton = toolbar:CreateButton("BRE", "Open the Blueprint Editor", "rbxassetid://95828282243301")
 pluginButton.ClickableWhenViewportHidden = true
 
 -- Docking widget
