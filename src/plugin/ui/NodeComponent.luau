@@ -55,6 +55,7 @@ local function makePin(parent, labelText, isOutput, isExec)
 		inputField.TextColor3 = Color3.fromRGB(200, 215, 240)
 		inputField.TextSize = 10
 		inputField.Font = Enum.Font.Gotham
+		inputField.ClearTextOnFocus = false
 		inputField.ZIndex = 13
 		inputField.Parent = row
 		makeCorner(inputField, 4)
