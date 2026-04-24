@@ -126,6 +126,19 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Task",
+		color = Color3.fromRGB(200, 100, 50),
+		items = {
+			{ id = "Task Wait", name = "Task Wait", type = "Method" },
+			{ id = "Task Spawn", name = "Task Spawn", type = "Control" },
+			{ id = "Task Defer", name = "Task Defer", type = "Control" },
+			{ id = "Task Delay", name = "Task Delay", type = "Control" },
+			{ id = "Task Synchronize", name = "Task Synchronize", type = "Method" },
+			{ id = "Task Desynchronize", name = "Task Desynchronize", type = "Method" },
+			{ id = "Task Cancel", name = "Task Cancel", type = "Method" },
+		}
+	},
+	{
 		category = "Modules",
 		color = Color3.fromRGB(150, 100, 40),
 		items = {

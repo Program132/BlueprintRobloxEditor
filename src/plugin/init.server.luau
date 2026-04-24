@@ -93,6 +93,13 @@ local Nodes = {
 	["For"]         = require(Shared.nodes.control.For),
 	["Require"]     = require(Shared.nodes.modules.Require),
 	["Module Call"] = require(Shared.nodes.modules.ModuleCall),
+	["Task Wait"]   = require(Shared.nodes.task.Wait),
+	["Task Spawn"]  = require(Shared.nodes.task.Spawn),
+	["Task Defer"]  = require(Shared.nodes.task.Defer),
+	["Task Delay"]  = require(Shared.nodes.task.Delay),
+	["Task Synchronize"] = require(Shared.nodes.task.Synchronize),
+	["Task Desynchronize"] = require(Shared.nodes.task.Desynchronize),
+	["Task Cancel"] = require(Shared.nodes.task.Cancel),
 	-- Special nodes handled dynamically
 	["Function Entry"] = FunctionEntry,
 	["Function Return"] = FunctionReturn,
