@@ -58,6 +58,25 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "String",
+		color = Color3.fromRGB(180, 70, 70),
+		items = {
+			{ id = "String Lower", name = "To Lowercase", type = "Function" },
+			{ id = "String Upper", name = "To Uppercase", type = "Function" },
+			{ id = "String Len", name = "Length (Len)", type = "Function" },
+			{ id = "String Reverse", name = "Reverse", type = "Function" },
+			{ id = "String Sub", name = "Substring (Sub)", type = "Function" },
+			{ id = "String Rep", name = "Repeat (Rep)", type = "Function" },
+			{ id = "String Split", name = "Split", type = "Function" },
+			{ id = "String Find", name = "Find Pattern", type = "Function" },
+			{ id = "String GSub", name = "Global Replace (GSub)", type = "Function" },
+			{ id = "String Match", name = "Match Pattern", type = "Function" },
+			{ id = "String Byte", name = "Char to Byte", type = "Function" },
+			{ id = "String Char", name = "Byte to Char", type = "Function" },
+			{ id = "String Format", name = "Format String", type = "Function" },
+		}
+	},
+	{
 		category = "Variables",
 		color = Color3.fromRGB(180, 130, 40),
 		items = {
