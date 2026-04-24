@@ -139,6 +139,16 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "OS",
+		color = Color3.fromRGB(70, 90, 110),
+		items = {
+			{ id = "OS Clock", name = "OS Clock", type = "Function" },
+			{ id = "OS Time", name = "OS Time", type = "Function" },
+			{ id = "OS Difftime", name = "OS Difftime", type = "Function" },
+			{ id = "OS Date", name = "OS Date", type = "Function" },
+		}
+	},
+	{
 		category = "Modules",
 		color = Color3.fromRGB(150, 100, 40),
 		items = {

@@ -100,6 +100,10 @@ local Nodes = {
 	["Task Synchronize"] = require(Shared.nodes.task.Synchronize),
 	["Task Desynchronize"] = require(Shared.nodes.task.Desynchronize),
 	["Task Cancel"] = require(Shared.nodes.task.Cancel),
+	["OS Clock"]    = require(Shared.nodes.os:WaitForChild("Clock")),
+	["OS Time"]     = require(Shared.nodes.os:WaitForChild("Time")),
+	["OS Difftime"] = require(Shared.nodes.os:WaitForChild("Difftime")),
+	["OS Date"]     = require(Shared.nodes.os:WaitForChild("Date")),
 	-- Special nodes handled dynamically
 	["Function Entry"] = FunctionEntry,
 	["Function Return"] = FunctionReturn,
