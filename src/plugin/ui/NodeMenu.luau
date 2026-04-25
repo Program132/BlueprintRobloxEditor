@@ -109,6 +109,16 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Color",
+		color = Color3.fromRGB(0, 170, 170),
+		items = {
+			{ id = "Color3 fromRGB", name = "Color3 fromRGB", type = "Function" },
+			{ id = "Color3 fromHSV", name = "Color3 fromHSV", type = "Function" },
+			{ id = "Color3 fromHex", name = "Color3 fromHex", type = "Function" },
+			{ id = "Color3 Lerp", name = "Color3 Lerp", type = "Method" },
+		}
+	},
+	{
 		category = "Variables",
 		color = Color3.fromRGB(180, 130, 40),
 		items = {

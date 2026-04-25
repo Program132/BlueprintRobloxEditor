@@ -118,6 +118,10 @@ local Nodes = {
 	["Enum HumanoidStateType"] = require(Shared.nodes.enums:WaitForChild("HumanoidStateType")),
 	["Enum EasingDirection"] = require(Shared.nodes.enums:WaitForChild("EasingDirection")),
 	["Enum EasingStyle"] = require(Shared.nodes.enums:WaitForChild("EasingStyle")),
+	["Color3 fromRGB"] = require(Shared.nodes.color:WaitForChild("FromRGB")),
+	["Color3 fromHSV"] = require(Shared.nodes.color:WaitForChild("FromHSV")),
+	["Color3 fromHex"] = require(Shared.nodes.color:WaitForChild("FromHex")),
+	["Color3 Lerp"] = require(Shared.nodes.color:WaitForChild("Lerp")),
 	-- Special nodes handled dynamically
 	["Function Entry"] = FunctionEntry,
 	["Function Return"] = FunctionReturn,
