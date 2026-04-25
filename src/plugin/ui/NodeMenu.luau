@@ -109,6 +109,24 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Vector",
+		color = Color3.fromRGB(240, 200, 50),
+		items = {
+			{ id = "Vector2 new", name = "Vector2 new", type = "Function" },
+			{ id = "Vector2 Lerp", name = "Vector2 Lerp", type = "Method" },
+			{ id = "Vector2 Dot", name = "Vector2 Dot", type = "Method" },
+			{ id = "Vector2 Cross", name = "Vector2 Cross", type = "Method" },
+			{ id = "Vector2 Abs", name = "Vector2 Abs", type = "Method" },
+			{ id = "Vector2 Ceil", name = "Vector2 Ceil", type = "Method" },
+			{ id = "Vector2 Floor", name = "Vector2 Floor", type = "Method" },
+			{ id = "Vector2 Sign", name = "Vector2 Sign", type = "Method" },
+			{ id = "Vector2 Angle", name = "Vector2 Angle", type = "Method" },
+			{ id = "Vector2 Max", name = "Vector2 Max", type = "Method" },
+			{ id = "Vector2 Min", name = "Vector2 Min", type = "Method" },
+			{ id = "Vector2 FuzzyEq", name = "Vector2 FuzzyEq", type = "Method" },
+		}
+	},
+	{
 		category = "Color",
 		color = Color3.fromRGB(0, 170, 170),
 		items = {
