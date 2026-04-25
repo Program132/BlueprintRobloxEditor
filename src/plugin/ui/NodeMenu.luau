@@ -154,6 +154,17 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "UI Types",
+		color = Color3.fromRGB(0, 200, 150),
+		items = {
+			{ id = "UDim new", name = "UDim new", type = "Function" },
+			{ id = "UDim2 new", name = "UDim2 new", type = "Function" },
+			{ id = "UDim2 fromScale", name = "UDim2 fromScale", type = "Function" },
+			{ id = "UDim2 fromOffset", name = "UDim2 fromOffset", type = "Function" },
+			{ id = "UDim2 Lerp", name = "UDim2 Lerp", type = "Method" },
+		}
+	},
+	{
 		category = "Variables",
 		color = Color3.fromRGB(180, 130, 40),
 		items = {

@@ -151,6 +151,11 @@ local Nodes = {
 	["Vector3 xAxis"] = require(Shared.nodes.vector3:WaitForChild("XAxis")),
 	["Vector3 yAxis"] = require(Shared.nodes.vector3:WaitForChild("YAxis")),
 	["Vector3 zAxis"] = require(Shared.nodes.vector3:WaitForChild("ZAxis")),
+	["UDim new"] = require(Shared.nodes.udim:WaitForChild("New")),
+	["UDim2 new"] = require(Shared.nodes.udim2:WaitForChild("New")),
+	["UDim2 fromScale"] = require(Shared.nodes.udim2:WaitForChild("FromScale")),
+	["UDim2 fromOffset"] = require(Shared.nodes.udim2:WaitForChild("FromOffset")),
+	["UDim2 Lerp"] = require(Shared.nodes.udim2:WaitForChild("Lerp")),
 	-- Special nodes handled dynamically
 	["Function Entry"] = FunctionEntry,
 	["Function Return"] = FunctionReturn,
