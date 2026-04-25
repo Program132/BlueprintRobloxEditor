@@ -111,6 +111,10 @@ local Nodes = {
 	["DateTime ToIsoDate"] = require(Shared.nodes.datetime:WaitForChild("ToIsoDate")),
 	["DateTime FormatLocalTime"] = require(Shared.nodes.datetime:WaitForChild("FormatLocalTime")),
 	["DateTime UnixTimestamp"] = require(Shared.nodes.datetime:WaitForChild("UnixTimestamp")),
+	["Enum KeyCode"] = require(Shared.nodes.enums:WaitForChild("KeyCode")),
+	["Enum UserInputType"] = require(Shared.nodes.enums:WaitForChild("UserInputType")),
+	["Enum Material"] = require(Shared.nodes.enums:WaitForChild("Material")),
+	["Enum PartType"] = require(Shared.nodes.enums:WaitForChild("PartType")),
 	-- Special nodes handled dynamically
 	["Function Entry"] = FunctionEntry,
 	["Function Return"] = FunctionReturn,

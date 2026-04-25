@@ -2,6 +2,7 @@ local NodeComponent = {}
 NodeComponent.__index = NodeComponent
 
 local TextService = game:GetService("TextService")
+local ChoiceModal = require(script.Parent.ChoiceModal)
 
 local function makeCorner(parent, radius)
 	local c = Instance.new("UICorner")
@@ -10,7 +11,7 @@ local function makeCorner(parent, radius)
 	return c
 end
 
-local function makePin(parent, labelText, isOutput, isExec)
+local function makePin(parent, labelText, isOutput, isExec, choices)
 	local row = Instance.new("TextButton")
 	row.Text = ""
 	row.AutoButtonColor = false
@@ -44,28 +45,47 @@ local function makePin(parent, labelText, isOutput, isExec)
 	label.Parent = row
 
 	local inputField = nil
+	local choiceButton = nil
 	if not isOutput and not isExec then
-		inputField = Instance.new("TextBox")
-		inputField.Size = UDim2.new(0, 50, 0, 18)
-		inputField.Position = UDim2.new(0, 15, 0.5, -9)
-		inputField.BackgroundColor3 = Color3.fromRGB(14, 19, 30)
-		inputField.BorderSizePixel = 0
-		inputField.Text = ""
-		inputField.PlaceholderText = "val"
-		inputField.TextColor3 = Color3.fromRGB(200, 215, 240)
-		inputField.TextSize = 10
-		inputField.Font = Enum.Font.Gotham
-		inputField.ClearTextOnFocus = false
-		inputField.ZIndex = 13
-		inputField.Parent = row
-		makeCorner(inputField, 4)
-		
-		-- Shift label to the right of the input field
-		label.Position = UDim2.new(0, 70, 0, 0)
-		label.Size = UDim2.new(1, -75, 1, 0)
+		if choices then
+			choiceButton = Instance.new("TextButton")
+			choiceButton.Size = UDim2.new(0, 60, 0, 18)
+			choiceButton.Position = UDim2.new(0, 15, 0.5, -9)
+			choiceButton.BackgroundColor3 = Color3.fromRGB(30, 40, 60)
+			choiceButton.BorderSizePixel = 0
+			choiceButton.Text = "select"
+			choiceButton.TextColor3 = Color3.fromRGB(200, 215, 240)
+			choiceButton.TextSize = 10
+			choiceButton.Font = Enum.Font.Gotham
+			choiceButton.ZIndex = 13
+			choiceButton.Parent = row
+			makeCorner(choiceButton, 4)
+			
+			label.Position = UDim2.new(0, 80, 0, 0)
+			label.Size = UDim2.new(1, -85, 1, 0)
+		else
+			inputField = Instance.new("TextBox")
+			inputField.Size = UDim2.new(0, 50, 0, 18)
+			inputField.Position = UDim2.new(0, 15, 0.5, -9)
+			inputField.BackgroundColor3 = Color3.fromRGB(14, 19, 30)
+			inputField.BorderSizePixel = 0
+			inputField.Text = ""
+			inputField.PlaceholderText = "val"
+			inputField.TextColor3 = Color3.fromRGB(200, 215, 240)
+			inputField.TextSize = 10
+			inputField.Font = Enum.Font.Gotham
+			inputField.ClearTextOnFocus = false
+			inputField.ZIndex = 13
+			inputField.Parent = row
+			makeCorner(inputField, 4)
+			
+			-- Shift label to the right of the input field
+			label.Position = UDim2.new(0, 70, 0, 0)
+			label.Size = UDim2.new(1, -75, 1, 0)
+		end
 	end
 
-	return { row = row, pin = pin, inputField = inputField }
+	return { row = row, pin = pin, inputField = inputField, choiceButton = choiceButton }
 end
 
 local TYPE_COLORS = {
@@ -224,13 +244,29 @@ function NodeComponent.new(canvasParent, nodeData)
 	for _, input in ipairs(nodeData:getInputs()) do
 		if input.Name:sub(1, 2) == "__" then continue end
 		local isExec = input.IsExec
-		local pinObj = makePin(leftFrame, input.Name, false, isExec)
+		local pinObj = makePin(leftFrame, input.Name, false, isExec, input.Choices)
 		self.pins[input.Id] = pinObj
 		
 		if pinObj.inputField then
 			pinObj.inputField.Text = input.Value or ""
 			pinObj.inputField.FocusLost:Connect(function()
 				input.Value = pinObj.inputField.Text
+			end)
+		elseif pinObj.choiceButton then
+			pinObj.choiceButton.Text = input.Value or "select"
+			pinObj.choiceButton.MouseButton1Click:Connect(function()
+				-- Find the top-level container (ScreenGui, DockWidget, or the canvas itself)
+				local topContainer = canvasParent:FindFirstAncestorWhichIsA("LayerCollector") or canvasParent
+				
+				-- Calculate position relative to the top container
+				local buttonPos = pinObj.choiceButton.AbsolutePosition
+				local containerPos = if topContainer:IsA("LayerCollector") then Vector2.new(0, 0) else topContainer.AbsolutePosition
+				local relativePos = buttonPos - containerPos + Vector2.new(0, 20)
+				
+				ChoiceModal.prompt(topContainer, input.Name, input.Choices, function(choice)
+					input.Value = choice
+					pinObj.choiceButton.Text = choice
+				end, relativePos)
 			end)
 		end
 

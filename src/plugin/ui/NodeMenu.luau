@@ -162,6 +162,16 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Enums",
+		color = Color3.fromRGB(150, 150, 40),
+		items = {
+			{ id = "Enum KeyCode", name = "KeyCode", type = "Enum" },
+			{ id = "Enum UserInputType", name = "UserInputType", type = "Enum" },
+			{ id = "Enum Material", name = "Material", type = "Enum" },
+			{ id = "Enum PartType", name = "PartType", type = "Enum" },
+		}
+	},
+	{
 		category = "Modules",
 		color = Color3.fromRGB(150, 100, 40),
 		items = {

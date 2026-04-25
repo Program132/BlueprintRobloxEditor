@@ -141,7 +141,7 @@ local function _run_node(node: Node, visited: { [Node]: boolean }, block: Block,
 	for _, edge in ipairs(block.data_edges) do
 		if edge.ToNode == node then
 			local sourceNode = edge.FromNode
-			if sourceNode.Type == NodeTypeModule.FUNCTION or sourceNode.Type == NodeTypeModule.VARIABLE then
+			if sourceNode.Type == NodeTypeModule.FUNCTION or sourceNode.Type == NodeTypeModule.VARIABLE or sourceNode.Type == NodeTypeModule.ENUM then
 				code = code .. _run_node(sourceNode, visited, block, currentIndent .. "    ")
 			end
 		end
