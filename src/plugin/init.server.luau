@@ -166,6 +166,10 @@ local Nodes = {
 	["CFrame ToObjectSpace"] = require(Shared.nodes.cframe:WaitForChild("ToObjectSpace")),
 	["CFrame PointToWorldSpace"] = require(Shared.nodes.cframe:WaitForChild("PointToWorldSpace")),
 	["CFrame PointToObjectSpace"] = require(Shared.nodes.cframe:WaitForChild("PointToObjectSpace")),
+	["Subtract"] = require(Shared.nodes.math:WaitForChild("Subtract")),
+	["Multiply"] = require(Shared.nodes.math:WaitForChild("Multiply")),
+	["Divide"] = require(Shared.nodes.math:WaitForChild("Divide")),
+	["Concat"] = require(Shared.nodes.string:WaitForChild("Concat")),
 	-- Special nodes handled dynamically
 	["Function Entry"] = FunctionEntry,
 	["Function Return"] = FunctionReturn,

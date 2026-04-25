@@ -27,6 +27,9 @@ local NODES_DATA = {
 		color = Color3.fromRGB(40, 150, 70),
 		items = {
 			{ id = "Add", name = "Add", type = "Function" },
+			{ id = "Subtract", name = "Subtract", type = "Function" },
+			{ id = "Multiply", name = "Multiply", type = "Function" },
+			{ id = "Divide", name = "Divide", type = "Function" },
 			{ id = "Abs", name = "Absolute Value (Abs)", type = "Function" },
 			{ id = "Sqrt", name = "Square Root (Sqrt)", type = "Function" },
 			{ id = "Floor", name = "Floor", type = "Function" },
@@ -74,6 +77,7 @@ local NODES_DATA = {
 			{ id = "String Byte", name = "Char to Byte", type = "Function" },
 			{ id = "String Char", name = "Byte to Char", type = "Function" },
 			{ id = "String Format", name = "Format String", type = "Function" },
+			{ id = "Concat", name = "Concat (..)", type = "Function" },
 		}
 	},
 	{
