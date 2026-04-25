@@ -169,6 +169,9 @@ local NODES_DATA = {
 			{ id = "Enum UserInputType", name = "UserInputType", type = "Enum" },
 			{ id = "Enum Material", name = "Material", type = "Enum" },
 			{ id = "Enum PartType", name = "PartType", type = "Enum" },
+			{ id = "Enum HumanoidStateType", name = "HumanoidStateType", type = "Enum" },
+			{ id = "Enum EasingDirection", name = "EasingDirection", type = "Enum" },
+			{ id = "Enum EasingStyle", name = "EasingStyle", type = "Enum" },
 		}
 	},
 	{

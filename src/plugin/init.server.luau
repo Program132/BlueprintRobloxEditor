@@ -115,6 +115,9 @@ local Nodes = {
 	["Enum UserInputType"] = require(Shared.nodes.enums:WaitForChild("UserInputType")),
 	["Enum Material"] = require(Shared.nodes.enums:WaitForChild("Material")),
 	["Enum PartType"] = require(Shared.nodes.enums:WaitForChild("PartType")),
+	["Enum HumanoidStateType"] = require(Shared.nodes.enums:WaitForChild("HumanoidStateType")),
+	["Enum EasingDirection"] = require(Shared.nodes.enums:WaitForChild("EasingDirection")),
+	["Enum EasingStyle"] = require(Shared.nodes.enums:WaitForChild("EasingStyle")),
 	-- Special nodes handled dynamically
 	["Function Entry"] = FunctionEntry,
 	["Function Return"] = FunctionReturn,
