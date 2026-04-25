@@ -109,7 +109,7 @@ local NODES_DATA = {
 		}
 	},
 	{
-		category = "Vector",
+		category = "Vectors",
 		color = Color3.fromRGB(240, 200, 50),
 		items = {
 			{ id = "Vector2 new", name = "Vector2 new", type = "Function" },
@@ -124,6 +124,23 @@ local NODES_DATA = {
 			{ id = "Vector2 Max", name = "Vector2 Max", type = "Method" },
 			{ id = "Vector2 Min", name = "Vector2 Min", type = "Method" },
 			{ id = "Vector2 FuzzyEq", name = "Vector2 FuzzyEq", type = "Method" },
+			{ id = "Vector3 new", name = "Vector3 new", type = "Function" },
+			{ id = "Vector3 zero", name = "Vector3 zero", type = "Constant" },
+			{ id = "Vector3 one", name = "Vector3 one", type = "Constant" },
+			{ id = "Vector3 xAxis", name = "Vector3 xAxis", type = "Constant" },
+			{ id = "Vector3 yAxis", name = "Vector3 yAxis", type = "Constant" },
+			{ id = "Vector3 zAxis", name = "Vector3 zAxis", type = "Constant" },
+			{ id = "Vector3 Abs", name = "Vector3 Abs", type = "Method" },
+			{ id = "Vector3 Ceil", name = "Vector3 Ceil", type = "Method" },
+			{ id = "Vector3 Floor", name = "Vector3 Floor", type = "Method" },
+			{ id = "Vector3 Sign", name = "Vector3 Sign", type = "Method" },
+			{ id = "Vector3 Dot", name = "Vector3 Dot", type = "Method" },
+			{ id = "Vector3 Cross", name = "Vector3 Cross", type = "Method" },
+			{ id = "Vector3 Lerp", name = "Vector3 Lerp", type = "Method" },
+			{ id = "Vector3 Angle", name = "Vector3 Angle", type = "Method" },
+			{ id = "Vector3 Max", name = "Vector3 Max", type = "Method" },
+			{ id = "Vector3 Min", name = "Vector3 Min", type = "Method" },
+			{ id = "Vector3 FuzzyEq", name = "Vector3 FuzzyEq", type = "Method" },
 		}
 	},
 	{
