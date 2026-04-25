@@ -144,6 +144,22 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "CFrame",
+		color = Color3.fromRGB(150, 50, 200),
+		items = {
+			{ id = "CFrame new", name = "CFrame new", type = "Function" },
+			{ id = "CFrame new XYZ", name = "CFrame new XYZ", type = "Function" },
+			{ id = "CFrame lookAt", name = "CFrame lookAt", type = "Function" },
+			{ id = "CFrame Angles", name = "CFrame Angles", type = "Function" },
+			{ id = "CFrame Inverse", name = "CFrame Inverse", type = "Method" },
+			{ id = "CFrame Lerp", name = "CFrame Lerp", type = "Method" },
+			{ id = "CFrame ToWorldSpace", name = "CFrame ToWorldSpace", type = "Method" },
+			{ id = "CFrame ToObjectSpace", name = "CFrame ToObjectSpace", type = "Method" },
+			{ id = "CFrame PointToWorldSpace", name = "CFrame PointToWorldSpace", type = "Method" },
+			{ id = "CFrame PointToObjectSpace", name = "CFrame PointToObjectSpace", type = "Method" },
+		}
+	},
+	{
 		category = "Color",
 		color = Color3.fromRGB(0, 170, 170),
 		items = {
