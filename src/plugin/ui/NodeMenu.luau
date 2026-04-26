@@ -81,6 +81,17 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Instances",
+		color = Color3.fromRGB(100, 180, 255),
+		items = {
+			{ id = "Workspace Object", name = "Workspace Object", type = "Function" },
+			{ id = "Get Service", name = "Get Service", type = "Function" },
+			{ id = "Instance Child", name = "Instance Child", type = "Function" },
+			{ id = "Find First Child", name = "Find First Child", type = "Function" },
+			{ id = "Wait For Child", name = "Wait For Child", type = "Function" },
+		}
+	},
+	{
 		category = "Boolean",
 		color = Color3.fromRGB(150, 40, 150),
 		items = {
@@ -212,6 +223,17 @@ local NODES_DATA = {
 			{ id = "Task Synchronize", name = "Task Synchronize", type = "Method" },
 			{ id = "Task Desynchronize", name = "Task Desynchronize", type = "Method" },
 			{ id = "Task Cancel", name = "Task Cancel", type = "Method" },
+		}
+	},
+	{
+		category = "Tween",
+		color = Color3.fromRGB(255, 100, 150),
+		items = {
+			{ id = "TweenInfo new", name = "TweenInfo new", type = "Function" },
+			{ id = "Tween Create", name = "Tween Create", type = "Function" },
+			{ id = "Tween Play", name = "Tween Play", type = "Action" },
+			{ id = "Tween Pause", name = "Tween Pause", type = "Action" },
+			{ id = "Tween Cancel", name = "Tween Cancel", type = "Action" },
 		}
 	},
 	{
