@@ -16,6 +16,15 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Globals",
+		color = Color3.fromRGB(200, 200, 200),
+		items = {
+			{ id = "game", name = "game", type = "Constant" },
+			{ id = "workspace", name = "workspace", type = "Constant" },
+			{ id = "script", name = "script", type = "Constant" },
+		}
+	},
+	{
 		category = "Methods",
 		color = Color3.fromRGB(40, 100, 150),
 		items = {
@@ -87,6 +96,7 @@ local NODES_DATA = {
 			{ id = "Instance Workspace Object", name = "Workspace Object", type = "Function" },
 			{ id = "Get Service", name = "Get Service", type = "Function" },
 			{ id = "Instance Child", name = "Instance Child", type = "Function" },
+			{ id = "Instance Get Parent", name = "Get Parent", type = "Function" },
 			{ id = "Instance Clone", name = "Clone", type = "Function" },
 			{ id = "Instance Destroy", name = "Destroy", type = "Action" },
 			{ id = "Instance Clear All Children", name = "Clear All Children", type = "Action" },
