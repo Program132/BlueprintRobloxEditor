@@ -227,7 +227,7 @@ function Graph:serialize()
         local nData = {
             Id = node.Id,
             Name = node.Name,
-            Class = node.Name,
+            Class = node.Class or node.Name,
             Title = node.Title,
             Position = { X = node.Position.X, Y = node.Position.Y },
             InputsValues = {},
@@ -273,6 +273,9 @@ function Graph.from_data(data, Nodes, context)
             local nodeInstance = nodeClass.new(nData, context)
             if nData.Id then
                 nodeInstance.Id = nData.Id
+            end
+            if nData.Class then
+                nodeInstance.Class = nData.Class
             end
             nodeInstance:editPosition(Vector2.new(nData.Position.X, nData.Position.Y))
             

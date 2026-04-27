@@ -155,8 +155,8 @@ function NodeComponent.new(canvasParent, nodeData)
 	title.ZIndex = 12
 	title.Parent = header
 
-	-- Refresh Button (for dynamic nodes like Module Call)
-	if nodeData.Type == "METHOD" or nodeData.Type == "FUNCTION" then
+	-- Refresh Button (for dynamic nodes like Module Call or Events)
+	if nodeData.Type == "METHOD" or nodeData.Type == "FUNCTION" or nodeData.Type == "EVENT" then
 		local refreshBtn = Instance.new("TextButton")
 		refreshBtn.Name = "RefreshBtn"
 		refreshBtn.Size = UDim2.new(0, 20, 0, 20)
@@ -322,6 +322,63 @@ function NodeComponent.new(canvasParent, nodeData)
 	-- Auto-size frame based on pins
 	local maxPins = math.max(#nodeData:getInputs(), #nodeData:getOutputs())
 	local bodyHeight = math.max(40, maxPins * 26 + 10)
+	
+	if nodeData.AllowDynamicPins then
+		bodyHeight += 30
+		local footer = Instance.new("Frame")
+		footer.Size = UDim2.new(1, -10, 0, 24)
+		footer.Position = UDim2.new(0, 5, 0, bodyHeight - 27)
+		footer.BackgroundColor3 = Color3.fromRGB(20, 25, 35)
+		footer.BorderSizePixel = 0
+		footer.ZIndex = 11
+		footer.Parent = body
+		makeCorner(footer, 4)
+		
+		local label = Instance.new("TextLabel")
+		label.Size = UDim2.new(1, -50, 1, 0)
+		label.Position = UDim2.new(0, 8, 0, 0)
+		label.BackgroundTransparency = 1
+		label.Text = "Add/Remove Parameter"
+		label.TextColor3 = Color3.fromRGB(100, 115, 140)
+		label.TextSize = 10
+		label.Font = Enum.Font.GothamMedium
+		label.TextXAlignment = Enum.TextXAlignment.Left
+		label.ZIndex = 12
+		label.Parent = footer
+
+		local addBtn = Instance.new("TextButton")
+		addBtn.Size = UDim2.new(0, 18, 0, 18)
+		addBtn.Position = UDim2.new(1, -42, 0.5, -9)
+		addBtn.BackgroundColor3 = Color3.fromRGB(40, 50, 65)
+		addBtn.Text = "+"
+		addBtn.TextColor3 = Color3.fromRGB(150, 255, 170)
+		addBtn.TextSize = 14
+		addBtn.Font = Enum.Font.GothamBold
+		addBtn.ZIndex = 13
+		addBtn.Parent = footer
+		makeCorner(addBtn, 4)
+		
+		addBtn.MouseButton1Click:Connect(function()
+			nodeData.OnAddPin:Fire()
+		end)
+		
+		local removeBtn = Instance.new("TextButton")
+		removeBtn.Size = UDim2.new(0, 18, 0, 18)
+		removeBtn.Position = UDim2.new(1, -20, 0.5, -9)
+		removeBtn.BackgroundColor3 = Color3.fromRGB(40, 50, 65)
+		removeBtn.Text = "-"
+		removeBtn.TextColor3 = Color3.fromRGB(255, 140, 140)
+		removeBtn.TextSize = 14
+		removeBtn.Font = Enum.Font.GothamBold
+		removeBtn.ZIndex = 13
+		removeBtn.Parent = footer
+		makeCorner(removeBtn, 4)
+		
+		removeBtn.MouseButton1Click:Connect(function()
+			nodeData.OnRemovePin:Fire()
+		end)
+	end
+
 	frame.Size = UDim2.new(0, calculatedWidth, 0, bodyHeight + 28)
 
 	self.frame = frame

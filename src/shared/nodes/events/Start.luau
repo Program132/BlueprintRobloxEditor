@@ -15,8 +15,8 @@ function Start.new()
 	return self
 end
 
-function Start:toLuau()
-	return ""
+function Start:toLuau(block, visited)
+	return block:run_from_port(self, "Exec", visited)
 end
 
 return Start

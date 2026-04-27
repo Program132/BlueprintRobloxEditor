@@ -21,7 +21,10 @@ export type Node = typeof(setmetatable({} :: {
 	Inputs: {Input},
 	Outputs: {Output},
 	EventsCounts: number,
+	Class: string,
 	OnPinsChanged: BindableEvent,
+	OnAddPin: BindableEvent,
+	OnRemovePin: BindableEvent,
 }, Node))
 
 function Node.new(name: string?, type: NodeType?): Node
@@ -36,7 +39,10 @@ function Node.new(name: string?, type: NodeType?): Node
 		Inputs = {},
 		Outputs = {},
 		EventsCounts = 0,
+		Class = name or "Node",
 		OnPinsChanged = Instance.new("BindableEvent"),
+		OnAddPin = Instance.new("BindableEvent"),
+		OnRemovePin = Instance.new("BindableEvent"),
 	}, Node)
 
 	return self

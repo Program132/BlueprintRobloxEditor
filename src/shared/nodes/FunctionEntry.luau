@@ -48,7 +48,7 @@ function FunctionEntry.new(dataOrInputs, contextOrMethodName)
 	return self
 end
 
-function FunctionEntry:toLuau()
+function FunctionEntry:toLuau(block, visited)
 	-- The entry node doesn't generate 'function' (that's handled by script wrapping)
 	-- but it provides the parameter names to its outputs
 	for _, output in ipairs(self:getOutputs()) do
@@ -56,7 +56,7 @@ function FunctionEntry:toLuau()
 			output.Value = output.Name
 		end
 	end
-	return ""
+	return block:run_from_port(self, "Exec", visited)
 end
 
 return FunctionEntry

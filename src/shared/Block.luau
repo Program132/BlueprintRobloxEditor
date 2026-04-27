@@ -151,8 +151,8 @@ local function _run_node(node: Node, visited: { [Node]: boolean }, block: Block,
 	
 	-- 2. Execute the current node
 	local nodeCode = ""
-	if node.Type == NodeTypeModule.CONTROL then
-		-- Control nodes handle their own execution flow branches
+	if node.Type == NodeTypeModule.CONTROL or node.Type == NodeTypeModule.EVENT then
+		-- Control and Event nodes handle their own execution flow branches or wrapping
 		nodeCode = (node :: any):toLuau(block, visited, indentCode)
 	else
 		nodeCode = node:toLuau()
@@ -173,8 +173,8 @@ local function _run_node(node: Node, visited: { [Node]: boolean }, block: Block,
 		end
 	end
 	
-	-- 4. Follow execution flow (Only if NOT a control node, as they manage their own branches)
-	if node.Type ~= NodeTypeModule.CONTROL then
+	-- 4. Follow execution flow (Only if NOT a control or event node, as they manage their own branches/wrapping)
+	if node.Type ~= NodeTypeModule.CONTROL and node.Type ~= NodeTypeModule.EVENT then
 		for _, edge in ipairs(block.exec_edges) do
 			if edge.FromNode == node then
 				code = code .. _run_node(edge.ToNode, visited, block, currentIndent)
@@ -186,6 +186,9 @@ local function _run_node(node: Node, visited: { [Node]: boolean }, block: Block,
 end
 
 function Block:run_from_port(node: Node, portName: string, visited: { [Node]: boolean }): string
+	-- Propagate current output values to connected nodes before starting the branch
+	self:transfer_data_from_node(node)
+
 	local code = ""
 	for _, edge in ipairs(self.exec_edges) do
 		if edge.FromNode == node and edge.FromPort == portName then

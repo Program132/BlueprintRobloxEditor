@@ -16,6 +16,17 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Networking",
+		color = Color3.fromRGB(255, 120, 0),
+		items = {
+			{ id = "FireServer", name = "Fire Server", type = "Action" },
+			{ id = "FireClient", name = "Fire Client", type = "Action" },
+			{ id = "FireAllClients", name = "Fire All Clients", type = "Action" },
+			{ id = "OnServerEvent", name = "On Server Event", type = "Event" },
+			{ id = "OnClientEvent", name = "On Client Event", type = "Event" },
+		}
+	},
+	{
 		category = "Globals",
 		color = Color3.fromRGB(200, 200, 200),
 		items = {

@@ -203,11 +203,19 @@ local Nodes = {
 	["Instance Find First Child Which Is A"] = require(Shared.nodes.instances:WaitForChild("FindFirstChildWhichIsA")),
 	["Tween Pause"] = require(Shared.nodes.tween:WaitForChild("Pause")),
 	["Tween Cancel"] = require(Shared.nodes.tween:WaitForChild("Cancel")),
-	-- Special nodes handled dynamically
-	["Function Entry"] = FunctionEntry,
-	["Function Return"] = FunctionReturn,
-	["Function Call"] = FunctionCall,
 }
+
+local networking = Shared.nodes:WaitForChild("networking")
+Nodes["FireServer"] = require(networking:WaitForChild("FireServer"))
+Nodes["FireClient"] = require(networking:WaitForChild("FireClient"))
+Nodes["FireAllClients"] = require(networking:WaitForChild("FireAllClients"))
+Nodes["OnServerEvent"] = require(networking:WaitForChild("OnServerEvent"))
+Nodes["OnClientEvent"] = require(networking:WaitForChild("OnClientEvent"))
+
+-- Special nodes handled dynamically
+Nodes["Function Entry"] = FunctionEntry
+Nodes["Function Return"] = FunctionReturn
+Nodes["Function Call"] = FunctionCall
 
 -- Toolbar button (toggle widget only)
 local toolbar      = plugin:CreateToolbar("Blueprint Roblox Editor")
@@ -858,6 +866,8 @@ local function spawnNode(nodeId, screenPosition, configFunc)
 		if not nodeClass then return end
 		nodeInstance = nodeClass.new()
 	end
+	
+	nodeInstance.Class = nodeId
 	
 	-- Place it under the mouse cursor in the canvas
 	local canvasPos = canvas:GetInstance().AbsolutePosition
