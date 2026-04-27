@@ -49,6 +49,17 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Conversions",
+		color = Color3.fromRGB(120, 100, 180),
+		items = {
+			{ id = "Instance To BasePart", name = "Instance To BasePart", type = "Function" },
+			{ id = "Instance To Part", name = "Instance To Part", type = "Function" },
+			{ id = "Instance To Model", name = "Instance To Model", type = "Function" },
+			{ id = "Instance To Folder", name = "Instance To Folder", type = "Function" },
+			{ id = "Instance To MeshPart", name = "Instance To MeshPart", type = "Function" },
+		}
+	},
+	{
 		category = "Methods",
 		color = Color3.fromRGB(40, 100, 150),
 		items = {

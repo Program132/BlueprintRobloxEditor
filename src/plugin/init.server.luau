@@ -204,6 +204,13 @@ local Nodes = {
 	["Instance Find First Child Which Is A"] = require(Shared.nodes.instances:WaitForChild("FindFirstChildWhichIsA")),
 	["Tween Pause"] = require(Shared.nodes.tween:WaitForChild("Pause")),
 	["Tween Cancel"] = require(Shared.nodes.tween:WaitForChild("Cancel")),
+
+	-- Conversion nodes
+	["Instance To BasePart"] = require(Shared.nodes.conversions:WaitForChild("InstanceToBasePart")),
+	["Instance To Part"] = require(Shared.nodes.conversions:WaitForChild("InstanceToPart")),
+	["Instance To Model"] = require(Shared.nodes.conversions:WaitForChild("InstanceToModel")),
+	["Instance To Folder"] = require(Shared.nodes.conversions:WaitForChild("InstanceToFolder")),
+	["Instance To MeshPart"] = require(Shared.nodes.conversions:WaitForChild("InstanceToMeshPart")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")
@@ -429,7 +436,16 @@ local function clearCanvas()
 end
 
 local function renderWiresOnly(graph)
-	-- Render Exec edges
+	if not projectActive then return end
+
+	-- 0. Reset connection states for all visual nodes before re-calculating
+	for _, vNode in ipairs(visualNodes) do
+		for pinId, _ in pairs(vNode.connections) do
+			vNode:UpdatePinState(pinId, false)
+		end
+	end
+
+	-- 1. Clear current visual wires
 	for _, edge in ipairs(graph.exec_edges) do
 		local outNode = edge.FromNode
 		local inNode = edge.ToNode
@@ -465,13 +481,22 @@ local function renderWiresOnly(graph)
 			local p1, p2 = updatePermanentWire()
 			local line = drawWireLine(wiresFrame, p1, p2, Color3.fromRGB(240, 240, 240))
 			
+			local fromPinId, toPinId
+			for _, out in ipairs(outNode:getOutputs()) do
+				if out.Name == edge.FromPort then fromPinId = out.Id; break end
+			end
+			for _, inp in ipairs(inNode:getInputs()) do
+				if inp.Name == edge.ToPort then toPinId = inp.Id; break end
+			end
+
 			local wireObj = { 
 				line = line, 
 				fromNode = outNode, 
 				toNode = inNode, 
 				fromPinName = edge.FromPort,
 				toPinName = edge.ToPort,
-				toPinId = nil,
+				fromPinId = fromPinId,
+				toPinId = toPinId,
 				isExec = true,
 				hbConn = nil 
 			}
@@ -494,14 +519,16 @@ local function renderWiresOnly(graph)
 			end)
 			table.insert(visualWires, wireObj)
 			registerWireHover(wireObj)
-			if wireObj.toPinId then
-				for _, vNode in ipairs(visualNodes) do
-					if vNode.nodeData == inNode then
-						vNode:UpdatePinState(wireObj.toPinId, true)
-						break
-					end
+			-- Update visual states for both nodes
+			for _, vNode in ipairs(visualNodes) do
+				if vNode.nodeData == outNode and fromPinId then
+					vNode:UpdatePinState(fromPinId, true)
+				end
+				if vNode.nodeData == inNode and toPinId then
+					vNode:UpdatePinState(toPinId, true)
 				end
 			end
+
 		end
 	end
 	
@@ -540,22 +567,32 @@ local function renderWiresOnly(graph)
 			local p1, p2 = updatePermanentWire()
 			local line = drawWireLine(wiresFrame, p1, p2, Color3.fromRGB(110, 180, 240))
 			
+			-- Find pin IDs to update their states
+			local fromPinId, toPinId
+			for _, out in ipairs(outNode:getOutputs()) do
+				if out.Name == edge.FromPort then
+					fromPinId = out.Id
+					break
+				end
+			end
+			for _, inp in ipairs(inNode:getInputs()) do
+				if inp.Name == edge.ToPort then
+					toPinId = inp.Id
+					break
+				end
+			end
+
 			local wireObj = { 
 				line = line, 
 				fromNode = outNode, 
 				toNode = inNode, 
 				fromPinName = edge.FromPort,
 				toPinName = edge.ToPort,
-				toPinId = nil,
+				fromPinId = fromPinId,
+				toPinId = toPinId,
 				isExec = false,
 				hbConn = nil 
 			}
-			for _, inp in ipairs(inNode:getInputs()) do
-				if inp.Name == edge.ToPort then
-					wireObj.toPinId = inp.Id
-					break
-				end
-			end
 
 			wireObj.hbConn = RunService.Heartbeat:Connect(function()
 				local np1, np2 = updatePermanentWire()
@@ -569,12 +606,14 @@ local function renderWiresOnly(graph)
 			end)
 			table.insert(visualWires, wireObj)
 			registerWireHover(wireObj)
-			if wireObj.toPinId then
-				for _, vNode in ipairs(visualNodes) do
-					if vNode.nodeData == inNode then
-						vNode:UpdatePinState(wireObj.toPinId, true)
-						break
-					end
+			
+			-- Update visual states for both nodes
+			for _, vNode in ipairs(visualNodes) do
+				if vNode.nodeData == outNode and fromPinId then
+					vNode:UpdatePinState(fromPinId, true)
+				end
+				if vNode.nodeData == inNode and toPinId then
+					vNode:UpdatePinState(toPinId, true)
 				end
 			end
 		end
@@ -765,73 +804,9 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 							currentGraph:connect_data(outInfo.nodeData, inInfo.nodeData, outInfo.pinData.Name, inInfo.pinData.Name)
 						end
 						
-						-- Draw permanent wire
-						local color = isExec1 and Color3.fromRGB(240, 240, 240) or Color3.fromRGB(110, 180, 240)
-						local function updatePermanentWire()
-							local zoom = canvas:GetZoom()
-							local cPos = canvas:GetNodeContainer().AbsolutePosition
-							local p1 = (outInfo.pinGui.AbsolutePosition + (outInfo.pinGui.AbsoluteSize / 2) - cPos) / zoom
-							local p2 = (inInfo.pinGui.AbsolutePosition + (inInfo.pinGui.AbsoluteSize / 2) - cPos) / zoom
-							return p1, p2
-						end
-						
-						local p1, p2 = updatePermanentWire()
-						local line = drawWireLine(wiresFrame, p1, p2, color)
-						
-						-- Enforce single connection rules visually
-						for i = #visualWires, 1, -1 do
-							local w = visualWires[i]
-							if isExec1 then
-								-- Exec: only one outgoing per pin
-								if w.fromNode == outInfo.nodeData and w.fromPinName == outInfo.pinData.Name and w.isExec then
-									w.line:Destroy()
-									if w.hbConn then w.hbConn:Disconnect() end
-									table.remove(visualWires, i)
-								end
-							else
-								-- Data: only one incoming per pin
-								if w.toNode == inInfo.nodeData and w.toPinName == inInfo.pinData.Name and not w.isExec then
-									w.line:Destroy()
-									if w.hbConn then w.hbConn:Disconnect() end
-									table.remove(visualWires, i)
-								end
-							end
-						end
-
-						local wireObj = {
-							line = line,
-							fromNode = outInfo.nodeData,
-							toNode = inInfo.nodeData,
-							fromPinName = outInfo.pinData.Name,
-							toPinName = inInfo.pinData.Name,
-							toPinId = inInfo.pinData.Id,
-							isExec = isExec1,
-							hbConn = nil
-						}
-						
-						-- Continuously update this line
-						wireObj.hbConn = RunService.Heartbeat:Connect(function()
-							local np1, np2 = updatePermanentWire()
-							local distance = (np2 - np1).Magnitude
-							local center = (np1 + np2) / 2
-							local angle = math.atan2(np2.Y - np1.Y, np2.X - np1.X)
-							line.Position = UDim2.fromOffset(center.X, center.Y)
-							-- Keep the height if hovered
-							local h = (hoveredWire == wireObj) and 5 or 3
-							line.Size = UDim2.fromOffset(distance, h)
-							line.Rotation = math.deg(angle)
-						end)
-						
-						table.insert(visualWires, wireObj)
-						registerWireHover(wireObj)
-						
-						-- Hide manual input field on target pin
-						for _, vNode in ipairs(visualNodes) do
-							if vNode.nodeData == inInfo.nodeData then
-								vNode:UpdatePinState(inInfo.pinData.Id, true)
-								break
-							end
-						end
+						-- Redraw all wires to ensure everything is synchronized
+						task.wait()
+						renderWiresOnly(currentGraph)
 					end
 				end
 			end
@@ -928,6 +903,7 @@ local function renderGraph(graph)
 	
 	renderWiresOnly(graph)
 end
+
 
 local function switchScript(handle)
 	if not projectActive then return end

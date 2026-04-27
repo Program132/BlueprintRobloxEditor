@@ -229,6 +229,8 @@ function NodeComponent.new(canvasParent, nodeData)
 	rightLayout.Parent = rightFrame
 
 	self.pins = {}
+	self.connections = {}
+	self.isOutputCollapsed = (#nodeData:getOutputs() > 5)
 
 	self.OnSelect = Instance.new("BindableEvent")
 	self.OnPinDragStart = Instance.new("BindableEvent")
@@ -319,6 +321,36 @@ function NodeComponent.new(canvasParent, nodeData)
 		end)
 	end
 
+	-- Expansion Button (for nodes with many outputs)
+	self.expander = nil
+	if #nodeData:getOutputs() > 5 then
+		local expanderRow = Instance.new("TextButton")
+		expanderRow.Text = ""
+		expanderRow.Size = UDim2.new(1, 0, 0, 18)
+		expanderRow.BackgroundTransparency = 1
+		expanderRow.Parent = rightFrame
+		expanderRow.LayoutOrder = 1000 -- Always at the end
+		
+		local expanderLabel = Instance.new("TextLabel")
+		expanderLabel.Size = UDim2.new(1, -5, 1, 0)
+		expanderLabel.BackgroundTransparency = 1
+		expanderLabel.Text = if self.isOutputCollapsed then "▼ Show All" else "▲ Show Less"
+		expanderLabel.TextColor3 = Color3.fromRGB(100, 150, 200)
+		expanderLabel.TextSize = 10
+		expanderLabel.Font = Enum.Font.GothamBold
+		expanderLabel.TextXAlignment = Enum.TextXAlignment.Right
+		expanderLabel.Parent = expanderRow
+		
+		self.expander = expanderRow
+		self.expanderLabel = expanderLabel
+		
+		expanderRow.MouseButton1Click:Connect(function()
+			self.isOutputCollapsed = not self.isOutputCollapsed
+			self.expanderLabel.Text = if self.isOutputCollapsed then "▼ Show All" else "▲ Show Less"
+			self:UpdateLayout()
+		end)
+	end
+
 	-- Auto-size frame based on pins
 	local maxPins = math.max(#nodeData:getInputs(), #nodeData:getOutputs())
 	local bodyHeight = math.max(40, maxPins * 26 + 10)
@@ -379,12 +411,13 @@ function NodeComponent.new(canvasParent, nodeData)
 		end)
 	end
 
-	frame.Size = UDim2.new(0, calculatedWidth, 0, bodyHeight + 28)
-
 	self.frame = frame
 	self.header = header
 	self.stroke = stroke
 	self.selected = false
+
+	frame.Size = UDim2.new(0, calculatedWidth, 0, bodyHeight + 28)
+	self:UpdateLayout()
 
 	self:_makeDraggable()
 
@@ -481,16 +514,60 @@ function NodeComponent:GetPins()
 	local allPins = {}
 	for _, input in ipairs(self.nodeData:getInputs()) do
 		local p = self.pins[input.Id]
-		if p then table.insert(allPins, { pinData = input, isOutput = false, pinGui = p.pin }) end
+		if p then 
+			table.insert(allPins, { pinData = input, isOutput = false, pinGui = p.pin }) 
+		end
 	end
 	for _, output in ipairs(self.nodeData:getOutputs()) do
 		local p = self.pins[output.Id]
-		if p then table.insert(allPins, { pinData = output, isOutput = true, pinGui = p.pin }) end
+		if p then 
+			table.insert(allPins, { pinData = output, isOutput = true, pinGui = p.pin }) 
+		end
 	end
 	return allPins
 end
 
+function NodeComponent:UpdateLayout()
+	-- Show/hide outputs based on connection and collapsed state
+	local visibleOutputs = 0
+	local outputs = self.nodeData:getOutputs()
+	for i, output in ipairs(outputs) do
+		local pinObj = self.pins[output.Id]
+		if pinObj then
+			local isConnected = self.connections[output.Id]
+			local shouldBeVisible = true
+			if self.isOutputCollapsed and i > 5 and not isConnected then
+				shouldBeVisible = false
+			end
+			pinObj.row.Visible = shouldBeVisible
+			if shouldBeVisible then 
+				visibleOutputs += 1 
+			end
+		end
+	end
+	
+	-- Inputs (always visible for now)
+	local visibleInputs = #self.nodeData:getInputs()
+	
+	-- Recalculate body height
+	local maxPins = math.max(visibleInputs, visibleOutputs)
+	if self.expander then
+		maxPins += 1
+	end
+	
+	local bodyHeight = math.max(40, maxPins * 26 + 10)
+	if self.nodeData.AllowDynamicPins then
+		bodyHeight += 30
+		-- Reposition footer if exists
+		local _footer = self.frame:FindFirstChild("Body"):FindFirstChild("Frame") -- Search for footer in body
+		-- Note: footer positioning logic might need refinement if body height changes
+	end
+	
+	self.frame.Size = UDim2.new(0, self.frame.Size.X.Offset, 0, bodyHeight + 28)
+end
+
 function NodeComponent:UpdatePinState(pinId, isConnected)
+	self.connections[pinId] = isConnected
 	local pinObj = self.pins[pinId]
 	if pinObj then
 		if pinObj.inputField then
@@ -512,6 +589,9 @@ function NodeComponent:UpdatePinState(pinId, isConnected)
 				pinObj.label.Size = UDim2.new(1, -offset - 5, 1, 0)
 			end
 		end
+		
+		-- Trigger layout update to handle show/hide logic
+		self:UpdateLayout()
 	end
 end
 
