@@ -126,6 +126,8 @@ local function indentCode(code: string): string
 	end
 	return indented
 end
+Block.indentCode = indentCode
+
 
 -- Internal recursive execution helper
 local function _run_node(node: Node, visited: { [Node]: boolean }, block: Block, indent: string?): string

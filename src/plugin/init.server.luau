@@ -2,6 +2,7 @@
 -- Import backend modules
 local Shared = script.Parent:WaitForChild("Shared")
 local Graph  = require(Shared.Graph)
+local Block  = require(Shared.Block)
 
 -- Import plugin classes
 local FileManager = require(script.FileManager)
@@ -900,7 +901,6 @@ local function spawnNode(nodeId, screenPosition, configFunc)
 	
 	return nodeInstance, visualNode
 end
-
 local function onVariableAction(varName, actionType)
 	if not projectActive then return end
 	-- Spawn near center of screen
@@ -909,6 +909,13 @@ local function onVariableAction(varName, actionType)
 		local nameInput = node:getInput("name")
 		if nameInput then nameInput.Value = varName end
 	end)
+end
+
+local function addVariableToSidebar(varName)
+	sidebar:AddVariable(varName, 
+		function() onVariableAction(varName, "Get") end, 
+		function() onVariableAction(varName, "Set") end
+	)
 end
 
 
@@ -925,14 +932,16 @@ end
 local function switchScript(handle)
 	if not projectActive then return end
 	
-	-- 1. Save current graph to the old handle
+	-- 1. Save current state to the old handle
 	if currentScriptHandle then
 		currentScriptHandle.data.graph = currentGraph:serialize()
+		currentScriptHandle.data.variables = sidebar:GetVariables()
 		currentScriptHandle:Deselect()
 	end
 	
-	-- 2. Clear canvas
+	-- 2. Clear canvas and variable list
 	clearCanvas()
+	sidebar:ClearVariables()
 	
 	-- 3. Load new graph
 	currentScriptHandle = handle
@@ -945,9 +954,13 @@ local function switchScript(handle)
 		currentGraph = Graph.new()
 	end
 	
-	-- 4. Render
+	-- 4. Load script-local variables
+	for _, vName in ipairs(handle.data.variables or {}) do
+		addVariableToSidebar(vName)
+	end
+	
+	-- 5. Render
 	renderGraph(currentGraph)
-	--print("[Editor] Switched to script: " .. handle.data.name)
 end
 
 
@@ -982,12 +995,15 @@ local function activateProject(data, name)
 		if not firstHandle then firstHandle = handle end
 	end
 	
-	-- Populate sidebar with variables
-	for _, vName in ipairs(data.variables or {}) do
-		sidebar:AddVariable(vName, 
-			function() onVariableAction(vName, "Get") end, 
-			function() onVariableAction(vName, "Set") end
-		)
+	-- Populate sidebar with variables (deprecated global variables moved to the first script for compatibility)
+	local globalVars = data.variables or {}
+	if #globalVars > 0 and firstHandle then
+		firstHandle.data.variables = firstHandle.data.variables or {}
+		for _, vName in ipairs(globalVars) do
+			if not table.find(firstHandle.data.variables, vName) then
+				table.insert(firstHandle.data.variables, vName)
+			end
+		end
 	end
 
 	canvas:ShowGrid()
@@ -1005,14 +1021,15 @@ end
 
 -- ── Collect current project data ──────────────────────────────────────────────
 local function gatherProjectData()
-	-- Save active graph
+	-- Save active graph and variables
 	if currentScriptHandle then
 		currentScriptHandle.data.graph = currentGraph:serialize()
+		currentScriptHandle.data.variables = sidebar:GetVariables()
 	end
 	
 	return {
 		name        = currentProjectName,
-		variables   = sidebar:GetVariables(),
+		variables   = {}, -- No more global variables
 		scripts     = sidebar:GetScripts(),
 	}
 end
@@ -1109,7 +1126,7 @@ local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 			end
 		end
 		local paramStr = table.concat(params, ", ")
-		return dependenciesCode .. "local function " .. sData.name .. "(" .. paramStr .. ")\n" .. code .. "\nend\n"
+		return dependenciesCode .. "local function " .. sData.name .. "(" .. paramStr .. ")\n" .. Block.indentCode(code) .. "end\n"
 	elseif sData.type == "Module" then
 		local moduleName = sData.name
 		local moduleHeader = "local " .. moduleName .. " = {}\n"
@@ -1139,7 +1156,7 @@ local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 						table.insert(params, inp.name)
 					end
 					local paramStr = table.concat(params, ", ")
-					moduleBody ..= "function " .. moduleName .. ":" .. mName .. "(" .. paramStr .. ")\n" .. b:run() .. "end\n\n"
+					moduleBody ..= "function " .. moduleName .. ":" .. mName .. "(" .. paramStr .. ")\n" .. Block.indentCode(b:run()) .. "end\n\n"
 				end
 			end
 		end
@@ -1226,10 +1243,7 @@ end)
 -- ── Sidebar: Variables ────────────────────────────────────────────────────────
 sidebar:OnAddVariable(function()
 	Modal.prompt(widget, "New Variable", "Variable name...", function(varName)
-		sidebar:AddVariable(varName, 
-			function() onVariableAction(varName, "Get") end, 
-			function() onVariableAction(varName, "Set") end
-		)
+		addVariableToSidebar(varName)
 	end)
 end)
 

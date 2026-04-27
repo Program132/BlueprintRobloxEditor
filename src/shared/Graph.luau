@@ -208,12 +208,34 @@ function Graph:compile()
 end
 
 function Graph:toLuau(variables)
-    -- Prefix variables (declarations) if needed
+    -- Identify used variables to declare them locally
+    local usedVars = {}
+    for _, node in pairs(self.nodes) do
+        if node.Name == "Get Variable" or node.Name == "Set Variable" then
+            local nameInput = node:getInput("name")
+            if nameInput and nameInput.Value ~= "" then
+                usedVars[nameInput.Value] = true
+            end
+        end
+    end
+
     local prefix = ""
-    for _, varName in ipairs(variables or {}) do
+    local sortedVars = {}
+    for varName, _ in pairs(usedVars) do
+        table.insert(sortedVars, varName)
+    end
+    table.sort(sortedVars)
+
+    for _, varName in ipairs(sortedVars) do
         prefix ..= "local var_" .. varName .. " = nil\n"
     end
-    return prefix .. self:compile()
+    
+    local compiled = self:compile()
+    if prefix ~= "" and compiled ~= "" then
+        prefix ..= "\n"
+    end
+    
+    return prefix .. compiled
 end
 
 function Graph:serialize()

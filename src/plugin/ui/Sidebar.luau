@@ -166,13 +166,21 @@ function Sidebar:OnScriptSelected(callback)
 end
 
 function Sidebar:Clear()
+	self:ClearScripts()
+	self:ClearVariables()
+end
+
+function Sidebar:ClearScripts()
 	for _, item in ipairs(self._scriptItems) do
 		item.instance:Destroy()
 	end
+	self._scriptItems = {}
+end
+
+function Sidebar:ClearVariables()
 	for _, item in ipairs(self._varItems) do
 		item.instance:Destroy()
 	end
-	self._scriptItems = {}
 	self._varItems = {}
 end
 
