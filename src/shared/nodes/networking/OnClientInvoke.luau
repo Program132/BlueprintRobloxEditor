@@ -2,17 +2,17 @@ local Node = require(script.Parent.Parent.Parent.Node)
 local NodeType = require(script.Parent.Parent.Parent.NodeType)
 local IO = require(script.Parent.Parent.Parent.IO)
 
-local OnClientEvent = {}
-OnClientEvent.__index = OnClientEvent
-setmetatable(OnClientEvent, Node)
+local OnClientInvoke = {}
+OnClientInvoke.__index = OnClientInvoke
+setmetatable(OnClientInvoke, Node)
 
-function OnClientEvent.new(data)
-	local self = Node.new("OnClientEvent", NodeType.EVENT)
-	setmetatable(self, OnClientEvent)
+function OnClientInvoke.new(data)
+	local self = Node.new("OnClientInvoke", NodeType.EVENT)
+	setmetatable(self, OnClientInvoke)
 	self:editColor(Color3.fromRGB(255, 120, 0))
 	self.AllowDynamicPins = true
 	
-	self:addInput(IO.Input.new("RemoteEvent", ""))
+	self:addInput(IO.Input.new("RemoteFunction", ""))
 	
 	local count = 0
 	if data and data.InputsValues and data.InputsValues.__argsCount then
@@ -48,8 +48,8 @@ function OnClientEvent.new(data)
 	return self
 end
 
-function OnClientEvent:toLuau(block, visited, indentCode)
-	local remote = self:getInput("RemoteEvent").Value
+function OnClientInvoke:toLuau(block, visited, indentCode)
+	local remote = self:getInput("RemoteFunction").Value
 	local count = tonumber(self:getInput("__argsCount").Value) or 0
 	
 	-- Set output values for connected nodes to use parameter names
@@ -63,7 +63,7 @@ function OnClientEvent:toLuau(block, visited, indentCode)
 	
 	local body = block:run_from_port(self, "Exec", visited)
 	
-	return `{remote}.OnClientEvent:Connect(function({table.concat(argNames, ", ")})\n` .. indentCode(body) .. "end)\n"
+	return `{remote}.OnClientInvoke = function({table.concat(argNames, ", ")})\n` .. indentCode(body) .. "end\n"
 end
 
-return OnClientEvent
+return OnClientInvoke

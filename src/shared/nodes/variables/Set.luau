@@ -31,7 +31,7 @@ function SetVar:toLuau()
 
 	if varName == "" then return "-- Missing variable name" end
 
-	return string.format("%s = %s", varName, tostring(value))
+	return string.format("var_%s = %s\n", varName, tostring(value))
 end
 
 return SetVar

@@ -12,7 +12,7 @@ function OnServerEvent.new(data)
 	self:editColor(Color3.fromRGB(255, 120, 0))
 	self.AllowDynamicPins = true
 	
-	self:addInput(IO.Input.new("RemoteEvent", "nil"))
+	self:addInput(IO.Input.new("RemoteEvent", ""))
 	
 	local count = 0
 	if data and data.InputsValues and data.InputsValues.__argsCount then

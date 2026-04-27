@@ -2,17 +2,19 @@ local Node = require(script.Parent.Parent.Parent.Node)
 local NodeType = require(script.Parent.Parent.Parent.NodeType)
 local IO = require(script.Parent.Parent.Parent.IO)
 
-local OnClientEvent = {}
-OnClientEvent.__index = OnClientEvent
-setmetatable(OnClientEvent, Node)
+local InvokeClient = {}
+InvokeClient.__index = InvokeClient
+setmetatable(InvokeClient, Node)
 
-function OnClientEvent.new(data)
-	local self = Node.new("OnClientEvent", NodeType.EVENT)
-	setmetatable(self, OnClientEvent)
+function InvokeClient.new(data)
+	local self = Node.new("InvokeClient", NodeType.METHOD)
+	setmetatable(self, InvokeClient)
 	self:editColor(Color3.fromRGB(255, 120, 0))
 	self.AllowDynamicPins = true
 	
-	self:addInput(IO.Input.new("RemoteEvent", ""))
+	self:addInput(IO.Input.new("Exec", ""))
+	self:addInput(IO.Input.new("RemoteFunction", ""))
+	self:addInput(IO.Input.new("Player", "nil"))
 	
 	local count = 0
 	if data and data.InputsValues and data.InputsValues.__argsCount then
@@ -21,24 +23,25 @@ function OnClientEvent.new(data)
 	
 	self:addInput(IO.Input.new("__argsCount", tostring(count)))
 	
-	self:addOutput(IO.Output.new("Exec", ""))
-	
 	for i = 1, count do
-		self:addOutput(IO.Output.new("Arg " .. i, ""))
+		self:addInput(IO.Input.new("Arg " .. i, ""))
 	end
+	
+	self:addOutput(IO.Output.new("Exec", ""))
+	self:addOutput(IO.Output.new("Result", ""))
 	
 	self.OnAddPin.Event:Connect(function()
 		local currentCount = tonumber(self:getInput("__argsCount").Value) or 0
 		currentCount += 1
 		self:getInput("__argsCount").Value = tostring(currentCount)
-		self:addOutput(IO.Output.new("Arg " .. currentCount, ""))
+		self:addInput(IO.Input.new("Arg " .. currentCount, ""))
 		self.OnPinsChanged:Fire()
 	end)
 	
 	self.OnRemovePin.Event:Connect(function()
 		local currentCount = tonumber(self:getInput("__argsCount").Value) or 0
 		if currentCount > 0 then
-			self:removeOutput("Arg " .. currentCount)
+			self:removeInput("Arg " .. currentCount)
 			currentCount -= 1
 			self:getInput("__argsCount").Value = tostring(currentCount)
 			self.OnPinsChanged:Fire()
@@ -48,22 +51,21 @@ function OnClientEvent.new(data)
 	return self
 end
 
-function OnClientEvent:toLuau(block, visited, indentCode)
-	local remote = self:getInput("RemoteEvent").Value
+function InvokeClient:toLuau()
+	local remote = self:getInput("RemoteFunction").Value
+	local player = self:getInput("Player").Value
 	local count = tonumber(self:getInput("__argsCount").Value) or 0
 	
-	-- Set output values for connected nodes to use parameter names
-	local argNames = {}
+	local args = {}
 	for i = 1, count do
-		local name = "arg" .. i
-		local out = self:getOutput("Arg " .. i)
-		if out then out.Value = name end
-		table.insert(argNames, name)
+		local val = self:getInput("Arg " .. i).Value
+		if val ~= "" then table.insert(args, val) end
 	end
 	
-	local body = block:run_from_port(self, "Exec", visited)
+	local resVar = "res_" .. self.Id:gsub("-", "")
+	self:getOutput("Result").Value = resVar
 	
-	return `{remote}.OnClientEvent:Connect(function({table.concat(argNames, ", ")})\n` .. indentCode(body) .. "end)\n"
+	return `local {resVar} = {remote}:InvokeClient({player}, {table.concat(args, ", ")})\n`
 end
 
-return OnClientEvent
+return InvokeClient

@@ -24,6 +24,19 @@ local NODES_DATA = {
 			{ id = "FireAllClients", name = "Fire All Clients", type = "Action" },
 			{ id = "OnServerEvent", name = "On Server Event", type = "Event" },
 			{ id = "OnClientEvent", name = "On Client Event", type = "Event" },
+			{ id = "InvokeServer", name = "Invoke Server", type = "Action" },
+			{ id = "InvokeClient", name = "Invoke Client", type = "Action" },
+			{ id = "OnServerInvoke", name = "On Server Invoke", type = "Event" },
+			{ id = "OnClientInvoke", name = "On Client Invoke", type = "Event" },
+			{ id = "Remote Return", name = "Remote Return", type = "Action" },
+		}
+	},
+	{
+		category = "Variables",
+		color = Color3.fromRGB(80, 80, 80),
+		items = {
+			{ id = "Get Variable", name = "Get Variable", type = "Variable" },
+			{ id = "Set Variable", name = "Set Variable", type = "Variable" },
 		}
 	},
 	{

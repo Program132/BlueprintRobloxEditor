@@ -211,6 +211,11 @@ Nodes["FireClient"] = require(networking:WaitForChild("FireClient"))
 Nodes["FireAllClients"] = require(networking:WaitForChild("FireAllClients"))
 Nodes["OnServerEvent"] = require(networking:WaitForChild("OnServerEvent"))
 Nodes["OnClientEvent"] = require(networking:WaitForChild("OnClientEvent"))
+Nodes["InvokeServer"] = require(networking:WaitForChild("InvokeServer"))
+Nodes["InvokeClient"] = require(networking:WaitForChild("InvokeClient"))
+Nodes["OnServerInvoke"] = require(networking:WaitForChild("OnServerInvoke"))
+Nodes["OnClientInvoke"] = require(networking:WaitForChild("OnClientInvoke"))
+Nodes["Remote Return"] = require(networking:WaitForChild("RemoteReturn"))
 
 -- Special nodes handled dynamically
 Nodes["Function Entry"] = FunctionEntry
@@ -626,6 +631,11 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 		table.insert(visualNodes, newNode)
 		hookUpNodeEvents(newNode, nodeInstance)
 		
+		-- Update hoveredNode if it was the one being changed
+		if hoveredNode == visualNode then
+			hoveredNode = newNode
+		end
+
 		-- 3. Update wire references
 		for _, wire in ipairs(visualWires) do
 			if wire.fromNode == nodeInstance or wire.toNode == nodeInstance then
@@ -694,6 +704,7 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 		end
 		
 		-- Re-render graph (but skip nodes, only wires)
+		task.wait()
 		renderWiresOnly(currentGraph)
 	end)
 

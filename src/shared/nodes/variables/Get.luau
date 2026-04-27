@@ -27,7 +27,7 @@ function GetVar:toLuau()
 	if varName == "" then return "-- Missing variable name" end
 	
 	-- A Get node just provides its name as the value for the output pin
-	self:getOutput("value").Value = varName
+	self:getOutput("value").Value = "var_" .. varName
 	return "" -- Get nodes don't generate standalone code lines, they provide data
 end
 

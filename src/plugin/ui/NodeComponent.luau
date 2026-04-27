@@ -85,7 +85,7 @@ local function makePin(parent, labelText, isOutput, isExec, choices)
 		end
 	end
 
-	return { row = row, pin = pin, inputField = inputField, choiceButton = choiceButton }
+	return { row = row, pin = pin, inputField = inputField, choiceButton = choiceButton, label = label }
 end
 
 local TYPE_COLORS = {
@@ -492,8 +492,26 @@ end
 
 function NodeComponent:UpdatePinState(pinId, isConnected)
 	local pinObj = self.pins[pinId]
-	if pinObj and pinObj.inputField then
-		pinObj.inputField.Visible = not isConnected
+	if pinObj then
+		if pinObj.inputField then
+			pinObj.inputField.Visible = not isConnected
+		end
+		if pinObj.choiceButton then
+			pinObj.choiceButton.Visible = not isConnected
+		end
+		
+		-- Adjust label position if it's an input pin
+		if pinObj.label and pinObj.label.Position.X.Offset > 0 then
+			if isConnected then
+				pinObj.label.Position = UDim2.new(0, 15, 0, 0)
+				pinObj.label.Size = UDim2.new(1, -20, 1, 0)
+			else
+				-- Restore position based on whether it's a choice or input
+				local offset = pinObj.choiceButton and 80 or 70
+				pinObj.label.Position = UDim2.new(0, offset, 0, 0)
+				pinObj.label.Size = UDim2.new(1, -offset - 5, 1, 0)
+			end
+		end
 	end
 end
 

@@ -13,7 +13,7 @@ function FireClient.new(data)
 	self.AllowDynamicPins = true
 	
 	self:addInput(IO.Input.new("Exec", ""))
-	self:addInput(IO.Input.new("RemoteEvent", "nil"))
+	self:addInput(IO.Input.new("RemoteEvent", ""))
 	self:addInput(IO.Input.new("Player", "nil"))
 	
 	local count = 0

@@ -2,17 +2,17 @@ local Node = require(script.Parent.Parent.Parent.Node)
 local NodeType = require(script.Parent.Parent.Parent.NodeType)
 local IO = require(script.Parent.Parent.Parent.IO)
 
-local OnClientEvent = {}
-OnClientEvent.__index = OnClientEvent
-setmetatable(OnClientEvent, Node)
+local OnServerInvoke = {}
+OnServerInvoke.__index = OnServerInvoke
+setmetatable(OnServerInvoke, Node)
 
-function OnClientEvent.new(data)
-	local self = Node.new("OnClientEvent", NodeType.EVENT)
-	setmetatable(self, OnClientEvent)
+function OnServerInvoke.new(data)
+	local self = Node.new("OnServerInvoke", NodeType.EVENT)
+	setmetatable(self, OnServerInvoke)
 	self:editColor(Color3.fromRGB(255, 120, 0))
 	self.AllowDynamicPins = true
 	
-	self:addInput(IO.Input.new("RemoteEvent", ""))
+	self:addInput(IO.Input.new("RemoteFunction", ""))
 	
 	local count = 0
 	if data and data.InputsValues and data.InputsValues.__argsCount then
@@ -22,6 +22,7 @@ function OnClientEvent.new(data)
 	self:addInput(IO.Input.new("__argsCount", tostring(count)))
 	
 	self:addOutput(IO.Output.new("Exec", ""))
+	self:addOutput(IO.Output.new("Player", "nil"))
 	
 	for i = 1, count do
 		self:addOutput(IO.Output.new("Arg " .. i, ""))
@@ -48,11 +49,12 @@ function OnClientEvent.new(data)
 	return self
 end
 
-function OnClientEvent:toLuau(block, visited, indentCode)
-	local remote = self:getInput("RemoteEvent").Value
+function OnServerInvoke:toLuau(block, visited, indentCode)
+	local remote = self:getInput("RemoteFunction").Value
 	local count = tonumber(self:getInput("__argsCount").Value) or 0
 	
 	-- Set output values for connected nodes to use parameter names
+	self:getOutput("Player").Value = "player"
 	local argNames = {}
 	for i = 1, count do
 		local name = "arg" .. i
@@ -63,7 +65,10 @@ function OnClientEvent:toLuau(block, visited, indentCode)
 	
 	local body = block:run_from_port(self, "Exec", visited)
 	
-	return `{remote}.OnClientEvent:Connect(function({table.concat(argNames, ", ")})\n` .. indentCode(body) .. "end)\n"
+	local params = {"player"}
+	for _, n in ipairs(argNames) do table.insert(params, n) end
+	
+	return `{remote}.OnServerInvoke = function({table.concat(params, ", ")})\n` .. indentCode(body) .. "end\n"
 end
 
-return OnClientEvent
+return OnServerInvoke

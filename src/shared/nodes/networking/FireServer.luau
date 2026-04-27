@@ -13,7 +13,7 @@ function FireServer.new(data)
 	self.AllowDynamicPins = true
 	
 	self:addInput(IO.Input.new("Exec", ""))
-	self:addInput(IO.Input.new("RemoteEvent", "nil"))
+	self:addInput(IO.Input.new("RemoteEvent", ""))
 	
 	local count = 0
 	if data and data.InputsValues and data.InputsValues.__argsCount then

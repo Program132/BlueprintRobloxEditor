@@ -269,6 +269,18 @@ function Graph.from_data(data, Nodes, context)
 
     for _, nData in ipairs(data.nodes) do
         local nodeClass = Nodes[nData.Class]
+        
+        -- Special handling for dynamic classes (like "Call MyFunction")
+        if not nodeClass then
+            if nData.Class:sub(1, 5) == "Call " then
+                nodeClass = Nodes["Function Call"]
+            elseif nData.Class:sub(1, 12) == "MethodEntry:" then
+                nodeClass = Nodes["Function Entry"]
+            elseif nData.Class:sub(1, 13) == "MethodReturn:" then
+                nodeClass = Nodes["Function Return"]
+            end
+        end
+
         if nodeClass then
             local nodeInstance = nodeClass.new(nData, context)
             if nData.Id then
