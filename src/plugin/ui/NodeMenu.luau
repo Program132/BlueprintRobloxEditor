@@ -57,6 +57,9 @@ local NODES_DATA = {
 			{ id = "Instance To Model", name = "Instance To Model", type = "Function" },
 			{ id = "Instance To Folder", name = "Instance To Folder", type = "Function" },
 			{ id = "Instance To MeshPart", name = "Instance To MeshPart", type = "Function" },
+			{ id = "Instance To Humanoid", name = "Instance To Humanoid", type = "Function" },
+			{ id = "Instance To Sound", name = "Instance To Sound", type = "Function" },
+			{ id = "Instance To Camera", name = "Instance To Camera", type = "Function" },
 		}
 	},
 	{
@@ -346,6 +349,7 @@ local NODES_DATA = {
 			{ id = "Enum HumanoidStateType", name = "HumanoidStateType", type = "Enum" },
 			{ id = "Enum EasingDirection", name = "EasingDirection", type = "Enum" },
 			{ id = "Enum EasingStyle", name = "EasingStyle", type = "Enum" },
+			{ id = "Enum CameraType", name = "CameraType", type = "Enum" },
 		}
 	},
 	{

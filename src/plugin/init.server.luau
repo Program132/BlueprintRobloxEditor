@@ -119,6 +119,7 @@ local Nodes = {
 	["Enum HumanoidStateType"] = require(Shared.nodes.enums:WaitForChild("HumanoidStateType")),
 	["Enum EasingDirection"] = require(Shared.nodes.enums:WaitForChild("EasingDirection")),
 	["Enum EasingStyle"] = require(Shared.nodes.enums:WaitForChild("EasingStyle")),
+	["Enum CameraType"] = require(Shared.nodes.enums:WaitForChild("CameraType")),
 	["Color3 fromRGB"] = require(Shared.nodes.color:WaitForChild("FromRGB")),
 	["Color3 fromHSV"] = require(Shared.nodes.color:WaitForChild("FromHSV")),
 	["Color3 fromHex"] = require(Shared.nodes.color:WaitForChild("FromHex")),
@@ -211,6 +212,9 @@ local Nodes = {
 	["Instance To Model"] = require(Shared.nodes.conversions:WaitForChild("InstanceToModel")),
 	["Instance To Folder"] = require(Shared.nodes.conversions:WaitForChild("InstanceToFolder")),
 	["Instance To MeshPart"] = require(Shared.nodes.conversions:WaitForChild("InstanceToMeshPart")),
+	["Instance To Humanoid"] = require(Shared.nodes.conversions:WaitForChild("InstanceToHumanoid")),
+	["Instance To Sound"] = require(Shared.nodes.conversions:WaitForChild("InstanceToSound")),
+	["Instance To Camera"] = require(Shared.nodes.conversions:WaitForChild("InstanceToCamera")),
 
 	-- Ray nodes
 	["Ray new"] = require(Shared.nodes.ray:WaitForChild("New")),
