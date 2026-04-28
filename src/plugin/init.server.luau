@@ -216,6 +216,14 @@ local Nodes = {
 	["Instance To Sound"] = require(Shared.nodes.conversions:WaitForChild("InstanceToSound")),
 	["Instance To Camera"] = require(Shared.nodes.conversions:WaitForChild("InstanceToCamera")),
 
+	-- Players nodes
+	["Get Local Player"] = require(Shared.nodes.players:WaitForChild("LocalPlayer")),
+	["Get Player From Character"] = require(Shared.nodes.players:WaitForChild("GetPlayerFromCharacter")),
+	["Event Player Added"] = require(Shared.nodes.players:WaitForChild("PlayerAdded")),
+	["Event Player Removing"] = require(Shared.nodes.players:WaitForChild("PlayerRemoving")),
+	["Get Name From UserIdAsync"] = require(Shared.nodes.players:WaitForChild("GetNameFromUserIdAsync")),
+	["Get UserId FromNameAsync"] = require(Shared.nodes.players:WaitForChild("GetUserIdFromNameAsync")),
+
 	-- Ray nodes
 	["Ray new"] = require(Shared.nodes.ray:WaitForChild("New")),
 	["Ray ClosestPoint"] = require(Shared.nodes.ray:WaitForChild("ClosestPoint")),

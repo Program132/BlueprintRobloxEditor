@@ -359,6 +359,18 @@ local NODES_DATA = {
 			{ id = "Require", name = "Require", type = "Function" },
 			{ id = "Module Call", name = "Module Call", type = "Method" }
 		}
+	},
+	{
+		category = "Players",
+		color = Color3.fromRGB(0, 160, 255),
+		items = {
+			{ id = "Get Local Player", name = "Get LocalPlayer", type = "Function" },
+			{ id = "Get Player From Character", name = "Get Player From Character", type = "Function" },
+			{ id = "Event Player Added", name = "PlayerAdded", type = "Event" },
+			{ id = "Event Player Removing", name = "PlayerRemoving", type = "Event" },
+			{ id = "Get Name From UserIdAsync", name = "GetNameFromUserIdAsync", type = "Function" },
+			{ id = "Get UserId FromNameAsync", name = "GetUserIdFromNameAsync", type = "Function" },
+		}
 	}
 }
 
