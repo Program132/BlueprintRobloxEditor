@@ -223,6 +223,18 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Ray",
+		color = Color3.fromRGB(120, 80, 220),
+		items = {
+			{ id = "Ray new", name = "Ray new", type = "Function" },
+			{ id = "Ray ClosestPoint", name = "Ray ClosestPoint", type = "Method" },
+			{ id = "Ray Distance", name = "Ray Distance", type = "Method" },
+			{ id = "Ray Unit", name = "Ray Unit", type = "Property" },
+			{ id = "Ray Origin", name = "Ray Origin", type = "Property" },
+			{ id = "Ray Direction", name = "Ray Direction", type = "Property" },
+		}
+	},
+	{
 		category = "CFrame",
 		color = Color3.fromRGB(150, 50, 200),
 		items = {

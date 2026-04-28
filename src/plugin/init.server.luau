@@ -211,6 +211,14 @@ local Nodes = {
 	["Instance To Model"] = require(Shared.nodes.conversions:WaitForChild("InstanceToModel")),
 	["Instance To Folder"] = require(Shared.nodes.conversions:WaitForChild("InstanceToFolder")),
 	["Instance To MeshPart"] = require(Shared.nodes.conversions:WaitForChild("InstanceToMeshPart")),
+
+	-- Ray nodes
+	["Ray new"] = require(Shared.nodes.ray:WaitForChild("New")),
+	["Ray ClosestPoint"] = require(Shared.nodes.ray:WaitForChild("ClosestPoint")),
+	["Ray Distance"] = require(Shared.nodes.ray:WaitForChild("Distance")),
+	["Ray Unit"] = require(Shared.nodes.ray:WaitForChild("Unit")),
+	["Ray Origin"] = require(Shared.nodes.ray:WaitForChild("Origin")),
+	["Ray Direction"] = require(Shared.nodes.ray:WaitForChild("Direction")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")
