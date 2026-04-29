@@ -58,6 +58,7 @@ local NODES_DATA = {
 			{ id = "Instance To Folder", name = "Instance To Folder", type = "Function" },
 			{ id = "Instance To MeshPart", name = "Instance To MeshPart", type = "Function" },
 			{ id = "Instance To Humanoid", name = "Instance To Humanoid", type = "Function" },
+			{ id = "Instance To Player", name = "Instance To Player", type = "Function" },
 			{ id = "Instance To Sound", name = "Instance To Sound", type = "Function" },
 			{ id = "Instance To Camera", name = "Instance To Camera", type = "Function" },
 		}
@@ -350,6 +351,13 @@ local NODES_DATA = {
 			{ id = "Enum EasingDirection", name = "EasingDirection", type = "Enum" },
 			{ id = "Enum EasingStyle", name = "EasingStyle", type = "Enum" },
 			{ id = "Enum CameraType", name = "CameraType", type = "Enum" },
+			{ id = "Enum CameraMode", name = "CameraMode", type = "Enum" },
+			{ id = "Enum ChatRestrictionStatus", name = "ChatRestrictionStatus", type = "Enum" },
+			{ id = "Enum DevCameraOcclusionMode", name = "DevCameraOcclusionMode", type = "Enum" },
+			{ id = "Enum DevComputerCameraMovementMode", name = "DevComputerCameraMovementMode", type = "Enum" },
+			{ id = "Enum DevComputerMovementMode", name = "DevComputerMovementMode", type = "Enum" },
+			{ id = "Enum DevTouchCameraMovementMode", name = "DevTouchCameraMovementMode", type = "Enum" },
+			{ id = "Enum DevTouchMovementMode", name = "DevTouchMovementMode", type = "Enum" },
 		}
 	},
 	{
