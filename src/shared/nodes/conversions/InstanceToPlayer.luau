@@ -8,7 +8,7 @@ InstanceToPlayer.__index = InstanceToPlayer
 setmetatable(InstanceToPlayer, Node)
 
 local PROPERTIES = {
-	"AccountAge", "Archivable", "AutoJumpEnabled", "CameraMaxZoomDistance", "CameraMinZoomDistance",
+	"AccountAge", "Archivable", "AutoJumpEnabled", "Backpack", "CameraMaxZoomDistance", "CameraMinZoomDistance",
 	"CameraMode", "CanLoadCharacterAppearance", "Capabilities", "Character", "CharacterAppearanceId",
 	"DevCameraOcclusionMode", "DevComputerCameraMode", "DevComputerMovementMode",
 	"DevEnableMouseLock", "DevTouchCameraMode", "DevTouchMovementMode", "DisplayName",
