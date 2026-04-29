@@ -417,7 +417,6 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 	end
 
 	cancelBtn.MouseButton1Click:Connect(close)
-	overlay.MouseButton1Click:Connect(close)
 
 	okBtn.MouseButton1Click:Connect(function()
 		data.name = nameInput.Text

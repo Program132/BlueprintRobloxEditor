@@ -105,7 +105,6 @@ function Modal.prompt(parent, title, placeholder, onConfirm)
 	end
 
 	cancelBtn.MouseButton1Click:Connect(close)
-	overlay.MouseButton1Click:Connect(close)
 
 	okBtn.MouseButton1Click:Connect(function()
 		local text = input.Text

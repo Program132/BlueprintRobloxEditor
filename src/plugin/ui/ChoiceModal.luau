@@ -69,7 +69,9 @@ function ChoiceModal.prompt(parent, title, choices, onConfirm, targetPos)
 		dialog:Destroy()
 	end
 
-	overlay.MouseButton1Click:Connect(close)
+	if isDropdown then
+		overlay.MouseButton1Click:Connect(close)
+	end
 
 	local searchInput = nil
 	if not isDropdown then
