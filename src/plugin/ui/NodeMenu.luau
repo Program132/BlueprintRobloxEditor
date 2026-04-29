@@ -391,6 +391,16 @@ local NODES_DATA = {
 			{ id = "Get Name From UserIdAsync", name = "GetNameFromUserIdAsync", type = "Function" },
 			{ id = "Get UserId FromNameAsync", name = "GetUserIdFromNameAsync", type = "Function" },
 		}
+	},
+	{
+		category = "Tools",
+		color = Color3.fromRGB(0, 180, 100),
+		items = {
+			{ id = "Event Tool Activated", name = "Activated", type = "Event" },
+			{ id = "Event Tool Deactivated", name = "Deactivated", type = "Event" },
+			{ id = "Event Tool Equipped", name = "Equipped", type = "Event" },
+			{ id = "Event Tool Unequipped", name = "Unequipped", type = "Event" },
+		}
 	}
 }
 

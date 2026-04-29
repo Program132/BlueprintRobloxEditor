@@ -243,6 +243,12 @@ local Nodes = {
 	["Event OnTeleport"] = require(Shared.nodes.players:WaitForChild("OnTeleport")),
 	["Get Name From UserIdAsync"] = require(Shared.nodes.players:WaitForChild("GetNameFromUserIdAsync")),
 	["Get UserId FromNameAsync"] = require(Shared.nodes.players:WaitForChild("GetUserIdFromNameAsync")),
+	
+	-- Tools nodes
+	["Event Tool Activated"] = require(Shared.nodes.tools:WaitForChild("Activated")),
+	["Event Tool Deactivated"] = require(Shared.nodes.tools:WaitForChild("Deactivated")),
+	["Event Tool Equipped"] = require(Shared.nodes.tools:WaitForChild("Equipped")),
+	["Event Tool Unequipped"] = require(Shared.nodes.tools:WaitForChild("Unequipped")),
 
 	-- Ray nodes
 	["Ray new"] = require(Shared.nodes.ray:WaitForChild("New")),
