@@ -127,6 +127,7 @@ local Nodes = {
 	["Enum DevComputerMovementMode"] = require(Shared.nodes.enums:WaitForChild("DevComputerMovementMode")),
 	["Enum DevTouchCameraMovementMode"] = require(Shared.nodes.enums:WaitForChild("DevTouchCameraMovementMode")),
 	["Enum DevTouchMovementMode"] = require(Shared.nodes.enums:WaitForChild("DevTouchMovementMode")),
+	["Enum PredictionMode"] = require(Shared.nodes.enums:WaitForChild("PredictionMode")),
 	["Color3 fromRGB"] = require(Shared.nodes.color:WaitForChild("FromRGB")),
 	["Color3 fromHSV"] = require(Shared.nodes.color:WaitForChild("FromHSV")),
 	["Color3 fromHex"] = require(Shared.nodes.color:WaitForChild("FromHex")),

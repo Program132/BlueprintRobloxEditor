@@ -358,6 +358,7 @@ local NODES_DATA = {
 			{ id = "Enum DevComputerMovementMode", name = "DevComputerMovementMode", type = "Enum" },
 			{ id = "Enum DevTouchCameraMovementMode", name = "DevTouchCameraMovementMode", type = "Enum" },
 			{ id = "Enum DevTouchMovementMode", name = "DevTouchMovementMode", type = "Enum" },
+			{ id = "Enum PredictionMode", name = "PredictionMode", type = "Enum" },
 		}
 	},
 	{

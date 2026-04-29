@@ -8,14 +8,15 @@ InstanceToPlayer.__index = InstanceToPlayer
 setmetatable(InstanceToPlayer, Node)
 
 local PROPERTIES = {
-	"AccountAge", "AutoJumpEnabled", "CameraMaxZoomDistance", "CameraMinZoomDistance",
-	"CameraMode", "CanLoadCharacterAppearance", "Character", "CharacterAppearanceId",
+	"AccountAge", "Archivable", "AutoJumpEnabled", "CameraMaxZoomDistance", "CameraMinZoomDistance",
+	"CameraMode", "CanLoadCharacterAppearance", "Capabilities", "Character", "CharacterAppearanceId",
 	"DevCameraOcclusionMode", "DevComputerCameraMode", "DevComputerMovementMode",
 	"DevEnableMouseLock", "DevTouchCameraMode", "DevTouchMovementMode", "DisplayName",
 	"FollowUserId", "GameplayPaused", "HasRobloxSubscription", "HasVerifiedBadge",
-	"HealthDisplayDistance", "InputLatency", "LocaleId", "NameDisplayDistance",
-	"Neutral", "PartyId", "ReplicationFocus", "RespawnLocation", "StepIdOffset",
-	"Team", "TeamColor", "ThirdPartyTextChatRestrictionStatus", "UserId"
+	"HealthDisplayDistance", "InputLatency", "LocaleId", "Name", "NameDisplayDistance",
+	"Neutral", "Parent", "PartyId", "PredictionMode", "ReplicationFocus", "RespawnLocation",
+	"Sandboxed", "StepIdOffset", "Team", "TeamColor", "ThirdPartyTextChatRestrictionStatus",
+	"UniqueId", "UserId"
 }
 
 function InstanceToPlayer.new()
