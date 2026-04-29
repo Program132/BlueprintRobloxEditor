@@ -1,4 +1,9 @@
--- Import backend modules
+local RunService = game:GetService("RunService")
+
+if not RunService:IsEdit() then
+	return
+end
+
 -- Import backend modules
 local Shared = script.Parent:WaitForChild("Shared")
 local Graph  = require(Shared.Graph)
@@ -330,7 +335,6 @@ local hoveredWire        = nil
 local currentScriptHandle = nil
 
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
 
 local function handleKeyDown(keyCode)
 	if UserInputService:GetFocusedTextBox() then return end
