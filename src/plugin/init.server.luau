@@ -213,6 +213,8 @@ local Nodes = {
 	["Instance Find First Ancestor Which Is A"] = require(Shared.nodes.instances:WaitForChild("FindFirstAncestorWhichIsA")),
 	["Instance Find First Child Of Class"] = require(Shared.nodes.instances:WaitForChild("FindFirstChildOfClass")),
 	["Instance Find First Child Which Is A"] = require(Shared.nodes.instances:WaitForChild("FindFirstChildWhichIsA")),
+	["Instance Get Property"] = require(Shared.nodes.instances:WaitForChild("GetProperty")),
+	["Instance Set Property"] = require(Shared.nodes.instances:WaitForChild("SetProperty")),
 	["Tween Pause"] = require(Shared.nodes.tween:WaitForChild("Pause")),
 	["Tween Cancel"] = require(Shared.nodes.tween:WaitForChild("Cancel")),
 

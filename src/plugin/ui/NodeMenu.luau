@@ -162,6 +162,8 @@ local NODES_DATA = {
 			{ id = "Instance Find First Ancestor", name = "Find First Ancestor", type = "Function" },
 			{ id = "Instance Find First Ancestor Of Class", name = "Find First Ancestor Of Class", type = "Function" },
 			{ id = "Instance Find First Ancestor Which Is A", name = "Find First Ancestor Which Is A", type = "Function" },
+			{ id = "Instance Get Property", name = "Get Property", type = "Function" },
+			{ id = "Instance Set Property", name = "Set Property", type = "Method" },
 		}
 	},
 	{
