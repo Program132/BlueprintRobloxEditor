@@ -249,6 +249,8 @@ local Nodes = {
 	["Event Tool Deactivated"] = require(Shared.nodes.tools:WaitForChild("Deactivated")),
 	["Event Tool Equipped"] = require(Shared.nodes.tools:WaitForChild("Equipped")),
 	["Event Tool Unequipped"] = require(Shared.nodes.tools:WaitForChild("Unequipped")),
+	["Activate Tool"] = require(Shared.nodes.tools:WaitForChild("Activate")),
+	["Deactivate Tool"] = require(Shared.nodes.tools:WaitForChild("Deactivate")),
 
 	-- Ray nodes
 	["Ray new"] = require(Shared.nodes.ray:WaitForChild("New")),

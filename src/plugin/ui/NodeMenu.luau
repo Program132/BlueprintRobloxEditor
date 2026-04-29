@@ -400,6 +400,8 @@ local NODES_DATA = {
 			{ id = "Event Tool Deactivated", name = "Deactivated", type = "Event" },
 			{ id = "Event Tool Equipped", name = "Equipped", type = "Event" },
 			{ id = "Event Tool Unequipped", name = "Unequipped", type = "Event" },
+			{ id = "Activate Tool", name = "Activate", type = "Method" },
+			{ id = "Deactivate Tool", name = "Deactivate", type = "Method" },
 		}
 	}
 }
