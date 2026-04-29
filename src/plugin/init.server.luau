@@ -225,6 +225,7 @@ local Nodes = {
 	["Instance To Humanoid"] = require(Shared.nodes.conversions:WaitForChild("InstanceToHumanoid")),
 	["Instance To Player"] = require(Shared.nodes.conversions:WaitForChild("InstanceToPlayer")),
 	["Instance To Sound"] = require(Shared.nodes.conversions:WaitForChild("InstanceToSound")),
+	["Instance To Tool"] = require(Shared.nodes.conversions:WaitForChild("InstanceToTool")),
 	["Instance To Camera"] = require(Shared.nodes.conversions:WaitForChild("InstanceToCamera")),
 	["ToString"] = require(Shared.nodes.conversions:WaitForChild("ToString")),
 	["ToNumber"] = require(Shared.nodes.conversions:WaitForChild("ToNumber")),

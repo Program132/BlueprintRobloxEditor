@@ -60,6 +60,7 @@ local NODES_DATA = {
 			{ id = "Instance To Humanoid", name = "Instance To Humanoid", type = "Function" },
 			{ id = "Instance To Player", name = "Instance To Player", type = "Function" },
 			{ id = "Instance To Sound", name = "Instance To Sound", type = "Function" },
+			{ id = "Instance To Tool", name = "Instance To Tool", type = "Function" },
 			{ id = "Instance To Camera", name = "Instance To Camera", type = "Function" },
 			{ id = "ToString", name = "To String", type = "Function" },
 			{ id = "ToNumber", name = "To Number", type = "Function" },
