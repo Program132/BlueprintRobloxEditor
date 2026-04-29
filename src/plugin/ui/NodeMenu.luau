@@ -376,6 +376,12 @@ local NODES_DATA = {
 			{ id = "Get Player From Character", name = "Get Player From Character", type = "Function" },
 			{ id = "Event Player Added", name = "PlayerAdded", type = "Event" },
 			{ id = "Event Player Removing", name = "PlayerRemoving", type = "Event" },
+			{ id = "Event CharacterAdded", name = "CharacterAdded", type = "Event" },
+			{ id = "Event CharacterAppearanceLoaded", name = "CharacterAppearanceLoaded", type = "Event" },
+			{ id = "Event CharacterRemoving", name = "CharacterRemoving", type = "Event" },
+			{ id = "Event Chatted", name = "Chatted", type = "Event" },
+			{ id = "Event Idled", name = "Idled", type = "Event" },
+			{ id = "Event OnTeleport", name = "OnTeleport", type = "Event" },
 			{ id = "Get Name From UserIdAsync", name = "GetNameFromUserIdAsync", type = "Function" },
 			{ id = "Get UserId FromNameAsync", name = "GetUserIdFromNameAsync", type = "Function" },
 		}

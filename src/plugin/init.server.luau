@@ -229,6 +229,12 @@ local Nodes = {
 	["Get Player From Character"] = require(Shared.nodes.players:WaitForChild("GetPlayerFromCharacter")),
 	["Event Player Added"] = require(Shared.nodes.players:WaitForChild("PlayerAdded")),
 	["Event Player Removing"] = require(Shared.nodes.players:WaitForChild("PlayerRemoving")),
+	["Event CharacterAdded"] = require(Shared.nodes.players:WaitForChild("CharacterAdded")),
+	["Event CharacterAppearanceLoaded"] = require(Shared.nodes.players:WaitForChild("CharacterAppearanceLoaded")),
+	["Event CharacterRemoving"] = require(Shared.nodes.players:WaitForChild("CharacterRemoving")),
+	["Event Chatted"] = require(Shared.nodes.players:WaitForChild("Chatted")),
+	["Event Idled"] = require(Shared.nodes.players:WaitForChild("Idled")),
+	["Event OnTeleport"] = require(Shared.nodes.players:WaitForChild("OnTeleport")),
 	["Get Name From UserIdAsync"] = require(Shared.nodes.players:WaitForChild("GetNameFromUserIdAsync")),
 	["Get UserId FromNameAsync"] = require(Shared.nodes.players:WaitForChild("GetUserIdFromNameAsync")),
 
