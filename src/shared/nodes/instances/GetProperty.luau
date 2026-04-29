@@ -22,8 +22,6 @@ function GetProperty:toLuau()
 	local obj = self:getInput("Object").Value or "nil"
 	local prop = self:getInput("Property").Value or '""'
 	
-	-- Strip quotes if it's a literal string to make it look cleaner: obj.Prop instead of obj["Prop"]
-	-- Actually, using [] is safer for all cases in dynamic nodes.
 	local cleanProp = prop
 	if prop:sub(1,1) == '"' and prop:sub(-1,-1) == '"' then
 		local inner = prop:sub(2, -2)

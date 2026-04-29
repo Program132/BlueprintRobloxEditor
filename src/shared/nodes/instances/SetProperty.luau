@@ -26,7 +26,6 @@ function SetProperty:toLuau()
 	local prop = self:getInput("Property").Value or '""'
 	local val = self:getInput("Value").Value or "nil"
 	
-	-- Clean access if possible
 	if prop:sub(1,1) == '"' and prop:sub(-1,-1) == '"' then
 		local inner = prop:sub(2, -2)
 		if inner:match("^[%a_][%w_]*$") then
