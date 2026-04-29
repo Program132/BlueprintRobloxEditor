@@ -25,6 +25,8 @@ local Nodes = {
 	["Start Event"] = require(Shared.nodes.events.Start),
 	["Return"]      = require(Shared.nodes.Return),
 	["Print"]       = require(Shared.nodes.Print),
+	["Warn"]        = require(Shared.nodes.Warn),
+	["Error"]       = require(Shared.nodes.Error),
 	["Add"]         = require(Shared.nodes.math.Add),
 	["Abs"]         = require(Shared.nodes.math.Abs),
 	["Sin"]         = require(Shared.nodes.math.Sin),
@@ -224,6 +226,8 @@ local Nodes = {
 	["Instance To Player"] = require(Shared.nodes.conversions:WaitForChild("InstanceToPlayer")),
 	["Instance To Sound"] = require(Shared.nodes.conversions:WaitForChild("InstanceToSound")),
 	["Instance To Camera"] = require(Shared.nodes.conversions:WaitForChild("InstanceToCamera")),
+	["ToString"] = require(Shared.nodes.conversions:WaitForChild("ToString")),
+	["ToNumber"] = require(Shared.nodes.conversions:WaitForChild("ToNumber")),
 
 	-- Players nodes
 	["Get Local Player"] = require(Shared.nodes.players:WaitForChild("LocalPlayer")),

@@ -61,13 +61,17 @@ local NODES_DATA = {
 			{ id = "Instance To Player", name = "Instance To Player", type = "Function" },
 			{ id = "Instance To Sound", name = "Instance To Sound", type = "Function" },
 			{ id = "Instance To Camera", name = "Instance To Camera", type = "Function" },
+			{ id = "ToString", name = "To String", type = "Function" },
+			{ id = "ToNumber", name = "To Number", type = "Function" },
 		}
 	},
 	{
 		category = "Methods",
 		color = Color3.fromRGB(40, 100, 150),
 		items = {
-			{ id = "Print", name = "Print", type = "Method" }
+			{ id = "Print", name = "Print", type = "Method" },
+			{ id = "Warn", name = "Warn", type = "Method" },
+			{ id = "Error", name = "Error", type = "Method" }
 		}
 	},
 	{
