@@ -447,10 +447,10 @@ local NODES_DATA = {
 		category = "StarterGui",
 		color = Color3.fromRGB(255, 50, 150),
 		items = {
-			{ id = "StarterGui GetCore", name = "GetCore", type = "Function" },
-			{ id = "StarterGui GetCoreGuiEnabled", name = "GetCoreGuiEnabled", type = "Function" },
-			{ id = "StarterGui SetCore", name = "SetCore", type = "Method" },
-			{ id = "StarterGui SetCoreGuiEnabled", name = "SetCoreGuiEnabled", type = "Method" },
+			{ id = "StarterGui GetCore", name = "StarterGui GetCore", type = "Function" },
+			{ id = "StarterGui GetCoreGuiEnabled", name = "StarterGui GetCoreGuiEnabled", type = "Function" },
+			{ id = "StarterGui SetCore", name = "StarterGui SetCore", type = "Method" },
+			{ id = "StarterGui SetCoreGuiEnabled", name = "StarterGui SetCoreGuiEnabled", type = "Method" },
 		}
 	}
 }
