@@ -95,6 +95,7 @@ local NODES_DATA = {
 			{ id = "Instance To Player", name = "Instance To Player", type = "Function" },
 			{ id = "Instance To Sound", name = "Instance To Sound", type = "Function" },
 			{ id = "Instance To Tool", name = "Instance To Tool", type = "Function" },
+			{ id = "Instance To StarterGui", name = "Instance To StarterGui", type = "Function" },
 			{ id = "Instance To Camera", name = "Instance To Camera", type = "Function" },
 			{ id = "ToString", name = "To String", type = "Function" },
 			{ id = "ToNumber", name = "To Number", type = "Function" },
@@ -403,6 +404,9 @@ local NODES_DATA = {
 			{ id = "Enum InfoType", name = "InfoType", type = "Enum" },
 			{ id = "Enum CurrencyType", name = "CurrencyType", type = "Enum" },
 			{ id = "Enum CoreGuiType", name = "CoreGuiType", type = "Enum" },
+			{ id = "Enum RtlTextSupport", name = "RtlTextSupport", type = "Enum" },
+			{ id = "Enum ScreenOrientation", name = "ScreenOrientation", type = "Enum" },
+			{ id = "Enum VirtualCursorMode", name = "VirtualCursorMode", type = "Enum" },
 		}
 	},
 	{
