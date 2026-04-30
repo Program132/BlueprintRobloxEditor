@@ -11,7 +11,7 @@ local function makeCorner(parent, radius)
 	return c
 end
 
-local function makePin(parent, labelText, isOutput, isExec, choices)
+local function makePin(parent, labelText, isOutput, isExec, choices, fieldWidth)
 	local row = Instance.new("TextButton")
 	row.Text = ""
 	row.AutoButtonColor = false
@@ -47,9 +47,10 @@ local function makePin(parent, labelText, isOutput, isExec, choices)
 	local inputField = nil
 	local choiceButton = nil
 	if not isOutput and not isExec then
+		local actualFieldWidth = fieldWidth or 50
 		if choices then
 			choiceButton = Instance.new("TextButton")
-			choiceButton.Size = UDim2.new(0, 60, 0, 18)
+			choiceButton.Size = UDim2.new(0, math.max(60, actualFieldWidth), 0, 18)
 			choiceButton.Position = UDim2.new(0, 15, 0.5, -9)
 			choiceButton.BackgroundColor3 = Color3.fromRGB(30, 40, 60)
 			choiceButton.BorderSizePixel = 0
@@ -61,11 +62,11 @@ local function makePin(parent, labelText, isOutput, isExec, choices)
 			choiceButton.Parent = row
 			makeCorner(choiceButton, 4)
 			
-			label.Position = UDim2.new(0, 80, 0, 0)
-			label.Size = UDim2.new(1, -85, 1, 0)
+			label.Position = UDim2.new(0, choiceButton.Size.X.Offset + 20, 0, 0)
+			label.Size = UDim2.new(1, -choiceButton.Size.X.Offset - 25, 1, 0)
 		else
 			inputField = Instance.new("TextBox")
-			inputField.Size = UDim2.new(0, 50, 0, 18)
+			inputField.Size = UDim2.new(0, actualFieldWidth, 0, 18)
 			inputField.Position = UDim2.new(0, 15, 0.5, -9)
 			inputField.BackgroundColor3 = Color3.fromRGB(14, 19, 30)
 			inputField.BorderSizePixel = 0
@@ -80,12 +81,12 @@ local function makePin(parent, labelText, isOutput, isExec, choices)
 			makeCorner(inputField, 4)
 			
 			-- Shift label to the right of the input field
-			label.Position = UDim2.new(0, 70, 0, 0)
-			label.Size = UDim2.new(1, -75, 1, 0)
+			label.Position = UDim2.new(0, actualFieldWidth + 20, 0, 0)
+			label.Size = UDim2.new(1, -actualFieldWidth - 25, 1, 0)
 		end
 	end
 
-	return { row = row, pin = pin, inputField = inputField, choiceButton = choiceButton, label = label }
+	return { row = row, pin = pin, inputField = inputField, choiceButton = choiceButton, label = label, fieldWidth = if (not isOutput and not isExec) then (fieldWidth or 50) else 0 }
 end
 
 local TYPE_COLORS = {
@@ -177,12 +178,23 @@ function NodeComponent.new(canvasParent, nodeData)
 	-- Calculate adaptive width
 	local titleWidth = TextService:GetTextSize(nodeData.Title or nodeData.Name, 13, Enum.Font.GothamBold, Vector2.new(1000, 1000)).X + 70
 	
+	-- Calculate max field width based on values
+	local maxFieldWidth = 50
+	for _, input in ipairs(nodeData:getInputs()) do
+		if not input.IsExec then
+			local val = tostring(input.Value or "")
+			local valW = TextService:GetTextSize(val, 10, Enum.Font.Gotham, Vector2.new(1000, 1000)).X
+			maxFieldWidth = math.max(maxFieldWidth, math.clamp(valW + 15, 50, 200))
+		end
+	end
+	self.maxFieldWidth = maxFieldWidth
+
 	local maxLeftWidth = 0
 	for _, input in ipairs(nodeData:getInputs()) do
 		if input.Name:sub(1, 2) == "__" then continue end
 		local w = TextService:GetTextSize(input.Name, 11, Enum.Font.GothamMedium, Vector2.new(1000, 1000)).X
 		if not input.IsExec then
-			w += 65 -- space for input field (50 size + padding)
+			w += maxFieldWidth + 20 -- space for input field + padding
 		end
 		maxLeftWidth = math.max(maxLeftWidth, w + 25)
 	end
@@ -198,6 +210,7 @@ function NodeComponent.new(canvasParent, nodeData)
 
 	-- Body
 	local body = Instance.new("Frame")
+	body.Name = "Body"
 	body.Size = UDim2.new(1, 0, 1, -28)
 	body.Position = UDim2.new(0, 0, 0, 28)
 	body.BackgroundTransparency = 1
@@ -215,7 +228,8 @@ function NodeComponent.new(canvasParent, nodeData)
 	leftFrame.BackgroundTransparency = 1
 	leftFrame.Parent = body
 	leftLayout.Parent = leftFrame
-
+	self.leftFrame = leftFrame
+	
 	local rightLayout = Instance.new("UIListLayout")
 	rightLayout.FillDirection = Enum.FillDirection.Vertical
 	rightLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -227,6 +241,7 @@ function NodeComponent.new(canvasParent, nodeData)
 	rightFrame.BackgroundTransparency = 1
 	rightFrame.Parent = body
 	rightLayout.Parent = rightFrame
+	self.rightFrame = rightFrame
 
 	self.pins = {}
 	self.connections = {}
@@ -246,13 +261,20 @@ function NodeComponent.new(canvasParent, nodeData)
 	for _, input in ipairs(nodeData:getInputs()) do
 		if input.Name:sub(1, 2) == "__" then continue end
 		local isExec = input.IsExec
-		local pinObj = makePin(leftFrame, input.Name, false, isExec, input.Choices)
+		local pinObj = makePin(leftFrame, input.Name, false, isExec, input.Choices, maxFieldWidth)
 		self.pins[input.Id] = pinObj
 		
 		if pinObj.inputField then
 			pinObj.inputField.Text = input.Value or ""
+			
+			pinObj.inputField:GetPropertyChangedSignal("Text"):Connect(function()
+				input.Value = pinObj.inputField.Text
+				self:UpdateLayout()
+			end)
+
 			pinObj.inputField.FocusLost:Connect(function()
 				input.Value = pinObj.inputField.Text
+				self:UpdateLayout()
 			end)
 		elseif pinObj.choiceButton then
 			pinObj.choiceButton.Text = input.Value or "select"
@@ -528,9 +550,77 @@ function NodeComponent:GetPins()
 end
 
 function NodeComponent:UpdateLayout()
-	-- Show/hide outputs based on connection and collapsed state
+	local nodeData = self.nodeData
+	
+	-- 1. Recalculate maxFieldWidth based on current values
+	local maxFieldWidth = 50
+	for _, input in ipairs(nodeData:getInputs()) do
+		if not input.IsExec then
+			local p = self.pins[input.Id]
+			local text = (p and p.inputField) and p.inputField.Text or tostring(input.Value or "")
+			local valW = TextService:GetTextSize(text, 10, Enum.Font.Gotham, Vector2.new(1000, 1000)).X
+			maxFieldWidth = math.max(maxFieldWidth, math.clamp(valW + 15, 50, 250))
+		end
+	end
+	self.maxFieldWidth = maxFieldWidth
+
+	-- 2. Recalculate adaptive widths for columns
+	local titleWidth = TextService:GetTextSize(nodeData.Title or nodeData.Name, 13, Enum.Font.GothamBold, Vector2.new(1000, 1000)).X + 70
+	
+	local maxLeftWidth = 0
+	for _, input in ipairs(nodeData:getInputs()) do
+		if input.Name:sub(1, 2) == "__" then continue end
+		local w = TextService:GetTextSize(input.Name, 11, Enum.Font.GothamMedium, Vector2.new(1000, 1000)).X
+		if not input.IsExec then
+			local isConnected = self.connections[input.Id]
+			if not isConnected then
+				w += maxFieldWidth + 20
+			end
+		end
+		maxLeftWidth = math.max(maxLeftWidth, w + 25)
+	end
+	
+	local maxRightWidth = 0
+	for _, output in ipairs(nodeData:getOutputs()) do
+		if output.Name:sub(1, 2) == "__" then continue end
+		local w = TextService:GetTextSize(output.Name, 11, Enum.Font.GothamMedium, Vector2.new(1000, 1000)).X
+		maxRightWidth = math.max(maxRightWidth, w + 25)
+	end
+	
+	local calculatedWidth = math.max(160, titleWidth, maxLeftWidth + maxRightWidth + 30)
+	
+	-- 3. Update all input fields and labels
+	for _, input in ipairs(nodeData:getInputs()) do
+		local pinObj = self.pins[input.Id]
+		if pinObj then
+			local isConnected = self.connections[input.Id]
+			if pinObj.inputField then
+				pinObj.inputField.Visible = not isConnected
+				pinObj.inputField.Size = UDim2.new(0, maxFieldWidth, 0, 18)
+				pinObj.fieldWidth = maxFieldWidth
+			end
+			if pinObj.choiceButton then
+				pinObj.choiceButton.Visible = not isConnected
+				pinObj.choiceButton.Size = UDim2.new(0, math.max(60, maxFieldWidth), 0, 18)
+				pinObj.fieldWidth = maxFieldWidth
+			end
+			
+			if pinObj.label then
+				if isConnected then
+					pinObj.label.Position = UDim2.new(0, 15, 0, 0)
+					pinObj.label.Size = UDim2.new(1, -20, 1, 0)
+				else
+					local offset = pinObj.fieldWidth + 20
+					pinObj.label.Position = UDim2.new(0, offset, 0, 0)
+					pinObj.label.Size = UDim2.new(1, -offset - 5, 1, 0)
+				end
+			end
+		end
+	end
+
+	-- 4. Show/hide outputs based on connection and collapsed state
 	local visibleOutputs = 0
-	local outputs = self.nodeData:getOutputs()
+	local outputs = nodeData:getOutputs()
 	for i, output in ipairs(outputs) do
 		local pinObj = self.pins[output.Id]
 		if pinObj then
@@ -546,53 +636,28 @@ function NodeComponent:UpdateLayout()
 		end
 	end
 	
-	-- Inputs (always visible for now)
-	local visibleInputs = #self.nodeData:getInputs()
-	
-	-- Recalculate body height
+	-- 5. Final size updates
+	local visibleInputs = #nodeData:getInputs()
 	local maxPins = math.max(visibleInputs, visibleOutputs)
 	if self.expander then
 		maxPins += 1
 	end
 	
 	local bodyHeight = math.max(40, maxPins * 26 + 10)
-	if self.nodeData.AllowDynamicPins then
+	if nodeData.AllowDynamicPins then
 		bodyHeight += 30
-		-- Reposition footer if exists
-		local _footer = self.frame:FindFirstChild("Body"):FindFirstChild("Frame") -- Search for footer in body
-		-- Note: footer positioning logic might need refinement if body height changes
 	end
 	
-	self.frame.Size = UDim2.new(0, self.frame.Size.X.Offset, 0, bodyHeight + 28)
+	self.leftFrame.Size = UDim2.new(0, maxLeftWidth, 1, -10)
+	self.rightFrame.Size = UDim2.new(0, maxRightWidth, 1, -10)
+	self.rightFrame.Position = UDim2.new(1, -maxRightWidth - 5, 0, 5)
+	
+	self.frame.Size = UDim2.new(0, calculatedWidth, 0, bodyHeight + 28)
 end
 
 function NodeComponent:UpdatePinState(pinId, isConnected)
 	self.connections[pinId] = isConnected
-	local pinObj = self.pins[pinId]
-	if pinObj then
-		if pinObj.inputField then
-			pinObj.inputField.Visible = not isConnected
-		end
-		if pinObj.choiceButton then
-			pinObj.choiceButton.Visible = not isConnected
-		end
-		
-		-- Adjust label position if it's an input pin
-		if pinObj.label and pinObj.label.Position.X.Offset > 0 then
-			if isConnected then
-				pinObj.label.Position = UDim2.new(0, 15, 0, 0)
-				pinObj.label.Size = UDim2.new(1, -20, 1, 0)
-			else
-				-- Restore position based on whether it's a choice or input
-				local offset = pinObj.choiceButton and 80 or 70
-				pinObj.label.Position = UDim2.new(0, offset, 0, 0)
-				pinObj.label.Size = UDim2.new(1, -offset - 5, 1, 0)
-			end
-		end
-		
-		-- Trigger layout update to handle show/hide logic
-		self:UpdateLayout()
-	end
+	self:UpdateLayout()
 end
 
 function NodeComponent:Destroy()

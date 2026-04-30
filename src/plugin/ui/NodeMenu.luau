@@ -32,37 +32,37 @@ local NODES_DATA = {
 		}
 	},
 	{
-		category = "Marketplace",
+		category = "MarketplaceService",
 		color = Color3.fromRGB(255, 170, 0),
 		items = {
-			{ id = "Marketplace PromptPurchaseFinished", name = "Marketplace PromptPurchaseFinished", type = "Event" },
-			{ id = "Marketplace PromptProductPurchaseFinished", name = "Marketplace PromptProductPurchaseFinished", type = "Event" },
-			{ id = "Marketplace PromptGamePassPurchaseFinished", name = "Marketplace PromptGamePassPurchaseFinished", type = "Event" },
-			{ id = "Marketplace PromptBundlePurchaseFinished", name = "Marketplace PromptBundlePurchaseFinished", type = "Event" },
-			{ id = "Marketplace PromptPremiumPurchaseFinished", name = "Marketplace PromptPremiumPurchaseFinished", type = "Event" },
-			{ id = "Marketplace PromptSubscriptionPurchaseFinished", name = "Marketplace PromptSubscriptionPurchaseFinished", type = "Event" },
-			{ id = "Marketplace PromptRobloxSubscriptionPurchaseFinished", name = "Marketplace PromptRobloxSubscriptionPurchaseFinished", type = "Event" },
-			{ id = "Marketplace GetProductInfoAsync", name = "Marketplace GetProductInfoAsync", type = "Function" },
-			{ id = "Marketplace UserOwnsGamePassAsync", name = "Marketplace UserOwnsGamePassAsync", type = "Function" },
-			{ id = "Marketplace PlayerOwnsAssetAsync", name = "Marketplace PlayerOwnsAssetAsync", type = "Function" },
-			{ id = "Marketplace PlayerOwnsBundleAsync", name = "Marketplace PlayerOwnsBundleAsync", type = "Function" },
-			{ id = "Marketplace PromptPurchase", name = "Marketplace PromptPurchase", type = "Method" },
-			{ id = "Marketplace PromptProductPurchase", name = "Marketplace PromptProductPurchase", type = "Method" },
-			{ id = "Marketplace PromptGamePassPurchase", name = "Marketplace PromptGamePassPurchase", type = "Method" },
-			{ id = "Marketplace PromptBundlePurchase", name = "Marketplace PromptBundlePurchase", type = "Method" },
-			{ id = "Marketplace PromptBulkPurchase", name = "Marketplace PromptBulkPurchase", type = "Method" },
-			{ id = "Marketplace PromptSubscriptionPurchase", name = "Marketplace PromptSubscriptionPurchase", type = "Method" },
-			{ id = "Marketplace PromptRobloxSubscriptionPurchase", name = "Marketplace PromptRobloxSubscriptionPurchase", type = "Method" },
-			{ id = "Marketplace PromptCancelSubscription", name = "Marketplace PromptCancelSubscription", type = "Method" },
-			{ id = "Marketplace GetDeveloperProductsAsync", name = "Marketplace GetDeveloperProductsAsync", type = "Function" },
-			{ id = "Marketplace GetSubscriptionProductInfoAsync", name = "Marketplace GetSubscriptionProductInfoAsync", type = "Function" },
-			{ id = "Marketplace GetRobloxSubscriptionDetailsAsync", name = "Marketplace GetRobloxSubscriptionDetailsAsync", type = "Function" },
-			{ id = "Marketplace GetUsersPriceLevelsAsync", name = "Marketplace GetUsersPriceLevelsAsync", type = "Function" },
-			{ id = "Marketplace GetUserSubscriptionDetailsAsync", name = "Marketplace GetUserSubscriptionDetailsAsync", type = "Function" },
-			{ id = "Marketplace GetUserSubscriptionPaymentHistoryAsync", name = "Marketplace GetUserSubscriptionPaymentHistoryAsync", type = "Function" },
-			{ id = "Marketplace GetUserSubscriptionStatusAsync", name = "Marketplace GetUserSubscriptionStatusAsync", type = "Function" },
-			{ id = "Marketplace RankProductsAsync", name = "Marketplace RankProductsAsync", type = "Function" },
-			{ id = "Marketplace RecommendTopProductsAsync", name = "Marketplace RecommendTopProductsAsync", type = "Function" },
+			{ id = "MarketplaceService PromptPurchaseFinished", name = "MarketplaceService PromptPurchaseFinished", type = "Event" },
+			{ id = "MarketplaceService PromptProductPurchaseFinished", name = "MarketplaceService PromptProductPurchaseFinished", type = "Event" },
+			{ id = "MarketplaceService PromptGamePassPurchaseFinished", name = "MarketplaceService PromptGamePassPurchaseFinished", type = "Event" },
+			{ id = "MarketplaceService PromptBundlePurchaseFinished", name = "MarketplaceService PromptBundlePurchaseFinished", type = "Event" },
+			{ id = "MarketplaceService PromptPremiumPurchaseFinished", name = "MarketplaceService PromptPremiumPurchaseFinished", type = "Event" },
+			{ id = "MarketplaceService PromptSubscriptionPurchaseFinished", name = "MarketplaceService PromptSubscriptionPurchaseFinished", type = "Event" },
+			{ id = "MarketplaceService PromptRobloxSubscriptionPurchaseFinished", name = "MarketplaceService PromptRobloxSubscriptionPurchaseFinished", type = "Event" },
+			{ id = "MarketplaceService GetProductInfoAsync", name = "MarketplaceService GetProductInfoAsync", type = "Function" },
+			{ id = "MarketplaceService UserOwnsGamePassAsync", name = "MarketplaceService UserOwnsGamePassAsync", type = "Function" },
+			{ id = "MarketplaceService PlayerOwnsAssetAsync", name = "MarketplaceService PlayerOwnsAssetAsync", type = "Function" },
+			{ id = "MarketplaceService PlayerOwnsBundleAsync", name = "MarketplaceService PlayerOwnsBundleAsync", type = "Function" },
+			{ id = "MarketplaceService PromptPurchase", name = "MarketplaceService PromptPurchase", type = "Method" },
+			{ id = "MarketplaceService PromptProductPurchase", name = "MarketplaceService PromptProductPurchase", type = "Method" },
+			{ id = "MarketplaceService PromptGamePassPurchase", name = "MarketplaceService PromptGamePassPurchase", type = "Method" },
+			{ id = "MarketplaceService PromptBundlePurchase", name = "MarketplaceService PromptBundlePurchase", type = "Method" },
+			{ id = "MarketplaceService PromptBulkPurchase", name = "MarketplaceService PromptBulkPurchase", type = "Method" },
+			{ id = "MarketplaceService PromptSubscriptionPurchase", name = "MarketplaceService PromptSubscriptionPurchase", type = "Method" },
+			{ id = "MarketplaceService PromptRobloxSubscriptionPurchase", name = "MarketplaceService PromptRobloxSubscriptionPurchase", type = "Method" },
+			{ id = "MarketplaceService PromptCancelSubscription", name = "MarketplaceService PromptCancelSubscription", type = "Method" },
+			{ id = "MarketplaceService GetDeveloperProductsAsync", name = "MarketplaceService GetDeveloperProductsAsync", type = "Function" },
+			{ id = "MarketplaceService GetSubscriptionProductInfoAsync", name = "MarketplaceService GetSubscriptionProductInfoAsync", type = "Function" },
+			{ id = "MarketplaceService GetRobloxSubscriptionDetailsAsync", name = "MarketplaceService GetRobloxSubscriptionDetailsAsync", type = "Function" },
+			{ id = "MarketplaceService GetUsersPriceLevelsAsync", name = "MarketplaceService GetUsersPriceLevelsAsync", type = "Function" },
+			{ id = "MarketplaceService GetUserSubscriptionDetailsAsync", name = "MarketplaceService GetUserSubscriptionDetailsAsync", type = "Function" },
+			{ id = "MarketplaceService GetUserSubscriptionPaymentHistoryAsync", name = "MarketplaceService GetUserSubscriptionPaymentHistoryAsync", type = "Function" },
+			{ id = "MarketplaceService GetUserSubscriptionStatusAsync", name = "MarketplaceService GetUserSubscriptionStatusAsync", type = "Function" },
+			{ id = "MarketplaceService RankProductsAsync", name = "MarketplaceService RankProductsAsync", type = "Function" },
+			{ id = "MarketplaceService RecommendTopProductsAsync", name = "MarketplaceService RecommendTopProductsAsync", type = "Function" },
 		}
 	},
 	{
@@ -387,6 +387,7 @@ local NODES_DATA = {
 		items = {
 			{ id = "Enum KeyCode", name = "KeyCode", type = "Enum" },
 			{ id = "Enum UserInputType", name = "UserInputType", type = "Enum" },
+			{ id = "Enum UserInputState", name = "UserInputState", type = "Enum" },
 			{ id = "Enum Material", name = "Material", type = "Enum" },
 			{ id = "Enum PartType", name = "PartType", type = "Enum" },
 			{ id = "Enum HumanoidStateType", name = "HumanoidStateType", type = "Enum" },
@@ -455,6 +456,65 @@ local NODES_DATA = {
 			{ id = "StarterGui GetCoreGuiEnabled", name = "StarterGui GetCoreGuiEnabled", type = "Function" },
 			{ id = "StarterGui SetCore", name = "StarterGui SetCore", type = "Method" },
 			{ id = "StarterGui SetCoreGuiEnabled", name = "StarterGui SetCoreGuiEnabled", type = "Method" },
+		}
+	},
+	{
+		category = "UserInputService",
+		color = Color3.fromRGB(0, 180, 200),
+		items = {
+			{ id = "UserInputService CreateVirtualInput", name = "UserInputService CreateVirtualInput", type = "Function" },
+			{ id = "UserInputService GamepadSupports", name = "UserInputService GamepadSupports", type = "Function" },
+			{ id = "UserInputService GetConnectedGamepads", name = "UserInputService GetConnectedGamepads", type = "Function" },
+			{ id = "UserInputService GetDeviceAcceleration", name = "UserInputService GetDeviceAcceleration", type = "Function" },
+			{ id = "UserInputService GetDeviceGravity", name = "UserInputService GetDeviceGravity", type = "Function" },
+			{ id = "UserInputService GetDeviceRotation", name = "UserInputService GetDeviceRotation", type = "Function" },
+			{ id = "UserInputService GetFocusedTextBox", name = "UserInputService GetFocusedTextBox", type = "Function" },
+			{ id = "UserInputService GetGamepadConnected", name = "UserInputService GetGamepadConnected", type = "Function" },
+			{ id = "UserInputService GetGamepadState", name = "UserInputService GetGamepadState", type = "Function" },
+			{ id = "UserInputService GetImageForKeyCode", name = "UserInputService GetImageForKeyCode", type = "Function" },
+			{ id = "UserInputService GetKeysPressed", name = "UserInputService GetKeysPressed", type = "Function" },
+			{ id = "UserInputService GetLastInputType", name = "UserInputService GetLastInputType", type = "Function" },
+			{ id = "UserInputService GetMouseButtonsPressed", name = "UserInputService GetMouseButtonsPressed", type = "Function" },
+			{ id = "UserInputService GetMouseDelta", name = "UserInputService GetMouseDelta", type = "Function" },
+			{ id = "UserInputService GetMouseLocation", name = "UserInputService GetMouseLocation", type = "Function" },
+			{ id = "UserInputService GetNavigationGamepads", name = "UserInputService GetNavigationGamepads", type = "Function" },
+			{ id = "UserInputService GetStringForKeyCode", name = "UserInputService GetStringForKeyCode", type = "Function" },
+			{ id = "UserInputService GetSupportedGamepadKeyCodes", name = "UserInputService GetSupportedGamepadKeyCodes", type = "Function" },
+			{ id = "UserInputService GetUserCFrame", name = "UserInputService GetUserCFrame", type = "Function" },
+			{ id = "UserInputService IsGamepadButtonDown", name = "UserInputService IsGamepadButtonDown", type = "Function" },
+			{ id = "UserInputService IsKeyDown", name = "UserInputService IsKeyDown", type = "Function" },
+			{ id = "UserInputService IsMouseButtonPressed", name = "UserInputService IsMouseButtonPressed", type = "Function" },
+			{ id = "UserInputService IsNavigationGamepad", name = "UserInputService IsNavigationGamepad", type = "Function" },
+			{ id = "UserInputService RecenterUserHeadCFrame", name = "UserInputService RecenterUserHeadCFrame", type = "Action" },
+			{ id = "UserInputService SetNavigationGamepad", name = "UserInputService SetNavigationGamepad", type = "Action" },
+			{ id = "Instance to UserInputService", name = "Instance to UserInputService", type = "Function" },
+			{ id = "UserInputService DeviceAccelerationChanged", name = "UserInputService DeviceAccelerationChanged", type = "Event" },
+			{ id = "UserInputService DeviceGravityChanged", name = "UserInputService DeviceGravityChanged", type = "Event" },
+			{ id = "UserInputService DeviceRotationChanged", name = "UserInputService DeviceRotationChanged", type = "Event" },
+			{ id = "UserInputService GamepadConnected", name = "UserInputService GamepadConnected", type = "Event" },
+			{ id = "UserInputService GamepadDisconnected", name = "UserInputService GamepadDisconnected", type = "Event" },
+			{ id = "UserInputService InputBegan", name = "UserInputService InputBegan", type = "Event" },
+			{ id = "UserInputService InputChanged", name = "UserInputService InputChanged", type = "Event" },
+			{ id = "UserInputService InputEnded", name = "UserInputService InputEnded", type = "Event" },
+			{ id = "UserInputService JumpRequest", name = "UserInputService JumpRequest", type = "Event" },
+			{ id = "UserInputService LastInputTypeChanged", name = "UserInputService LastInputTypeChanged", type = "Event" },
+			{ id = "UserInputService PointerAction", name = "UserInputService PointerAction", type = "Event" },
+			{ id = "UserInputService TextBoxFocused", name = "UserInputService TextBoxFocused", type = "Event" },
+			{ id = "UserInputService TextBoxFocusReleased", name = "UserInputService TextBoxFocusReleased", type = "Event" },
+			{ id = "UserInputService TouchDrag", name = "UserInputService TouchDrag", type = "Event" },
+			{ id = "UserInputService TouchEnded", name = "UserInputService TouchEnded", type = "Event" },
+			{ id = "UserInputService TouchLongPress", name = "UserInputService TouchLongPress", type = "Event" },
+			{ id = "UserInputService TouchMoved", name = "UserInputService TouchMoved", type = "Event" },
+			{ id = "UserInputService TouchPan", name = "UserInputService TouchPan", type = "Event" },
+			{ id = "UserInputService TouchPinch", name = "UserInputService TouchPinch", type = "Event" },
+			{ id = "UserInputService TouchRotate", name = "UserInputService TouchRotate", type = "Event" },
+			{ id = "UserInputService TouchStarted", name = "UserInputService TouchStarted", type = "Event" },
+			{ id = "UserInputService TouchSwipe", name = "UserInputService TouchSwipe", type = "Event" },
+			{ id = "UserInputService TouchTap", name = "UserInputService TouchTap", type = "Event" },
+			{ id = "UserInputService TouchTapInWorld", name = "UserInputService TouchTapInWorld", type = "Event" },
+			{ id = "UserInputService UserCFrameChanged", name = "UserInputService UserCFrameChanged", type = "Event" },
+			{ id = "UserInputService WindowFocused", name = "UserInputService WindowFocused", type = "Event" },
+			{ id = "UserInputService WindowFocusReleased", name = "UserInputService WindowFocusReleased", type = "Event" },
 		}
 	}
 }
@@ -539,6 +599,8 @@ function NodeMenu.prompt(parent, position, extraNodes, onSelect)
 	end
 	overlay.MouseButton1Click:Connect(close)
 
+	local TextService = game:GetService("TextService")
+
 	local function renderList(filter)
 		for _, child in scroll:GetChildren() do
 			if child:IsA("GuiObject") then child:Destroy() end
@@ -547,11 +609,19 @@ function NodeMenu.prompt(parent, position, extraNodes, onSelect)
 		filter = filter and string.lower(filter) or ""
 
 		local layoutOrder = 0
+		local maxTextWidth = 140 -- Minimum internal width for titles
+
 		for _, cat in ipairs(menuData) do
 			local validItems = {}
 			for _, item in ipairs(cat.items) do
 				if filter == "" or string.find(string.lower(item.name), filter) or string.find(string.lower(item.type), filter) then
 					table.insert(validItems, item)
+					
+					-- Calculate width of this title
+					local size = TextService:GetTextSize(item.name, 12, Enum.Font.GothamMedium, Vector2.new(1000, 26))
+					if size.X > maxTextWidth then
+						maxTextWidth = size.X
+					end
 				end
 			end
 
@@ -619,6 +689,10 @@ function NodeMenu.prompt(parent, position, extraNodes, onSelect)
 				end
 			end
 		end
+		
+		-- Update menu width based on maxTextWidth + padding + badge area
+		local finalWidth = math.clamp(maxTextWidth + 80, 220, 500)
+		menu.Size = UDim2.new(0, finalWidth, 0, 300)
 	end
 
 	searchInput:GetPropertyChangedSignal("Text"):Connect(function()
