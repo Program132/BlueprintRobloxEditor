@@ -35,6 +35,13 @@ local NODES_DATA = {
 		category = "Marketplace",
 		color = Color3.fromRGB(255, 170, 0),
 		items = {
+			{ id = "Marketplace PromptPurchaseFinished", name = "Marketplace PromptPurchaseFinished", type = "Event" },
+			{ id = "Marketplace PromptProductPurchaseFinished", name = "Marketplace PromptProductPurchaseFinished", type = "Event" },
+			{ id = "Marketplace PromptGamePassPurchaseFinished", name = "Marketplace PromptGamePassPurchaseFinished", type = "Event" },
+			{ id = "Marketplace PromptBundlePurchaseFinished", name = "Marketplace PromptBundlePurchaseFinished", type = "Event" },
+			{ id = "Marketplace PromptPremiumPurchaseFinished", name = "Marketplace PromptPremiumPurchaseFinished", type = "Event" },
+			{ id = "Marketplace PromptSubscriptionPurchaseFinished", name = "Marketplace PromptSubscriptionPurchaseFinished", type = "Event" },
+			{ id = "Marketplace PromptRobloxSubscriptionPurchaseFinished", name = "Marketplace PromptRobloxSubscriptionPurchaseFinished", type = "Event" },
 			{ id = "Marketplace GetProductInfoAsync", name = "Marketplace GetProductInfoAsync", type = "Function" },
 			{ id = "Marketplace UserOwnsGamePassAsync", name = "Marketplace UserOwnsGamePassAsync", type = "Function" },
 			{ id = "Marketplace PlayerOwnsAssetAsync", name = "Marketplace PlayerOwnsAssetAsync", type = "Function" },

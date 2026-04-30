@@ -291,6 +291,13 @@ local Nodes = {
 	["Marketplace GetUserSubscriptionStatusAsync"] = require(Shared.nodes.marketplace:WaitForChild("GetUserSubscriptionStatusAsync")),
 	["Marketplace RankProductsAsync"] = require(Shared.nodes.marketplace:WaitForChild("RankProductsAsync")),
 	["Marketplace RecommendTopProductsAsync"] = require(Shared.nodes.marketplace:WaitForChild("RecommendTopProductsAsync")),
+	["Marketplace PromptPurchaseFinished"] = require(Shared.nodes.marketplace:WaitForChild("PromptPurchaseFinished")),
+	["Marketplace PromptProductPurchaseFinished"] = require(Shared.nodes.marketplace:WaitForChild("PromptProductPurchaseFinished")),
+	["Marketplace PromptGamePassPurchaseFinished"] = require(Shared.nodes.marketplace:WaitForChild("PromptGamePassPurchaseFinished")),
+	["Marketplace PromptBundlePurchaseFinished"] = require(Shared.nodes.marketplace:WaitForChild("PromptBundlePurchaseFinished")),
+	["Marketplace PromptPremiumPurchaseFinished"] = require(Shared.nodes.marketplace:WaitForChild("PromptPremiumPurchaseFinished")),
+	["Marketplace PromptSubscriptionPurchaseFinished"] = require(Shared.nodes.marketplace:WaitForChild("PromptSubscriptionPurchaseFinished")),
+	["Marketplace PromptRobloxSubscriptionPurchaseFinished"] = require(Shared.nodes.marketplace:WaitForChild("PromptRobloxSubscriptionPurchaseFinished")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")
