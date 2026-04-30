@@ -266,6 +266,29 @@ local Nodes = {
 	["Ray Unit"] = require(Shared.nodes.ray:WaitForChild("Unit")),
 	["Ray Origin"] = require(Shared.nodes.ray:WaitForChild("Origin")),
 	["Ray Direction"] = require(Shared.nodes.ray:WaitForChild("Direction")),
+
+	-- Marketplace nodes
+	["Marketplace GetProductInfoAsync"] = require(Shared.nodes.marketplace:WaitForChild("GetProductInfoAsync")),
+	["Marketplace UserOwnsGamePassAsync"] = require(Shared.nodes.marketplace:WaitForChild("UserOwnsGamePassAsync")),
+	["Marketplace PlayerOwnsAssetAsync"] = require(Shared.nodes.marketplace:WaitForChild("PlayerOwnsAssetAsync")),
+	["Marketplace PlayerOwnsBundleAsync"] = require(Shared.nodes.marketplace:WaitForChild("PlayerOwnsBundleAsync")),
+	["Marketplace PromptPurchase"] = require(Shared.nodes.marketplace:WaitForChild("PromptPurchase")),
+	["Marketplace PromptProductPurchase"] = require(Shared.nodes.marketplace:WaitForChild("PromptProductPurchase")),
+	["Marketplace PromptGamePassPurchase"] = require(Shared.nodes.marketplace:WaitForChild("PromptGamePassPurchase")),
+	["Marketplace PromptBundlePurchase"] = require(Shared.nodes.marketplace:WaitForChild("PromptBundlePurchase")),
+	["Marketplace PromptBulkPurchase"] = require(Shared.nodes.marketplace:WaitForChild("PromptBulkPurchase")),
+	["Marketplace PromptSubscriptionPurchase"] = require(Shared.nodes.marketplace:WaitForChild("PromptSubscriptionPurchase")),
+	["Marketplace PromptRobloxSubscriptionPurchase"] = require(Shared.nodes.marketplace:WaitForChild("PromptRobloxSubscriptionPurchase")),
+	["Marketplace PromptCancelSubscription"] = require(Shared.nodes.marketplace:WaitForChild("PromptCancelSubscription")),
+	["Marketplace GetDeveloperProductsAsync"] = require(Shared.nodes.marketplace:WaitForChild("GetDeveloperProductsAsync")),
+	["Marketplace GetSubscriptionProductInfoAsync"] = require(Shared.nodes.marketplace:WaitForChild("GetSubscriptionProductInfoAsync")),
+	["Marketplace GetRobloxSubscriptionDetailsAsync"] = require(Shared.nodes.marketplace:WaitForChild("GetRobloxSubscriptionDetailsAsync")),
+	["Marketplace GetUsersPriceLevelsAsync"] = require(Shared.nodes.marketplace:WaitForChild("GetUsersPriceLevelsAsync")),
+	["Marketplace GetUserSubscriptionDetailsAsync"] = require(Shared.nodes.marketplace:WaitForChild("GetUserSubscriptionDetailsAsync")),
+	["Marketplace GetUserSubscriptionPaymentHistoryAsync"] = require(Shared.nodes.marketplace:WaitForChild("GetUserSubscriptionPaymentHistoryAsync")),
+	["Marketplace GetUserSubscriptionStatusAsync"] = require(Shared.nodes.marketplace:WaitForChild("GetUserSubscriptionStatusAsync")),
+	["Marketplace RankProductsAsync"] = require(Shared.nodes.marketplace:WaitForChild("RankProductsAsync")),
+	["Marketplace RecommendTopProductsAsync"] = require(Shared.nodes.marketplace:WaitForChild("RecommendTopProductsAsync")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")

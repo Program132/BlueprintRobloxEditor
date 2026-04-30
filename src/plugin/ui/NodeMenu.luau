@@ -32,6 +32,33 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Marketplace",
+		color = Color3.fromRGB(255, 170, 0),
+		items = {
+			{ id = "Marketplace GetProductInfoAsync", name = "Marketplace GetProductInfoAsync", type = "Function" },
+			{ id = "Marketplace UserOwnsGamePassAsync", name = "Marketplace UserOwnsGamePassAsync", type = "Function" },
+			{ id = "Marketplace PlayerOwnsAssetAsync", name = "Marketplace PlayerOwnsAssetAsync", type = "Function" },
+			{ id = "Marketplace PlayerOwnsBundleAsync", name = "Marketplace PlayerOwnsBundleAsync", type = "Function" },
+			{ id = "Marketplace PromptPurchase", name = "Marketplace PromptPurchase", type = "Method" },
+			{ id = "Marketplace PromptProductPurchase", name = "Marketplace PromptProductPurchase", type = "Method" },
+			{ id = "Marketplace PromptGamePassPurchase", name = "Marketplace PromptGamePassPurchase", type = "Method" },
+			{ id = "Marketplace PromptBundlePurchase", name = "Marketplace PromptBundlePurchase", type = "Method" },
+			{ id = "Marketplace PromptBulkPurchase", name = "Marketplace PromptBulkPurchase", type = "Method" },
+			{ id = "Marketplace PromptSubscriptionPurchase", name = "Marketplace PromptSubscriptionPurchase", type = "Method" },
+			{ id = "Marketplace PromptRobloxSubscriptionPurchase", name = "Marketplace PromptRobloxSubscriptionPurchase", type = "Method" },
+			{ id = "Marketplace PromptCancelSubscription", name = "Marketplace PromptCancelSubscription", type = "Method" },
+			{ id = "Marketplace GetDeveloperProductsAsync", name = "Marketplace GetDeveloperProductsAsync", type = "Function" },
+			{ id = "Marketplace GetSubscriptionProductInfoAsync", name = "Marketplace GetSubscriptionProductInfoAsync", type = "Function" },
+			{ id = "Marketplace GetRobloxSubscriptionDetailsAsync", name = "Marketplace GetRobloxSubscriptionDetailsAsync", type = "Function" },
+			{ id = "Marketplace GetUsersPriceLevelsAsync", name = "Marketplace GetUsersPriceLevelsAsync", type = "Function" },
+			{ id = "Marketplace GetUserSubscriptionDetailsAsync", name = "Marketplace GetUserSubscriptionDetailsAsync", type = "Function" },
+			{ id = "Marketplace GetUserSubscriptionPaymentHistoryAsync", name = "Marketplace GetUserSubscriptionPaymentHistoryAsync", type = "Function" },
+			{ id = "Marketplace GetUserSubscriptionStatusAsync", name = "Marketplace GetUserSubscriptionStatusAsync", type = "Function" },
+			{ id = "Marketplace RankProductsAsync", name = "Marketplace RankProductsAsync", type = "Function" },
+			{ id = "Marketplace RecommendTopProductsAsync", name = "Marketplace RecommendTopProductsAsync", type = "Function" },
+		}
+	},
+	{
 		category = "Variables",
 		color = Color3.fromRGB(80, 80, 80),
 		items = {
