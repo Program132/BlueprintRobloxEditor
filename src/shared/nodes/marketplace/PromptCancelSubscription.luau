@@ -8,7 +8,7 @@ PromptCancelSubscription.__index = PromptCancelSubscription
 setmetatable(PromptCancelSubscription, Node)
 
 function PromptCancelSubscription.new()
-	local self = Node.new("PromptCancelSubscription", NodeType.METHOD)
+	local self = Node.new("MarketplaceService PromptCancelSubscription", NodeType.METHOD)
 	setmetatable(self, PromptCancelSubscription)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -27,3 +27,4 @@ function PromptCancelSubscription:toLuau()
 end
 
 return PromptCancelSubscription
+

@@ -8,7 +8,7 @@ PlayerOwnsBundleAsync.__index = PlayerOwnsBundleAsync
 setmetatable(PlayerOwnsBundleAsync, Node)
 
 function PlayerOwnsBundleAsync.new()
-	local self = Node.new("PlayerOwnsBundleAsync", NodeType.FUNCTION)
+	local self = Node.new("MarketplaceService PlayerOwnsBundleAsync", NodeType.FUNCTION)
 	setmetatable(self, PlayerOwnsBundleAsync)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -27,3 +27,4 @@ function PlayerOwnsBundleAsync:toLuau()
 end
 
 return PlayerOwnsBundleAsync
+

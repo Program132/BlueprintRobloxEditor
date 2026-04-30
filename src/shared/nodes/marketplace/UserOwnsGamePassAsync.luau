@@ -8,7 +8,7 @@ UserOwnsGamePassAsync.__index = UserOwnsGamePassAsync
 setmetatable(UserOwnsGamePassAsync, Node)
 
 function UserOwnsGamePassAsync.new()
-	local self = Node.new("UserOwnsGamePassAsync", NodeType.FUNCTION)
+	local self = Node.new("MarketplaceService UserOwnsGamePassAsync", NodeType.FUNCTION)
 	setmetatable(self, UserOwnsGamePassAsync)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -27,3 +27,4 @@ function UserOwnsGamePassAsync:toLuau()
 end
 
 return UserOwnsGamePassAsync
+

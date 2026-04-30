@@ -8,7 +8,7 @@ PromptBundlePurchase.__index = PromptBundlePurchase
 setmetatable(PromptBundlePurchase, Node)
 
 function PromptBundlePurchase.new()
-	local self = Node.new("PromptBundlePurchase", NodeType.METHOD)
+	local self = Node.new("MarketplaceService PromptBundlePurchase", NodeType.METHOD)
 	setmetatable(self, PromptBundlePurchase)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -27,3 +27,4 @@ function PromptBundlePurchase:toLuau()
 end
 
 return PromptBundlePurchase
+

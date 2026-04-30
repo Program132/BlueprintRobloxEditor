@@ -8,7 +8,7 @@ PromptProductPurchase.__index = PromptProductPurchase
 setmetatable(PromptProductPurchase, Node)
 
 function PromptProductPurchase.new()
-	local self = Node.new("PromptProductPurchase", NodeType.METHOD)
+	local self = Node.new("MarketplaceService PromptProductPurchase", NodeType.METHOD)
 	setmetatable(self, PromptProductPurchase)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -31,3 +31,4 @@ function PromptProductPurchase:toLuau()
 end
 
 return PromptProductPurchase
+

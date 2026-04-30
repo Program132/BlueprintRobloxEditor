@@ -8,7 +8,7 @@ RankProductsAsync.__index = RankProductsAsync
 setmetatable(RankProductsAsync, Node)
 
 function RankProductsAsync.new()
-	local self = Node.new("RankProductsAsync", NodeType.FUNCTION)
+	local self = Node.new("MarketplaceService RankProductsAsync", NodeType.FUNCTION)
 	setmetatable(self, RankProductsAsync)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -25,3 +25,4 @@ function RankProductsAsync:toLuau()
 end
 
 return RankProductsAsync
+

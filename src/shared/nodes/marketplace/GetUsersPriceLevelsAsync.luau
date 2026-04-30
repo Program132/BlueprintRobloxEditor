@@ -8,7 +8,7 @@ GetUsersPriceLevelsAsync.__index = GetUsersPriceLevelsAsync
 setmetatable(GetUsersPriceLevelsAsync, Node)
 
 function GetUsersPriceLevelsAsync.new()
-	local self = Node.new("GetUsersPriceLevelsAsync", NodeType.FUNCTION)
+	local self = Node.new("MarketplaceService GetUsersPriceLevelsAsync", NodeType.FUNCTION)
 	setmetatable(self, GetUsersPriceLevelsAsync)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -25,3 +25,4 @@ function GetUsersPriceLevelsAsync:toLuau()
 end
 
 return GetUsersPriceLevelsAsync
+

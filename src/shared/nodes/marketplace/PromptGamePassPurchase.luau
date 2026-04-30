@@ -8,7 +8,7 @@ PromptGamePassPurchase.__index = PromptGamePassPurchase
 setmetatable(PromptGamePassPurchase, Node)
 
 function PromptGamePassPurchase.new()
-	local self = Node.new("PromptGamePassPurchase", NodeType.METHOD)
+	local self = Node.new("MarketplaceService PromptGamePassPurchase", NodeType.METHOD)
 	setmetatable(self, PromptGamePassPurchase)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -27,3 +27,4 @@ function PromptGamePassPurchase:toLuau()
 end
 
 return PromptGamePassPurchase
+

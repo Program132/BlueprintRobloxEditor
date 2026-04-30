@@ -8,7 +8,7 @@ GetRobloxSubscriptionDetailsAsync.__index = GetRobloxSubscriptionDetailsAsync
 setmetatable(GetRobloxSubscriptionDetailsAsync, Node)
 
 function GetRobloxSubscriptionDetailsAsync.new()
-	local self = Node.new("GetRobloxSubscriptionDetailsAsync", NodeType.FUNCTION)
+	local self = Node.new("MarketplaceService GetRobloxSubscriptionDetailsAsync", NodeType.FUNCTION)
 	setmetatable(self, GetRobloxSubscriptionDetailsAsync)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -25,3 +25,4 @@ function GetRobloxSubscriptionDetailsAsync:toLuau()
 end
 
 return GetRobloxSubscriptionDetailsAsync
+

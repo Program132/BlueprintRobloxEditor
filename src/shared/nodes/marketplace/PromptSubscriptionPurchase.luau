@@ -8,7 +8,7 @@ PromptSubscriptionPurchase.__index = PromptSubscriptionPurchase
 setmetatable(PromptSubscriptionPurchase, Node)
 
 function PromptSubscriptionPurchase.new()
-	local self = Node.new("PromptSubscriptionPurchase", NodeType.METHOD)
+	local self = Node.new("MarketplaceService PromptSubscriptionPurchase", NodeType.METHOD)
 	setmetatable(self, PromptSubscriptionPurchase)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -27,3 +27,4 @@ function PromptSubscriptionPurchase:toLuau()
 end
 
 return PromptSubscriptionPurchase
+

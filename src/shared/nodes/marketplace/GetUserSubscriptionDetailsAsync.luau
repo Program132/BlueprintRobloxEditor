@@ -8,7 +8,7 @@ GetUserSubscriptionDetailsAsync.__index = GetUserSubscriptionDetailsAsync
 setmetatable(GetUserSubscriptionDetailsAsync, Node)
 
 function GetUserSubscriptionDetailsAsync.new()
-	local self = Node.new("GetUserSubscriptionDetailsAsync", NodeType.FUNCTION)
+	local self = Node.new("MarketplaceService GetUserSubscriptionDetailsAsync", NodeType.FUNCTION)
 	setmetatable(self, GetUserSubscriptionDetailsAsync)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -27,3 +27,4 @@ function GetUserSubscriptionDetailsAsync:toLuau()
 end
 
 return GetUserSubscriptionDetailsAsync
+

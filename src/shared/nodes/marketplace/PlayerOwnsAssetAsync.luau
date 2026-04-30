@@ -8,7 +8,7 @@ PlayerOwnsAssetAsync.__index = PlayerOwnsAssetAsync
 setmetatable(PlayerOwnsAssetAsync, Node)
 
 function PlayerOwnsAssetAsync.new()
-	local self = Node.new("PlayerOwnsAssetAsync", NodeType.FUNCTION)
+	local self = Node.new("MarketplaceService PlayerOwnsAssetAsync", NodeType.FUNCTION)
 	setmetatable(self, PlayerOwnsAssetAsync)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -27,3 +27,4 @@ function PlayerOwnsAssetAsync:toLuau()
 end
 
 return PlayerOwnsAssetAsync
+

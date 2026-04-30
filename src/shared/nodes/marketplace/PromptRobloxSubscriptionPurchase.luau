@@ -8,7 +8,7 @@ PromptRobloxSubscriptionPurchase.__index = PromptRobloxSubscriptionPurchase
 setmetatable(PromptRobloxSubscriptionPurchase, Node)
 
 function PromptRobloxSubscriptionPurchase.new()
-	local self = Node.new("PromptRobloxSubscriptionPurchase", NodeType.METHOD)
+	local self = Node.new("MarketplaceService PromptRobloxSubscriptionPurchase", NodeType.METHOD)
 	setmetatable(self, PromptRobloxSubscriptionPurchase)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -25,3 +25,4 @@ function PromptRobloxSubscriptionPurchase:toLuau()
 end
 
 return PromptRobloxSubscriptionPurchase
+

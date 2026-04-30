@@ -8,7 +8,7 @@ RecommendTopProductsAsync.__index = RecommendTopProductsAsync
 setmetatable(RecommendTopProductsAsync, Node)
 
 function RecommendTopProductsAsync.new()
-	local self = Node.new("RecommendTopProductsAsync", NodeType.FUNCTION)
+	local self = Node.new("MarketplaceService RecommendTopProductsAsync", NodeType.FUNCTION)
 	setmetatable(self, RecommendTopProductsAsync)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -25,3 +25,4 @@ function RecommendTopProductsAsync:toLuau()
 end
 
 return RecommendTopProductsAsync
+

@@ -8,7 +8,7 @@ PromptRobloxSubscriptionPurchaseFinished.__index = PromptRobloxSubscriptionPurch
 setmetatable(PromptRobloxSubscriptionPurchaseFinished, Node)
 
 function PromptRobloxSubscriptionPurchaseFinished.new()
-	local self = Node.new("Marketplace PromptRobloxSubscriptionPurchaseFinished", NodeType.EVENT)
+	local self = Node.new("MarketplaceService PromptRobloxSubscriptionPurchaseFinished", NodeType.EVENT)
 	setmetatable(self, PromptRobloxSubscriptionPurchaseFinished)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -29,3 +29,4 @@ function PromptRobloxSubscriptionPurchaseFinished:toLuau(block, visited, indentC
 end
 
 return PromptRobloxSubscriptionPurchaseFinished
+

@@ -8,7 +8,7 @@ GetUserSubscriptionPaymentHistoryAsync.__index = GetUserSubscriptionPaymentHisto
 setmetatable(GetUserSubscriptionPaymentHistoryAsync, Node)
 
 function GetUserSubscriptionPaymentHistoryAsync.new()
-	local self = Node.new("GetUserSubscriptionPaymentHistoryAsync", NodeType.FUNCTION)
+	local self = Node.new("MarketplaceService GetUserSubscriptionPaymentHistoryAsync", NodeType.FUNCTION)
 	setmetatable(self, GetUserSubscriptionPaymentHistoryAsync)
 	self:editColor(Color3.fromRGB(255, 170, 0))
 	
@@ -27,3 +27,4 @@ function GetUserSubscriptionPaymentHistoryAsync:toLuau()
 end
 
 return GetUserSubscriptionPaymentHistoryAsync
+
