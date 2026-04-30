@@ -402,6 +402,7 @@ local NODES_DATA = {
 			{ id = "Enum PredictionMode", name = "PredictionMode", type = "Enum" },
 			{ id = "Enum InfoType", name = "InfoType", type = "Enum" },
 			{ id = "Enum CurrencyType", name = "CurrencyType", type = "Enum" },
+			{ id = "Enum CoreGuiType", name = "CoreGuiType", type = "Enum" },
 		}
 	},
 	{
@@ -440,6 +441,16 @@ local NODES_DATA = {
 			{ id = "Event Tool Unequipped", name = "Unequipped", type = "Event" },
 			{ id = "Activate Tool", name = "Activate", type = "Method" },
 			{ id = "Deactivate Tool", name = "Deactivate", type = "Method" },
+		}
+	},
+	{
+		category = "StarterGui",
+		color = Color3.fromRGB(255, 50, 150),
+		items = {
+			{ id = "StarterGui GetCore", name = "GetCore", type = "Function" },
+			{ id = "StarterGui GetCoreGuiEnabled", name = "GetCoreGuiEnabled", type = "Function" },
+			{ id = "StarterGui SetCore", name = "SetCore", type = "Method" },
+			{ id = "StarterGui SetCoreGuiEnabled", name = "SetCoreGuiEnabled", type = "Method" },
 		}
 	}
 }

@@ -137,6 +137,7 @@ local Nodes = {
 	["Enum PredictionMode"] = require(Shared.nodes.enums:WaitForChild("PredictionMode")),
 	["Enum InfoType"] = require(Shared.nodes.enums:WaitForChild("InfoType")),
 	["Enum CurrencyType"] = require(Shared.nodes.enums:WaitForChild("CurrencyType")),
+	["Enum CoreGuiType"] = require(Shared.nodes.enums:WaitForChild("CoreGuiType")),
 	["Color3 fromRGB"] = require(Shared.nodes.color:WaitForChild("FromRGB")),
 	["Color3 fromHSV"] = require(Shared.nodes.color:WaitForChild("FromHSV")),
 	["Color3 fromHex"] = require(Shared.nodes.color:WaitForChild("FromHex")),
@@ -260,6 +261,12 @@ local Nodes = {
 	["Event Tool Unequipped"] = require(Shared.nodes.tools:WaitForChild("Unequipped")),
 	["Activate Tool"] = require(Shared.nodes.tools:WaitForChild("Activate")),
 	["Deactivate Tool"] = require(Shared.nodes.tools:WaitForChild("Deactivate")),
+
+	-- StarterGui nodes
+	["StarterGui GetCore"] = require(Shared.nodes.startergui:WaitForChild("GetCore")),
+	["StarterGui GetCoreGuiEnabled"] = require(Shared.nodes.startergui:WaitForChild("GetCoreGuiEnabled")),
+	["StarterGui SetCore"] = require(Shared.nodes.startergui:WaitForChild("SetCore")),
+	["StarterGui SetCoreGuiEnabled"] = require(Shared.nodes.startergui:WaitForChild("SetCoreGuiEnabled")),
 
 	-- Ray nodes
 	["Ray new"] = require(Shared.nodes.ray:WaitForChild("New")),
