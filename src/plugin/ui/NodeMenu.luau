@@ -408,6 +408,24 @@ local NODES_DATA = {
 			{ id = "Enum RtlTextSupport", name = "RtlTextSupport", type = "Enum" },
 			{ id = "Enum ScreenOrientation", name = "ScreenOrientation", type = "Enum" },
 			{ id = "Enum VirtualCursorMode", name = "VirtualCursorMode", type = "Enum" },
+			{ id = "Enum TeleportResult", name = "TeleportResult", type = "Enum" },
+		}
+	},
+	{
+		category = "TeleportService",
+		color = Color3.fromRGB(0, 150, 150),
+		items = {
+			{ id = "TeleportService GetArrivingTeleportGui", name = "TeleportService GetArrivingTeleportGui", type = "Function" },
+			{ id = "TeleportService GetLocalPlayerTeleportData", name = "TeleportService GetLocalPlayerTeleportData", type = "Function" },
+			{ id = "TeleportService GetTeleportSetting", name = "TeleportService GetTeleportSetting", type = "Function" },
+			{ id = "TeleportService GetPlayerPlaceInstanceAsync", name = "TeleportService GetPlayerPlaceInstanceAsync", type = "Method" },
+			{ id = "TeleportService PromptExperienceDetailsAsync", name = "TeleportService PromptExperienceDetailsAsync", type = "Method" },
+			{ id = "TeleportService ReserveServer", name = "TeleportService ReserveServer", type = "Method" },
+			{ id = "TeleportService SetTeleportGui", name = "TeleportService SetTeleportGui", type = "Method" },
+			{ id = "TeleportService SetTeleportSetting", name = "TeleportService SetTeleportSetting", type = "Method" },
+			{ id = "TeleportService TeleportAsync", name = "TeleportService TeleportAsync", type = "Method" },
+			{ id = "Event TeleportService LocalPlayerArrivedFromTeleport", name = "Event TeleportService LocalPlayerArrivedFromTeleport", type = "Event" },
+			{ id = "Event TeleportService TeleportInitFailed", name = "Event TeleportService TeleportInitFailed", type = "Event" },
 		}
 	},
 	{

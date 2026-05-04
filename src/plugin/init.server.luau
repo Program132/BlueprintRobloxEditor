@@ -142,6 +142,7 @@ local Nodes = {
 	["Enum RtlTextSupport"] = require(Shared.nodes.enums:WaitForChild("RtlTextSupport")),
 	["Enum ScreenOrientation"] = require(Shared.nodes.enums:WaitForChild("ScreenOrientation")),
 	["Enum VirtualCursorMode"] = require(Shared.nodes.enums:WaitForChild("VirtualCursorMode")),
+	["Enum TeleportResult"] = require(Shared.nodes.enums:WaitForChild("TeleportResult")),
 	["Color3 fromRGB"] = require(Shared.nodes.color:WaitForChild("FromRGB")),
 	["Color3 fromHSV"] = require(Shared.nodes.color:WaitForChild("FromHSV")),
 	["Color3 fromHex"] = require(Shared.nodes.color:WaitForChild("FromHex")),
@@ -310,6 +311,19 @@ local Nodes = {
 	["MarketplaceService PromptPremiumPurchaseFinished"] = require(Shared.nodes.marketplace:WaitForChild("PromptPremiumPurchaseFinished")),
 	["MarketplaceService PromptSubscriptionPurchaseFinished"] = require(Shared.nodes.marketplace:WaitForChild("PromptSubscriptionPurchaseFinished")),
 	["MarketplaceService PromptRobloxSubscriptionPurchaseFinished"] = require(Shared.nodes.marketplace:WaitForChild("PromptRobloxSubscriptionPurchaseFinished")),
+
+	-- TeleportService nodes
+	["TeleportService GetArrivingTeleportGui"] = require(Shared.nodes.teleportservice:WaitForChild("GetArrivingTeleportGui")),
+	["TeleportService GetLocalPlayerTeleportData"] = require(Shared.nodes.teleportservice:WaitForChild("GetLocalPlayerTeleportData")),
+	["TeleportService GetTeleportSetting"] = require(Shared.nodes.teleportservice:WaitForChild("GetTeleportSetting")),
+	["TeleportService GetPlayerPlaceInstanceAsync"] = require(Shared.nodes.teleportservice:WaitForChild("GetPlayerPlaceInstanceAsync")),
+	["TeleportService PromptExperienceDetailsAsync"] = require(Shared.nodes.teleportservice:WaitForChild("PromptExperienceDetailsAsync")),
+	["TeleportService ReserveServer"] = require(Shared.nodes.teleportservice:WaitForChild("ReserveServer")),
+	["TeleportService SetTeleportGui"] = require(Shared.nodes.teleportservice:WaitForChild("SetTeleportGui")),
+	["TeleportService SetTeleportSetting"] = require(Shared.nodes.teleportservice:WaitForChild("SetTeleportSetting")),
+	["TeleportService TeleportAsync"] = require(Shared.nodes.teleportservice:WaitForChild("TeleportAsync")),
+	["Event TeleportService LocalPlayerArrivedFromTeleport"] = require(Shared.nodes.teleportservice:WaitForChild("LocalPlayerArrivedFromTeleport")),
+	["Event TeleportService TeleportInitFailed"] = require(Shared.nodes.teleportservice:WaitForChild("TeleportInitFailed")),
 
 	-- UserInputService nodes
 	["UserInputService CreateVirtualInput"] = require(Shared.nodes.userinputservice:WaitForChild("CreateVirtualInput")),
