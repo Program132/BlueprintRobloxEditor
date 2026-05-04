@@ -25,7 +25,7 @@ end
 function PromptExperienceDetailsAsync:toLuau()
 	local player = self:getInput("Player").Value or "nil"
 	local universeId = self:getInput("UniverseId").Value or "0"
-	local resVar = `result_{self.ID:gsub("-", "_")}`
+	local resVar = `result_{self.Id:gsub("-", "_")}`
 	
 	self:getOutput("Result").Value = resVar
 	

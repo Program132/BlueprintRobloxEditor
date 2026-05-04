@@ -27,7 +27,7 @@ function TeleportAsync:toLuau()
 	local placeId = self:getInput("PlaceId").Value or "0"
 	local players = self:getInput("Players").Value or "{}"
 	local options = self:getInput("TeleportOptions").Value or "nil"
-	local resVar = `result_{self.ID:gsub("-", "_")}`
+	local resVar = `result_{self.Id:gsub("-", "_")}`
 	
 	self:getOutput("Result").Value = resVar
 	

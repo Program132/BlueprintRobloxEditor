@@ -24,8 +24,8 @@ end
 
 function GetPlayerPlaceInstanceAsync:toLuau()
 	local userId = self:getInput("UserId").Value or "0"
-	local jobIdVar = `jobId_{self.ID:gsub("-", "_")}`
-	local placeIdVar = `placeId_{self.ID:gsub("-", "_")}`
+	local jobIdVar = `jobId_{self.Id:gsub("-", "_")}`
+	local placeIdVar = `placeId_{self.Id:gsub("-", "_")}`
 	
 	self:getOutput("InstanceId").Value = jobIdVar
 	self:getOutput("PlaceId").Value = placeIdVar

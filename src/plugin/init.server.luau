@@ -143,6 +143,8 @@ local Nodes = {
 	["Enum ScreenOrientation"] = require(Shared.nodes.enums:WaitForChild("ScreenOrientation")),
 	["Enum VirtualCursorMode"] = require(Shared.nodes.enums:WaitForChild("VirtualCursorMode")),
 	["Enum TeleportResult"] = require(Shared.nodes.enums:WaitForChild("TeleportResult")),
+	["Enum DataStoreRequestType"] = require(Shared.nodes.enums:WaitForChild("DataStoreRequestType")),
+	["Enum SortDirection"] = require(Shared.nodes.enums:WaitForChild("SortDirection")),
 	["Color3 fromRGB"] = require(Shared.nodes.color:WaitForChild("FromRGB")),
 	["Color3 fromHSV"] = require(Shared.nodes.color:WaitForChild("FromHSV")),
 	["Color3 fromHex"] = require(Shared.nodes.color:WaitForChild("FromHex")),
@@ -324,6 +326,23 @@ local Nodes = {
 	["TeleportService TeleportAsync"] = require(Shared.nodes.teleportservice:WaitForChild("TeleportAsync")),
 	["Event TeleportService LocalPlayerArrivedFromTeleport"] = require(Shared.nodes.teleportservice:WaitForChild("LocalPlayerArrivedFromTeleport")),
 	["Event TeleportService TeleportInitFailed"] = require(Shared.nodes.teleportservice:WaitForChild("TeleportInitFailed")),
+
+	-- DataStoreService nodes
+	["DataStoreService GetDataStore"] = require(Shared.nodes.datastore:WaitForChild("GetDataStore")),
+	["DataStoreService GetGlobalDataStore"] = require(Shared.nodes.datastore:WaitForChild("GetGlobalDataStore")),
+	["DataStoreService GetOrderedDataStore"] = require(Shared.nodes.datastore:WaitForChild("GetOrderedDataStore")),
+	["DataStoreService GetRequestBudgetForRequestType"] = require(Shared.nodes.datastore:WaitForChild("GetRequestBudgetForRequestType")),
+	["DataStoreService ListDataStoresAsync"] = require(Shared.nodes.datastore:WaitForChild("ListDataStoresAsync")),
+	["DataStoreService SetRateLimitForRequestType"] = require(Shared.nodes.datastore:WaitForChild("SetRateLimitForRequestType")),
+	["DataStore GetVersionAsync"] = require(Shared.nodes.datastore:WaitForChild("GetVersionAsync")),
+	["DataStore GetVersionAtTimeAsync"] = require(Shared.nodes.datastore:WaitForChild("GetVersionAtTimeAsync")),
+	["DataStore ListKeysAsync"] = require(Shared.nodes.datastore:WaitForChild("ListKeysAsync")),
+	["DataStore ListVersionsAsync"] = require(Shared.nodes.datastore:WaitForChild("ListVersionsAsync")),
+	["DataStore GetAsync"] = require(Shared.nodes.datastore:WaitForChild("GetAsync")),
+	["DataStore IncrementAsync"] = require(Shared.nodes.datastore:WaitForChild("IncrementAsync")),
+	["DataStore RemoveAsync"] = require(Shared.nodes.datastore:WaitForChild("RemoveAsync")),
+	["DataStore SetAsync"] = require(Shared.nodes.datastore:WaitForChild("SetAsync")),
+	["DataStore UpdateAsync"] = require(Shared.nodes.datastore:WaitForChild("UpdateAsync")),
 
 	-- UserInputService nodes
 	["UserInputService CreateVirtualInput"] = require(Shared.nodes.userinputservice:WaitForChild("CreateVirtualInput")),

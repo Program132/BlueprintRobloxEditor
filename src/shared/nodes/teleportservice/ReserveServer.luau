@@ -24,8 +24,8 @@ end
 
 function ReserveServer:toLuau()
 	local placeId = self:getInput("PlaceId").Value or "0"
-	local accessCodeVar = `accessCode_{self.ID:gsub("-", "_")}`
-	local privateServerIdVar = `privateServerId_{self.ID:gsub("-", "_")}`
+	local accessCodeVar = `accessCode_{self.Id:gsub("-", "_")}`
+	local privateServerIdVar = `privateServerId_{self.Id:gsub("-", "_")}`
 	
 	self:getOutput("AccessCode").Value = accessCodeVar
 	self:getOutput("PrivateServerId").Value = privateServerIdVar

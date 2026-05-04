@@ -409,6 +409,29 @@ local NODES_DATA = {
 			{ id = "Enum ScreenOrientation", name = "ScreenOrientation", type = "Enum" },
 			{ id = "Enum VirtualCursorMode", name = "VirtualCursorMode", type = "Enum" },
 			{ id = "Enum TeleportResult", name = "TeleportResult", type = "Enum" },
+			{ id = "Enum DataStoreRequestType", name = "DataStoreRequestType", type = "Enum" },
+			{ id = "Enum SortDirection", name = "SortDirection", type = "Enum" },
+		}
+	},
+	{
+		category = "DataStoreService",
+		color = Color3.fromRGB(180, 40, 40),
+		items = {
+			{ id = "DataStoreService GetDataStore", name = "DataStoreService GetDataStore", type = "Function" },
+			{ id = "DataStoreService GetGlobalDataStore", name = "DataStoreService GetGlobalDataStore", type = "Function" },
+			{ id = "DataStoreService GetOrderedDataStore", name = "DataStoreService GetOrderedDataStore", type = "Function" },
+			{ id = "DataStoreService GetRequestBudgetForRequestType", name = "DataStoreService GetRequestBudgetForRequestType", type = "Function" },
+			{ id = "DataStoreService ListDataStoresAsync", name = "DataStoreService ListDataStoresAsync", type = "Method" },
+			{ id = "DataStoreService SetRateLimitForRequestType", name = "DataStoreService SetRateLimitForRequestType", type = "Method" },
+			{ id = "DataStore GetVersionAsync", name = "DataStore GetVersionAsync", type = "Method" },
+			{ id = "DataStore GetVersionAtTimeAsync", name = "DataStore GetVersionAtTimeAsync", type = "Method" },
+			{ id = "DataStore ListKeysAsync", name = "DataStore ListKeysAsync", type = "Method" },
+			{ id = "DataStore ListVersionsAsync", name = "DataStore ListVersionsAsync", type = "Method" },
+			{ id = "DataStore GetAsync", name = "DataStore GetAsync", type = "Method" },
+			{ id = "DataStore IncrementAsync", name = "DataStore IncrementAsync", type = "Method" },
+			{ id = "DataStore RemoveAsync", name = "DataStore RemoveAsync", type = "Method" },
+			{ id = "DataStore SetAsync", name = "DataStore SetAsync", type = "Method" },
+			{ id = "DataStore UpdateAsync", name = "DataStore UpdateAsync", type = "Method" },
 		}
 	},
 	{
