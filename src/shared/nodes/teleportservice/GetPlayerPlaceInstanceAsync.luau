@@ -8,14 +8,12 @@ GetPlayerPlaceInstanceAsync.__index = GetPlayerPlaceInstanceAsync
 setmetatable(GetPlayerPlaceInstanceAsync, Node)
 
 function GetPlayerPlaceInstanceAsync.new()
-	local self = Node.new("TeleportService GetPlayerPlaceInstanceAsync", NodeType.METHOD)
+	local self = Node.new("TeleportService GetPlayerPlaceInstanceAsync", NodeType.FUNCTION)
 	setmetatable(self, GetPlayerPlaceInstanceAsync)
 	self:editColor(Color3.fromRGB(0, 150, 150))
 	
-	self:addInput(IO.Input.new("Exec", ""))
 	self:addInput(IO.Input.new("UserId", "0"))
 	
-	self:addOutput(IO.Output.new("Exec", ""))
 	self:addOutput(IO.Output.new("InstanceId", "nil"))
 	self:addOutput(IO.Output.new("PlaceId", "0"))
 	
@@ -24,13 +22,11 @@ end
 
 function GetPlayerPlaceInstanceAsync:toLuau()
 	local userId = self:getInput("UserId").Value or "0"
-	local jobIdVar = `jobId_{self.Id:gsub("-", "_")}`
-	local placeIdVar = `placeId_{self.Id:gsub("-", "_")}`
 	
-	self:getOutput("InstanceId").Value = jobIdVar
-	self:getOutput("PlaceId").Value = placeIdVar
+	self:getOutput("InstanceId").Value = `(select(1, game:GetService("TeleportService"):GetPlayerPlaceInstanceAsync({userId})))`
+	self:getOutput("PlaceId").Value = `(select(2, game:GetService("TeleportService"):GetPlayerPlaceInstanceAsync({userId})))`
 	
-	return `local {jobIdVar}, {placeIdVar} = game:GetService("TeleportService"):GetPlayerPlaceInstanceAsync({userId})\n`
+	return ""
 end
 
 return GetPlayerPlaceInstanceAsync

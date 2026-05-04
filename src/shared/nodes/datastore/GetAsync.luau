@@ -8,16 +8,14 @@ GetAsync.__index = GetAsync
 setmetatable(GetAsync, Node)
 
 function GetAsync.new()
-	local self = Node.new("DataStore GetAsync", NodeType.METHOD)
+	local self = Node.new("DataStore GetAsync", NodeType.FUNCTION)
 	setmetatable(self, GetAsync)
 	self:editColor(Color3.fromRGB(180, 40, 40))
 	
-	self:addInput(IO.Input.new("Exec", ""))
 	self:addInput(IO.Input.new("DataStore", "nil"))
 	self:addInput(IO.Input.new("Key", '""'))
 	self:addInput(IO.Input.new("Options", "nil"))
 	
-	self:addOutput(IO.Output.new("Exec", ""))
 	self:addOutput(IO.Output.new("Value", "nil"))
 	self:addOutput(IO.Output.new("Info", "nil"))
 	
@@ -28,13 +26,11 @@ function GetAsync:toLuau()
 	local ds = self:getInput("DataStore").Value or "nil"
 	local key = self:getInput("Key").Value or '""'
 	local options = self:getInput("Options").Value or "nil"
-	local valVar = `value_{self.Id:gsub("-", "_")}`
-	local infoVar = `info_{self.Id:gsub("-", "_")}`
 	
-	self:getOutput("Value").Value = valVar
-	self:getOutput("Info").Value = infoVar
+	self:getOutput("Value").Value = `(select(1, {ds}:GetAsync({key}, {options})))`
+	self:getOutput("Info").Value = `(select(2, {ds}:GetAsync({key}, {options})))`
 	
-	return `local {valVar}, {infoVar} = {ds}:GetAsync({key}, {options})\n`
+	return ""
 end
 
 return GetAsync

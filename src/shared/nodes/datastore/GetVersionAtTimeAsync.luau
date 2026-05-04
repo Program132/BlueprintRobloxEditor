@@ -8,16 +8,14 @@ GetVersionAtTimeAsync.__index = GetVersionAtTimeAsync
 setmetatable(GetVersionAtTimeAsync, Node)
 
 function GetVersionAtTimeAsync.new()
-	local self = Node.new("DataStore GetVersionAtTimeAsync", NodeType.METHOD)
+	local self = Node.new("DataStore GetVersionAtTimeAsync", NodeType.FUNCTION)
 	setmetatable(self, GetVersionAtTimeAsync)
 	self:editColor(Color3.fromRGB(180, 40, 40))
 	
-	self:addInput(IO.Input.new("Exec", ""))
 	self:addInput(IO.Input.new("DataStore", "nil"))
 	self:addInput(IO.Input.new("Key", '""'))
 	self:addInput(IO.Input.new("Timestamp", "0"))
 	
-	self:addOutput(IO.Output.new("Exec", ""))
 	self:addOutput(IO.Output.new("Value", "nil"))
 	self:addOutput(IO.Output.new("Info", "nil"))
 	
@@ -28,13 +26,11 @@ function GetVersionAtTimeAsync:toLuau()
 	local ds = self:getInput("DataStore").Value or "nil"
 	local key = self:getInput("Key").Value or '""'
 	local timestamp = self:getInput("Timestamp").Value or "0"
-	local valVar = `value_{self.Id:gsub("-", "_")}`
-	local infoVar = `info_{self.Id:gsub("-", "_")}`
 	
-	self:getOutput("Value").Value = valVar
-	self:getOutput("Info").Value = infoVar
+	self:getOutput("Value").Value = `(select(1, {ds}:GetVersionAtTimeAsync({key}, {timestamp})))`
+	self:getOutput("Info").Value = `(select(2, {ds}:GetVersionAtTimeAsync({key}, {timestamp})))`
 	
-	return `local {valVar}, {infoVar} = {ds}:GetVersionAtTimeAsync({key}, {timestamp})\n`
+	return ""
 end
 
 return GetVersionAtTimeAsync
