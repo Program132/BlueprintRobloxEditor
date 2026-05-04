@@ -98,6 +98,7 @@ local Nodes = {
 	["Set Variable"] = require(Shared.nodes.variables.Set),
 	["If"]          = require(Shared.nodes.control.If),
 	["While"]       = require(Shared.nodes.control.While),
+	["pcall"]       = require(Shared.nodes.control.Pcall),
 	["For"]         = require(Shared.nodes.control.For),
 	["Require"]     = require(Shared.nodes.modules.Require),
 	["Module Call"] = require(Shared.nodes.modules.ModuleCall),

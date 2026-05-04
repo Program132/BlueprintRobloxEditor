@@ -330,7 +330,8 @@ local NODES_DATA = {
 		color = Color3.fromRGB(130, 40, 180),
 		items = {
 			{ id = "If", name = "If / Branch", type = "Control" },
-			{ id = "While", name = "While Loop", type = "Control" },
+			{ id = "While", name = "While", type = "Control" },
+			{ id = "pcall", name = "pcall", type = "Control" },
 			{ id = "For", name = "For Loop", type = "Control" }
 		}
 	},
