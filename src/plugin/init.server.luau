@@ -151,6 +151,10 @@ local Nodes = {
 	["Enum RolloutState"] = require(Shared.nodes.enums:WaitForChild("RolloutState")),
 	["Enum ProximityPromptInputType"] = require(Shared.nodes.enums:WaitForChild("ProximityPromptInputType")),
 	["Enum GroupMembershipStatus"] = require(Shared.nodes.enums:WaitForChild("GroupMembershipStatus")),
+	["Enum ReverbType"] = require(Shared.nodes.enums:WaitForChild("ReverbType")),
+	["Enum ListenerLocation"] = require(Shared.nodes.enums:WaitForChild("ListenerLocation")),
+	["Enum VolumetricAudio"] = require(Shared.nodes.enums:WaitForChild("VolumetricAudio")),
+	["Enum ListenerType"] = require(Shared.nodes.enums:WaitForChild("ListenerType")),
 	["Enum TeleportResult"] = require(Shared.nodes.enums:WaitForChild("TeleportResult")),
 	["Enum DataStoreRequestType"] = require(Shared.nodes.enums:WaitForChild("DataStoreRequestType")),
 	["Enum SortDirection"] = require(Shared.nodes.enums:WaitForChild("SortDirection")),
@@ -519,6 +523,29 @@ local Nodes = {
 	["GroupService GetGroupInfoAsync"] = require(Shared.nodes.groupservice:WaitForChild("GetGroupInfoAsync")),
 	["GroupService GetGroupsAsync"] = require(Shared.nodes.groupservice:WaitForChild("GetGroupsAsync")),
 	["GroupService PromptJoinAsync"] = require(Shared.nodes.groupservice:WaitForChild("PromptJoinAsync")),
+
+	-- PathfindingService nodes
+	["Pathfinding CreatePath"] = require(Shared.nodes.pathfindingservice:WaitForChild("CreatePath")),
+
+	-- TextChatService nodes
+	["TextChatService CanUserChatAsync"] = require(Shared.nodes.textchatservice:WaitForChild("CanUserChatAsync")),
+	["TextChatService CanUsersChatAsync"] = require(Shared.nodes.textchatservice:WaitForChild("CanUsersChatAsync")),
+	["TextChatService CanUsersDirectChatAsync"] = require(Shared.nodes.textchatservice:WaitForChild("CanUsersDirectChatAsync")),
+	["TextChatService DisplayBubble"] = require(Shared.nodes.textchatservice:WaitForChild("DisplayBubble")),
+	["TextChatService GetChatGroupsAsync"] = require(Shared.nodes.textchatservice:WaitForChild("GetChatGroupsAsync")),
+	["TextChatService BubbleDisplayed"] = require(Shared.nodes.textchatservice:WaitForChild("BubbleDisplayed")),
+	["TextChatService MessageReceived"] = require(Shared.nodes.textchatservice:WaitForChild("MessageReceived")),
+	["TextChatService SendingMessage"] = require(Shared.nodes.textchatservice:WaitForChild("SendingMessage")),
+	["Instance to TextChatService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToTextChatService")),
+
+	-- SoundService nodes
+	["SoundService GetListener"] = require(Shared.nodes.soundservice:WaitForChild("GetListener")),
+	["SoundService GetMixerTime"] = require(Shared.nodes.soundservice:WaitForChild("GetMixerTime")),
+	["SoundService OpenAttenuationCurveEditor"] = require(Shared.nodes.soundservice:WaitForChild("OpenAttenuationCurveEditor")),
+	["SoundService OpenDirectionalCurveEditor"] = require(Shared.nodes.soundservice:WaitForChild("OpenDirectionalCurveEditor")),
+	["SoundService PlayLocalSound"] = require(Shared.nodes.soundservice:WaitForChild("PlayLocalSound")),
+	["SoundService SetListener"] = require(Shared.nodes.soundservice:WaitForChild("SetListener")),
+	["Instance to SoundService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToSoundService")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")

@@ -412,6 +412,10 @@ local NODES_DATA = {
 			{ id = "Enum VirtualCursorMode", name = "VirtualCursorMode", type = "Enum" },
 			{ id = "Enum ProximityPromptInputType", name = "ProximityPromptInputType", type = "Enum" },
 			{ id = "Enum StepFrequency", name = "StepFrequency", type = "Enum" },
+			{ id = "Enum ReverbType", name = "ReverbType", type = "Enum" },
+			{ id = "Enum ListenerLocation", name = "ListenerLocation", type = "Enum" },
+			{ id = "Enum VolumetricAudio", name = "VolumetricAudio", type = "Enum" },
+			{ id = "Enum ListenerType", name = "ListenerType", type = "Enum" },
 			{ id = "Enum WebStreamClientType", name = "WebStreamClientType", type = "Enum" },
 			{ id = "Enum HttpContentType", name = "HttpContentType", type = "Enum" },
 			{ id = "Enum LightingStyle", name = "LightingStyle", type = "Enum" },
@@ -709,6 +713,41 @@ local NODES_DATA = {
 			{ id = "GroupService GetGroupInfoAsync", name = "GroupService GetGroupInfoAsync", type = "Method" },
 			{ id = "GroupService GetGroupsAsync", name = "GroupService GetGroupsAsync", type = "Method" },
 			{ id = "GroupService PromptJoinAsync", name = "GroupService PromptJoinAsync", type = "Method" },
+		}
+	},
+	{
+		category = "Pathfinding",
+		color = Color3.fromRGB(50, 200, 100),
+		items = {
+			{ id = "Pathfinding CreatePath", name = "Pathfinding CreatePath", type = "Function" },
+		}
+	},
+	{
+		category = "TextChatService",
+		color = Color3.fromRGB(200, 50, 255),
+		items = {
+			{ id = "TextChatService CanUserChatAsync", name = "TextChatService CanUserChatAsync", type = "Function" },
+			{ id = "TextChatService CanUsersChatAsync", name = "TextChatService CanUsersChatAsync", type = "Function" },
+			{ id = "TextChatService CanUsersDirectChatAsync", name = "TextChatService CanUsersDirectChatAsync", type = "Function" },
+			{ id = "TextChatService DisplayBubble", name = "TextChatService DisplayBubble", type = "Method" },
+			{ id = "TextChatService GetChatGroupsAsync", name = "TextChatService GetChatGroupsAsync", type = "Function" },
+			{ id = "TextChatService BubbleDisplayed", name = "TextChatService BubbleDisplayed", type = "Event" },
+			{ id = "TextChatService MessageReceived", name = "TextChatService MessageReceived", type = "Event" },
+			{ id = "TextChatService SendingMessage", name = "TextChatService SendingMessage", type = "Event" },
+			{ id = "Instance to TextChatService", name = "Instance to TextChatService", type = "Function" },
+		}
+	},
+	{
+		category = "SoundService",
+		color = Color3.fromRGB(255, 100, 200),
+		items = {
+			{ id = "SoundService GetListener", name = "SoundService GetListener", type = "Function" },
+			{ id = "SoundService GetMixerTime", name = "SoundService GetMixerTime", type = "Function" },
+			{ id = "SoundService OpenAttenuationCurveEditor", name = "SoundService OpenAttenuationCurveEditor", type = "Method" },
+			{ id = "SoundService OpenDirectionalCurveEditor", name = "SoundService OpenDirectionalCurveEditor", type = "Method" },
+			{ id = "SoundService PlayLocalSound", name = "SoundService PlayLocalSound", type = "Method" },
+			{ id = "SoundService SetListener", name = "SoundService SetListener", type = "Method" },
+			{ id = "Instance to SoundService", name = "Instance to SoundService", type = "Function" },
 		}
 	}
 }
