@@ -538,6 +538,10 @@ local Nodes = {
 	["TextChatService SendingMessage"] = require(Shared.nodes.textchatservice:WaitForChild("SendingMessage")),
 	["Instance to TextChatService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToTextChatService")),
 
+	-- MessagingService nodes
+	["Messaging PublishAsync"] = require(Shared.nodes.messagingservice:WaitForChild("PublishAsync")),
+	["Messaging SubscribeAsync"] = require(Shared.nodes.messagingservice:WaitForChild("SubscribeAsync")),
+
 	-- SoundService nodes
 	["SoundService GetListener"] = require(Shared.nodes.soundservice:WaitForChild("GetListener")),
 	["SoundService GetMixerTime"] = require(Shared.nodes.soundservice:WaitForChild("GetMixerTime")),
@@ -546,6 +550,30 @@ local Nodes = {
 	["SoundService PlayLocalSound"] = require(Shared.nodes.soundservice:WaitForChild("PlayLocalSound")),
 	["SoundService SetListener"] = require(Shared.nodes.soundservice:WaitForChild("SetListener")),
 	["Instance to SoundService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToSoundService")),
+
+	-- MemoryStore nodes
+	["MemoryStore GetHashMap"] = require(Shared.nodes.memorystore:WaitForChild("GetHashMap")),
+	["MemoryStore GetQueue"] = require(Shared.nodes.memorystore:WaitForChild("GetQueue")),
+	["MemoryStore GetSortedMap"] = require(Shared.nodes.memorystore:WaitForChild("GetSortedMap")),
+
+	-- MemoryStore Object methods
+	["HashMap GetAsync"] = require(Shared.nodes.memorystore:WaitForChild("HashMapGetAsync")),
+	["HashMap ListItemsAsync"] = require(Shared.nodes.memorystore:WaitForChild("HashMapListItemsAsync")),
+	["HashMap RemoveAsync"] = require(Shared.nodes.memorystore:WaitForChild("HashMapRemoveAsync")),
+	["HashMap SetAsync"] = require(Shared.nodes.memorystore:WaitForChild("HashMapSetAsync")),
+	["HashMap UpdateAsync"] = require(Shared.nodes.memorystore:WaitForChild("HashMapUpdateAsync")),
+
+	["Queue AddAsync"] = require(Shared.nodes.memorystore:WaitForChild("QueueAddAsync")),
+	["Queue GetSizeAsync"] = require(Shared.nodes.memorystore:WaitForChild("QueueGetSizeAsync")),
+	["Queue ReadAsync"] = require(Shared.nodes.memorystore:WaitForChild("QueueReadAsync")),
+	["Queue RemoveAsync"] = require(Shared.nodes.memorystore:WaitForChild("QueueRemoveAsync")),
+
+	["SortedMap GetAsync"] = require(Shared.nodes.memorystore:WaitForChild("SortedMapGetAsync")),
+	["SortedMap GetRangeAsync"] = require(Shared.nodes.memorystore:WaitForChild("SortedMapGetRangeAsync")),
+	["SortedMap GetSizeAsync"] = require(Shared.nodes.memorystore:WaitForChild("SortedMapGetSizeAsync")),
+	["SortedMap RemoveAsync"] = require(Shared.nodes.memorystore:WaitForChild("SortedMapRemoveAsync")),
+	["SortedMap SetAsync"] = require(Shared.nodes.memorystore:WaitForChild("SortedMapSetAsync")),
+	["SortedMap UpdateAsync"] = require(Shared.nodes.memorystore:WaitForChild("SortedMapUpdateAsync")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")

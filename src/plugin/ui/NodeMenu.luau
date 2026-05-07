@@ -738,6 +738,14 @@ local NODES_DATA = {
 		}
 	},
 	{
+		category = "Messaging",
+		color = Color3.fromRGB(255, 150, 50),
+		items = {
+			{ id = "Messaging PublishAsync", name = "Messaging PublishAsync", type = "Method" },
+			{ id = "Messaging SubscribeAsync", name = "Messaging SubscribeAsync", type = "Event" },
+		}
+	},
+	{
 		category = "SoundService",
 		color = Color3.fromRGB(255, 100, 200),
 		items = {
@@ -748,6 +756,30 @@ local NODES_DATA = {
 			{ id = "SoundService PlayLocalSound", name = "SoundService PlayLocalSound", type = "Method" },
 			{ id = "SoundService SetListener", name = "SoundService SetListener", type = "Method" },
 			{ id = "Instance to SoundService", name = "Instance to SoundService", type = "Function" },
+		}
+	},
+	{
+		category = "MemoryStore",
+		color = Color3.fromRGB(50, 50, 150),
+		items = {
+			{ id = "MemoryStore GetHashMap", name = "MemoryStore GetHashMap", type = "Function" },
+			{ id = "MemoryStore GetQueue", name = "MemoryStore GetQueue", type = "Function" },
+			{ id = "MemoryStore GetSortedMap", name = "MemoryStore GetSortedMap", type = "Function" },
+			{ id = "HashMap GetAsync", name = "HashMap GetAsync", type = "Method" },
+			{ id = "HashMap ListItemsAsync", name = "HashMap ListItemsAsync", type = "Method" },
+			{ id = "HashMap RemoveAsync", name = "HashMap RemoveAsync", type = "Method" },
+			{ id = "HashMap SetAsync", name = "HashMap SetAsync", type = "Method" },
+			{ id = "HashMap UpdateAsync", name = "HashMap UpdateAsync", type = "Method" },
+			{ id = "Queue AddAsync", name = "Queue AddAsync", type = "Method" },
+			{ id = "Queue GetSizeAsync", name = "Queue GetSizeAsync", type = "Method" },
+			{ id = "Queue ReadAsync", name = "Queue ReadAsync", type = "Method" },
+			{ id = "Queue RemoveAsync", name = "Queue RemoveAsync", type = "Method" },
+			{ id = "SortedMap GetAsync", name = "SortedMap GetAsync", type = "Method" },
+			{ id = "SortedMap GetRangeAsync", name = "SortedMap GetRangeAsync", type = "Method" },
+			{ id = "SortedMap GetSizeAsync", name = "SortedMap GetSizeAsync", type = "Method" },
+			{ id = "SortedMap RemoveAsync", name = "SortedMap RemoveAsync", type = "Method" },
+			{ id = "SortedMap SetAsync", name = "SortedMap SetAsync", type = "Method" },
+			{ id = "SortedMap UpdateAsync", name = "SortedMap UpdateAsync", type = "Method" },
 		}
 	}
 }
