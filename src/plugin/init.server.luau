@@ -574,6 +574,29 @@ local Nodes = {
 	["SortedMap RemoveAsync"] = require(Shared.nodes.memorystore:WaitForChild("SortedMapRemoveAsync")),
 	["SortedMap SetAsync"] = require(Shared.nodes.memorystore:WaitForChild("SortedMapSetAsync")),
 	["SortedMap UpdateAsync"] = require(Shared.nodes.memorystore:WaitForChild("SortedMapUpdateAsync")),
+
+	-- AssetService nodes
+	["AssetService ComposeDecalAsync"] = require(Shared.nodes.assetservice:WaitForChild("ComposeDecalAsync")),
+	["AssetService CreateAssetAsync"] = require(Shared.nodes.assetservice:WaitForChild("CreateAssetAsync")),
+	["AssetService CreateAssetVersionAsync"] = require(Shared.nodes.assetservice:WaitForChild("CreateAssetVersionAsync")),
+	["AssetService CreateDataModelContentAsync"] = require(Shared.nodes.assetservice:WaitForChild("CreateDataModelContentAsync")),
+	["AssetService CreateEditableImage"] = require(Shared.nodes.assetservice:WaitForChild("CreateEditableImage")),
+	["AssetService CreateEditableImageAsync"] = require(Shared.nodes.assetservice:WaitForChild("CreateEditableImageAsync")),
+	["AssetService CreateEditableMesh"] = require(Shared.nodes.assetservice:WaitForChild("CreateEditableMesh")),
+	["AssetService CreateEditableMeshAsync"] = require(Shared.nodes.assetservice:WaitForChild("CreateEditableMeshAsync")),
+	["AssetService CreateMeshPartAsync"] = require(Shared.nodes.assetservice:WaitForChild("CreateMeshPartAsync")),
+	["AssetService CreatePlaceAsync"] = require(Shared.nodes.assetservice:WaitForChild("CreatePlaceAsync")),
+	["AssetService CreateSurfaceAppearanceAsync"] = require(Shared.nodes.assetservice:WaitForChild("CreateSurfaceAppearanceAsync")),
+	["AssetService GetAssetIdsForPackageAsync"] = require(Shared.nodes.assetservice:WaitForChild("GetAssetIdsForPackageAsync")),
+	["AssetService GetAudioMetadataAsync"] = require(Shared.nodes.assetservice:WaitForChild("GetAudioMetadataAsync")),
+	["AssetService GetBundleDetailsAsync"] = require(Shared.nodes.assetservice:WaitForChild("GetBundleDetailsAsync")),
+	["AssetService GetGamePlacesAsync"] = require(Shared.nodes.assetservice:WaitForChild("GetGamePlacesAsync")),
+	["AssetService LoadAssetAsync"] = require(Shared.nodes.assetservice:WaitForChild("LoadAssetAsync")),
+	["AssetService PromptCreateAssetAsync"] = require(Shared.nodes.assetservice:WaitForChild("PromptCreateAssetAsync")),
+	["AssetService PromptImportAnimationClipFromVideoAsync"] = require(Shared.nodes.assetservice:WaitForChild("PromptImportAnimationClipFromVideoAsync")),
+	["AssetService SavePlaceAsync"] = require(Shared.nodes.assetservice:WaitForChild("SavePlaceAsync")),
+	["AssetService SearchAudioAsync"] = require(Shared.nodes.assetservice:WaitForChild("SearchAudioAsync")),
+	["Instance to AssetService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToAssetService")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")

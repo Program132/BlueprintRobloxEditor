@@ -781,6 +781,33 @@ local NODES_DATA = {
 			{ id = "SortedMap SetAsync", name = "SortedMap SetAsync", type = "Method" },
 			{ id = "SortedMap UpdateAsync", name = "SortedMap UpdateAsync", type = "Method" },
 		}
+	},
+	{
+		category = "AssetService",
+		color = Color3.fromRGB(150, 100, 255),
+		items = {
+			{ id = "AssetService ComposeDecalAsync", name = "AssetService ComposeDecalAsync", type = "Method" },
+			{ id = "AssetService CreateAssetAsync", name = "AssetService CreateAssetAsync", type = "Method" },
+			{ id = "AssetService CreateAssetVersionAsync", name = "AssetService CreateAssetVersionAsync", type = "Method" },
+			{ id = "AssetService CreateDataModelContentAsync", name = "AssetService CreateDataModelContentAsync", type = "Method" },
+			{ id = "AssetService CreateEditableImage", name = "AssetService CreateEditableImage", type = "Function" },
+			{ id = "AssetService CreateEditableImageAsync", name = "AssetService CreateEditableImageAsync", type = "Method" },
+			{ id = "AssetService CreateEditableMesh", name = "AssetService CreateEditableMesh", type = "Function" },
+			{ id = "AssetService CreateEditableMeshAsync", name = "AssetService CreateEditableMeshAsync", type = "Method" },
+			{ id = "AssetService CreateMeshPartAsync", name = "AssetService CreateMeshPartAsync", type = "Method" },
+			{ id = "AssetService CreatePlaceAsync", name = "AssetService CreatePlaceAsync", type = "Method" },
+			{ id = "AssetService CreateSurfaceAppearanceAsync", name = "AssetService CreateSurfaceAppearanceAsync", type = "Method" },
+			{ id = "AssetService GetAssetIdsForPackageAsync", name = "AssetService GetAssetIdsForPackageAsync", type = "Method" },
+			{ id = "AssetService GetAudioMetadataAsync", name = "AssetService GetAudioMetadataAsync", type = "Method" },
+			{ id = "AssetService GetBundleDetailsAsync", name = "AssetService GetBundleDetailsAsync", type = "Method" },
+			{ id = "AssetService GetGamePlacesAsync", name = "AssetService GetGamePlacesAsync", type = "Method" },
+			{ id = "AssetService LoadAssetAsync", name = "AssetService LoadAssetAsync", type = "Method" },
+			{ id = "AssetService PromptCreateAssetAsync", name = "AssetService PromptCreateAssetAsync", type = "Method" },
+			{ id = "AssetService PromptImportAnimationClipFromVideoAsync", name = "AssetService PromptImportAnimationClipFromVideoAsync", type = "Method" },
+			{ id = "AssetService SavePlaceAsync", name = "AssetService SavePlaceAsync", type = "Method" },
+			{ id = "AssetService SearchAudioAsync", name = "AssetService SearchAudioAsync", type = "Method" },
+			{ id = "Instance to AssetService", name = "Instance to AssetService", type = "Function" },
+		}
 	}
 }
 
