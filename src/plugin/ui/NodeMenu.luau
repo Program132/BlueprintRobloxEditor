@@ -411,6 +411,8 @@ local NODES_DATA = {
 			{ id = "Enum VirtualCursorMode", name = "VirtualCursorMode", type = "Enum" },
 			{ id = "Enum WebStreamClientType", name = "WebStreamClientType", type = "Enum" },
 			{ id = "Enum HttpContentType", name = "HttpContentType", type = "Enum" },
+			{ id = "Enum LightingStyle", name = "LightingStyle", type = "Enum" },
+			{ id = "Enum RolloutState", name = "RolloutState", type = "Enum" },
 			{ id = "Enum StepFrequency", name = "StepFrequency", type = "Enum" },
 			{ id = "Enum StepFrequency", name = "StepFrequency", type = "Enum" },
 			{ id = "Enum RunState", name = "RunState", type = "Enum" },
@@ -609,6 +611,18 @@ local NODES_DATA = {
 			{ id = "HttpService GetSecret", name = "HttpService GetSecret", type = "Function" },
 			{ id = "HttpService CreateWebStreamClient", name = "HttpService CreateWebStreamClient", type = "Function" },
 			{ id = "Instance to HttpService", name = "Instance to HttpService", type = "Function" },
+		}
+	},
+	{
+		category = "Lighting",
+		color = Color3.fromRGB(255, 200, 50),
+		items = {
+			{ id = "Lighting GetMinutesAfterMidnight", name = "Lighting GetMinutesAfterMidnight", type = "Function" },
+			{ id = "Lighting GetSunDirection", name = "Lighting GetSunDirection", type = "Function" },
+			{ id = "Lighting GetMoonDirection", name = "Lighting GetMoonDirection", type = "Function" },
+			{ id = "Lighting SetMinutesAfterMidnight", name = "Lighting SetMinutesAfterMidnight", type = "Method" },
+			{ id = "Lighting LightingChanged", name = "Lighting LightingChanged", type = "Event" },
+			{ id = "Instance to Lighting", name = "Instance to Lighting", type = "Function" },
 		}
 	}
 }

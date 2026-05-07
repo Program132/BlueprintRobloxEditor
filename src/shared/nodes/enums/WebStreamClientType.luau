@@ -15,8 +15,8 @@ function WebStreamClientTypeNode.new()
 	setmetatable(self, WebStreamClientTypeNode)
 	self:editColor(Color3.fromRGB(150, 150, 40))
 	
-	self:addInput(IO.Input.new("Type", "Default", false, Types))
-	self:addOutput(IO.Output.new("Enum", "Enum.WebStreamClientType.Default"))
+	self:addInput(IO.Input.new("Type", "SSE", false, Types))
+	self:addOutput(IO.Output.new("Enum", "Enum.WebStreamClientType.SSE"))
 	
 	return self
 end

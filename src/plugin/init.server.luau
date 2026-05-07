@@ -147,6 +147,8 @@ local Nodes = {
 	["Enum VirtualCursorMode"] = require(Shared.nodes.enums:WaitForChild("VirtualCursorMode")),
 	["Enum WebStreamClientType"] = require(Shared.nodes.enums:WaitForChild("WebStreamClientType")),
 	["Enum HttpContentType"] = require(Shared.nodes.enums:WaitForChild("HttpContentType")),
+	["Enum LightingStyle"] = require(Shared.nodes.enums:WaitForChild("LightingStyle")),
+	["Enum RolloutState"] = require(Shared.nodes.enums:WaitForChild("RolloutState")),
 	["Enum TeleportResult"] = require(Shared.nodes.enums:WaitForChild("TeleportResult")),
 	["Enum DataStoreRequestType"] = require(Shared.nodes.enums:WaitForChild("DataStoreRequestType")),
 	["Enum SortDirection"] = require(Shared.nodes.enums:WaitForChild("SortDirection")),
@@ -442,6 +444,14 @@ local Nodes = {
 	["HttpService RequestAsync"] = require(Shared.nodes.httpservice:WaitForChild("RequestAsync")),
 	["HttpService UrlEncode"] = require(Shared.nodes.httpservice:WaitForChild("UrlEncode")),
 	["Instance to HttpService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToHttpService")),
+
+	-- Lighting nodes
+	["Lighting GetMinutesAfterMidnight"] = require(Shared.nodes.lighting:WaitForChild("GetMinutesAfterMidnight")),
+	["Lighting GetSunDirection"] = require(Shared.nodes.lighting:WaitForChild("GetSunDirection")),
+	["Lighting GetMoonDirection"] = require(Shared.nodes.lighting:WaitForChild("GetMoonDirection")),
+	["Lighting SetMinutesAfterMidnight"] = require(Shared.nodes.lighting:WaitForChild("SetMinutesAfterMidnight")),
+	["Lighting LightingChanged"] = require(Shared.nodes.lighting:WaitForChild("LightingChanged")),
+	["Instance to Lighting"] = require(Shared.nodes.conversions:WaitForChild("InstanceToLighting")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")
