@@ -409,6 +409,9 @@ local NODES_DATA = {
 			{ id = "Enum RtlTextSupport", name = "RtlTextSupport", type = "Enum" },
 			{ id = "Enum ScreenOrientation", name = "ScreenOrientation", type = "Enum" },
 			{ id = "Enum VirtualCursorMode", name = "VirtualCursorMode", type = "Enum" },
+			{ id = "Enum WebStreamClientType", name = "WebStreamClientType", type = "Enum" },
+			{ id = "Enum HttpContentType", name = "HttpContentType", type = "Enum" },
+			{ id = "Enum StepFrequency", name = "StepFrequency", type = "Enum" },
 			{ id = "Enum StepFrequency", name = "StepFrequency", type = "Enum" },
 			{ id = "Enum RunState", name = "RunState", type = "Enum" },
 			{ id = "Enum TeleportResult", name = "TeleportResult", type = "Enum" },
@@ -590,6 +593,22 @@ local NODES_DATA = {
 			{ id = "RunService RenderStepped", name = "RunService RenderStepped", type = "Event" },
 			{ id = "RunService Rollback", name = "RunService Rollback", type = "Event" },
 			{ id = "RunService Stepped", name = "RunService Stepped", type = "Event" },
+		}
+	},
+	{
+		category = "HttpService",
+		color = Color3.fromRGB(50, 150, 200),
+		items = {
+			{ id = "HttpService JSONEncode", name = "HttpService JSONEncode", type = "Function" },
+			{ id = "HttpService JSONDecode", name = "HttpService JSONDecode", type = "Function" },
+			{ id = "HttpService GenerateGUID", name = "HttpService GenerateGUID", type = "Function" },
+			{ id = "HttpService UrlEncode", name = "HttpService UrlEncode", type = "Function" },
+			{ id = "HttpService GetAsync", name = "HttpService GetAsync", type = "Method" },
+			{ id = "HttpService PostAsync", name = "HttpService PostAsync", type = "Method" },
+			{ id = "HttpService RequestAsync", name = "HttpService RequestAsync", type = "Method" },
+			{ id = "HttpService GetSecret", name = "HttpService GetSecret", type = "Function" },
+			{ id = "HttpService CreateWebStreamClient", name = "HttpService CreateWebStreamClient", type = "Function" },
+			{ id = "Instance to HttpService", name = "Instance to HttpService", type = "Function" },
 		}
 	}
 }

@@ -145,6 +145,8 @@ local Nodes = {
 	["Enum RtlTextSupport"] = require(Shared.nodes.enums:WaitForChild("RtlTextSupport")),
 	["Enum ScreenOrientation"] = require(Shared.nodes.enums:WaitForChild("ScreenOrientation")),
 	["Enum VirtualCursorMode"] = require(Shared.nodes.enums:WaitForChild("VirtualCursorMode")),
+	["Enum WebStreamClientType"] = require(Shared.nodes.enums:WaitForChild("WebStreamClientType")),
+	["Enum HttpContentType"] = require(Shared.nodes.enums:WaitForChild("HttpContentType")),
 	["Enum TeleportResult"] = require(Shared.nodes.enums:WaitForChild("TeleportResult")),
 	["Enum DataStoreRequestType"] = require(Shared.nodes.enums:WaitForChild("DataStoreRequestType")),
 	["Enum SortDirection"] = require(Shared.nodes.enums:WaitForChild("SortDirection")),
@@ -428,6 +430,18 @@ local Nodes = {
 	["RunService RenderStepped"] = require(Shared.nodes.runservice:WaitForChild("RenderStepped")),
 	["RunService Rollback"] = require(Shared.nodes.runservice:WaitForChild("Rollback")),
 	["RunService Stepped"] = require(Shared.nodes.runservice:WaitForChild("Stepped")),
+
+	-- HttpService nodes
+	["HttpService CreateWebStreamClient"] = require(Shared.nodes.httpservice:WaitForChild("CreateWebStreamClient")),
+	["HttpService GenerateGUID"] = require(Shared.nodes.httpservice:WaitForChild("GenerateGUID")),
+	["HttpService GetAsync"] = require(Shared.nodes.httpservice:WaitForChild("GetAsync")),
+	["HttpService GetSecret"] = require(Shared.nodes.httpservice:WaitForChild("GetSecret")),
+	["HttpService JSONDecode"] = require(Shared.nodes.httpservice:WaitForChild("JSONDecode")),
+	["HttpService JSONEncode"] = require(Shared.nodes.httpservice:WaitForChild("JSONEncode")),
+	["HttpService PostAsync"] = require(Shared.nodes.httpservice:WaitForChild("PostAsync")),
+	["HttpService RequestAsync"] = require(Shared.nodes.httpservice:WaitForChild("RequestAsync")),
+	["HttpService UrlEncode"] = require(Shared.nodes.httpservice:WaitForChild("UrlEncode")),
+	["Instance to HttpService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToHttpService")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")
