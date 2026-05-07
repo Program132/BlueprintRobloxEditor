@@ -409,6 +409,8 @@ local NODES_DATA = {
 			{ id = "Enum RtlTextSupport", name = "RtlTextSupport", type = "Enum" },
 			{ id = "Enum ScreenOrientation", name = "ScreenOrientation", type = "Enum" },
 			{ id = "Enum VirtualCursorMode", name = "VirtualCursorMode", type = "Enum" },
+			{ id = "Enum ProximityPromptInputType", name = "ProximityPromptInputType", type = "Enum" },
+			{ id = "Enum StepFrequency", name = "StepFrequency", type = "Enum" },
 			{ id = "Enum WebStreamClientType", name = "WebStreamClientType", type = "Enum" },
 			{ id = "Enum HttpContentType", name = "HttpContentType", type = "Enum" },
 			{ id = "Enum LightingStyle", name = "LightingStyle", type = "Enum" },
@@ -646,6 +648,33 @@ local NODES_DATA = {
 			{ id = "CollectionService GetInstanceRemovedSignal", name = "CollectionService GetInstanceRemovedSignal", type = "Event" },
 			{ id = "CollectionService TagAdded", name = "CollectionService TagAdded", type = "Event" },
 			{ id = "CollectionService TagRemoved", name = "CollectionService TagRemoved", type = "Event" },
+		}
+	},
+	{
+		category = "ProximityPrompt",
+		color = Color3.fromRGB(255, 100, 50),
+		items = {
+			{ id = "ProximityPrompt InputHoldBegin", name = "ProximityPrompt InputHoldBegin", type = "Method" },
+			{ id = "ProximityPrompt InputHoldEnd", name = "ProximityPrompt InputHoldEnd", type = "Method" },
+			{ id = "ProximityPrompt Triggered", name = "ProximityPrompt Triggered", type = "Event" },
+			{ id = "ProximityPrompt TriggerEnded", name = "ProximityPrompt TriggerEnded", type = "Event" },
+			{ id = "ProximityPrompt PromptButtonHoldBegan", name = "ProximityPrompt PromptButtonHoldBegan", type = "Event" },
+			{ id = "ProximityPrompt PromptButtonHoldEnded", name = "ProximityPrompt PromptButtonHoldEnded", type = "Event" },
+			{ id = "ProximityPrompt PromptShown", name = "ProximityPrompt PromptShown", type = "Event" },
+			{ id = "ProximityPrompt PromptHidden", name = "ProximityPrompt PromptHidden", type = "Event" },
+			{ id = "ProximityPrompt IndicatorShown", name = "ProximityPrompt IndicatorShown", type = "Event" },
+			{ id = "ProximityPrompt IndicatorHidden", name = "ProximityPrompt IndicatorHidden", type = "Event" },
+			{ id = "Instance to ProximityPrompt", name = "Instance to ProximityPrompt", type = "Function" },
+		}
+	},
+	{
+		category = "BadgeService",
+		color = Color3.fromRGB(255, 180, 50),
+		items = {
+			{ id = "BadgeService AwardBadgeAsync", name = "BadgeService AwardBadgeAsync", type = "Method" },
+			{ id = "BadgeService CheckUserBadgesAsync", name = "BadgeService CheckUserBadgesAsync", type = "Method" },
+			{ id = "BadgeService GetBadgeInfoAsync", name = "BadgeService GetBadgeInfoAsync", type = "Method" },
+			{ id = "BadgeService UserHasBadgeAsync", name = "BadgeService UserHasBadgeAsync", type = "Method" },
 		}
 	}
 }

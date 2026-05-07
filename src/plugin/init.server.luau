@@ -149,6 +149,7 @@ local Nodes = {
 	["Enum HttpContentType"] = require(Shared.nodes.enums:WaitForChild("HttpContentType")),
 	["Enum LightingStyle"] = require(Shared.nodes.enums:WaitForChild("LightingStyle")),
 	["Enum RolloutState"] = require(Shared.nodes.enums:WaitForChild("RolloutState")),
+	["Enum ProximityPromptInputType"] = require(Shared.nodes.enums:WaitForChild("ProximityPromptInputType")),
 	["Enum TeleportResult"] = require(Shared.nodes.enums:WaitForChild("TeleportResult")),
 	["Enum DataStoreRequestType"] = require(Shared.nodes.enums:WaitForChild("DataStoreRequestType")),
 	["Enum SortDirection"] = require(Shared.nodes.enums:WaitForChild("SortDirection")),
@@ -467,6 +468,25 @@ local Nodes = {
 	["CollectionService RemoveTag"] = require(Shared.nodes.collectionservice:WaitForChild("RemoveTag")),
 	["CollectionService TagAdded"] = require(Shared.nodes.collectionservice:WaitForChild("TagAdded")),
 	["CollectionService TagRemoved"] = require(Shared.nodes.collectionservice:WaitForChild("TagRemoved")),
+
+	-- ProximityPrompt nodes
+	["ProximityPrompt InputHoldBegin"] = require(Shared.nodes.proximityprompt:WaitForChild("InputHoldBegin")),
+	["ProximityPrompt InputHoldEnd"] = require(Shared.nodes.proximityprompt:WaitForChild("InputHoldEnd")),
+	["ProximityPrompt IndicatorHidden"] = require(Shared.nodes.proximityprompt:WaitForChild("IndicatorHidden")),
+	["ProximityPrompt IndicatorShown"] = require(Shared.nodes.proximityprompt:WaitForChild("IndicatorShown")),
+	["ProximityPrompt PromptButtonHoldBegan"] = require(Shared.nodes.proximityprompt:WaitForChild("PromptButtonHoldBegan")),
+	["ProximityPrompt PromptButtonHoldEnded"] = require(Shared.nodes.proximityprompt:WaitForChild("PromptButtonHoldEnded")),
+	["ProximityPrompt PromptHidden"] = require(Shared.nodes.proximityprompt:WaitForChild("PromptHidden")),
+	["ProximityPrompt PromptShown"] = require(Shared.nodes.proximityprompt:WaitForChild("PromptShown")),
+	["ProximityPrompt Triggered"] = require(Shared.nodes.proximityprompt:WaitForChild("Triggered")),
+	["ProximityPrompt TriggerEnded"] = require(Shared.nodes.proximityprompt:WaitForChild("TriggerEnded")),
+	["Instance to ProximityPrompt"] = require(Shared.nodes.conversions:WaitForChild("InstanceToProximityPrompt")),
+
+	-- BadgeService nodes
+	["BadgeService AwardBadgeAsync"] = require(Shared.nodes.badgeservice:WaitForChild("AwardBadgeAsync")),
+	["BadgeService CheckUserBadgesAsync"] = require(Shared.nodes.badgeservice:WaitForChild("CheckUserBadgesAsync")),
+	["BadgeService GetBadgeInfoAsync"] = require(Shared.nodes.badgeservice:WaitForChild("GetBadgeInfoAsync")),
+	["BadgeService UserHasBadgeAsync"] = require(Shared.nodes.badgeservice:WaitForChild("UserHasBadgeAsync")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")
