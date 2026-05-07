@@ -150,6 +150,7 @@ local Nodes = {
 	["Enum LightingStyle"] = require(Shared.nodes.enums:WaitForChild("LightingStyle")),
 	["Enum RolloutState"] = require(Shared.nodes.enums:WaitForChild("RolloutState")),
 	["Enum ProximityPromptInputType"] = require(Shared.nodes.enums:WaitForChild("ProximityPromptInputType")),
+	["Enum GroupMembershipStatus"] = require(Shared.nodes.enums:WaitForChild("GroupMembershipStatus")),
 	["Enum TeleportResult"] = require(Shared.nodes.enums:WaitForChild("TeleportResult")),
 	["Enum DataStoreRequestType"] = require(Shared.nodes.enums:WaitForChild("DataStoreRequestType")),
 	["Enum SortDirection"] = require(Shared.nodes.enums:WaitForChild("SortDirection")),
@@ -423,7 +424,7 @@ local Nodes = {
 	["RunService SetPredictionMode"] = require(Shared.nodes.runservice:WaitForChild("SetPredictionMode")),
 	["RunService Stop"] = require(Shared.nodes.runservice:WaitForChild("Stop")),
 	["RunService UnbindFromRenderStep"] = require(Shared.nodes.runservice:WaitForChild("UnbindFromRenderStep")),
-	["Instance to RunService"] = require(Shared.nodes.runservice:WaitForChild("InstanceToRunService")),
+	["Instance to RunService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToRunService")),
 	["RunService Heartbeat"] = require(Shared.nodes.runservice:WaitForChild("Heartbeat")),
 	["RunService Misprediction"] = require(Shared.nodes.runservice:WaitForChild("Misprediction")),
 	["RunService PostSimulation"] = require(Shared.nodes.runservice:WaitForChild("PostSimulation")),
@@ -433,6 +434,30 @@ local Nodes = {
 	["RunService RenderStepped"] = require(Shared.nodes.runservice:WaitForChild("RenderStepped")),
 	["RunService Rollback"] = require(Shared.nodes.runservice:WaitForChild("Rollback")),
 	["RunService Stepped"] = require(Shared.nodes.runservice:WaitForChild("Stepped")),
+
+	-- Player nodes
+	["Player AddReplicationFocus"] = require(Shared.nodes.players:WaitForChild("AddReplicationFocus")),
+	["Player ClearCharacterAppearance"] = require(Shared.nodes.players:WaitForChild("ClearCharacterAppearance")),
+	["Player DistanceFromCharacter"] = require(Shared.nodes.players:WaitForChild("DistanceFromCharacter")),
+	["Player GetFriendsOnlineAsync"] = require(Shared.nodes.players:WaitForChild("GetFriendsOnlineAsync")),
+	["Player GetFriendsWhoPlayedAsync"] = require(Shared.nodes.players:WaitForChild("GetFriendsWhoPlayedAsync")),
+	["Player GetJoinData"] = require(Shared.nodes.players:WaitForChild("GetJoinData")),
+	["Player GetMouse"] = require(Shared.nodes.players:WaitForChild("GetMouse")),
+	["Player GetNetworkPing"] = require(Shared.nodes.players:WaitForChild("GetNetworkPing")),
+	["Player GetRankInGroupAsync"] = require(Shared.nodes.players:WaitForChild("GetRankInGroupAsync")),
+	["Player GetRoleInGroupAsync"] = require(Shared.nodes.players:WaitForChild("GetRoleInGroupAsync")),
+	["Player HasAppearanceLoaded"] = require(Shared.nodes.players:WaitForChild("HasAppearanceLoaded")),
+	["Player IsFriendsWithAsync"] = require(Shared.nodes.players:WaitForChild("IsFriendsWithAsync")),
+	["Player IsInGroupAsync"] = require(Shared.nodes.players:WaitForChild("IsInGroupAsync")),
+	["Player IsVerified"] = require(Shared.nodes.players:WaitForChild("IsVerified")),
+	["Player Kick"] = require(Shared.nodes.players:WaitForChild("Kick")),
+	["Player LoadCharacterAsync"] = require(Shared.nodes.players:WaitForChild("LoadCharacterAsync")),
+	["Player LoadCharacterWithHumanoidDescriptionAsync"] = require(Shared.nodes.players:WaitForChild("LoadCharacterWithHumanoidDescriptionAsync")),
+	["Player Move"] = require(Shared.nodes.players:WaitForChild("Move")),
+	["Player RemoveReplicationFocus"] = require(Shared.nodes.players:WaitForChild("RemoveReplicationFocus")),
+	["Player RequestStreamAroundAsync"] = require(Shared.nodes.players:WaitForChild("RequestStreamAroundAsync")),
+	["Player SetAccountAge"] = require(Shared.nodes.players:WaitForChild("SetAccountAge")),
+	["Player SetSuperSafeChat"] = require(Shared.nodes.players:WaitForChild("SetSuperSafeChat")),
 
 	-- HttpService nodes
 	["HttpService CreateWebStreamClient"] = require(Shared.nodes.httpservice:WaitForChild("CreateWebStreamClient")),
@@ -487,6 +512,13 @@ local Nodes = {
 	["BadgeService CheckUserBadgesAsync"] = require(Shared.nodes.badgeservice:WaitForChild("CheckUserBadgesAsync")),
 	["BadgeService GetBadgeInfoAsync"] = require(Shared.nodes.badgeservice:WaitForChild("GetBadgeInfoAsync")),
 	["BadgeService UserHasBadgeAsync"] = require(Shared.nodes.badgeservice:WaitForChild("UserHasBadgeAsync")),
+
+	-- GroupService nodes
+	["GroupService GetAlliesAsync"] = require(Shared.nodes.groupservice:WaitForChild("GetAlliesAsync")),
+	["GroupService GetEnemiesAsync"] = require(Shared.nodes.groupservice:WaitForChild("GetEnemiesAsync")),
+	["GroupService GetGroupInfoAsync"] = require(Shared.nodes.groupservice:WaitForChild("GetGroupInfoAsync")),
+	["GroupService GetGroupsAsync"] = require(Shared.nodes.groupservice:WaitForChild("GetGroupsAsync")),
+	["GroupService PromptJoinAsync"] = require(Shared.nodes.groupservice:WaitForChild("PromptJoinAsync")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")
