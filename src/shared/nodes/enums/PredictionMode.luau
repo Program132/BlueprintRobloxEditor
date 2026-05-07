@@ -15,8 +15,8 @@ function PredictionModeNode.new()
 	setmetatable(self, PredictionModeNode)
 	self:editColor(Color3.fromRGB(150, 150, 40))
 	
-	self:addInput(IO.Input.new("Mode", "None", false, Modes))
-	self:addOutput(IO.Output.new("Enum", "Enum.PredictionMode.None"))
+	self:addInput(IO.Input.new("Mode", "Automatic", false, Modes))
+	self:addOutput(IO.Output.new("Enum", "Enum.PredictionMode.Automatic"))
 	
 	return self
 end
