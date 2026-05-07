@@ -455,6 +455,18 @@ local Nodes = {
 
 	-- Debris nodes
 	["Debris AddItem"] = require(Shared.nodes.debris:WaitForChild("AddItem")),
+
+	-- CollectionService nodes
+	["CollectionService AddTag"] = require(Shared.nodes.collectionservice:WaitForChild("AddTag")),
+	["CollectionService GetAllTags"] = require(Shared.nodes.collectionservice:WaitForChild("GetAllTags")),
+	["CollectionService GetInstanceAddedSignal"] = require(Shared.nodes.collectionservice:WaitForChild("GetInstanceAddedSignal")),
+	["CollectionService GetInstanceRemovedSignal"] = require(Shared.nodes.collectionservice:WaitForChild("GetInstanceRemovedSignal")),
+	["CollectionService GetTagged"] = require(Shared.nodes.collectionservice:WaitForChild("GetTagged")),
+	["CollectionService GetTags"] = require(Shared.nodes.collectionservice:WaitForChild("GetTags")),
+	["CollectionService HasTag"] = require(Shared.nodes.collectionservice:WaitForChild("HasTag")),
+	["CollectionService RemoveTag"] = require(Shared.nodes.collectionservice:WaitForChild("RemoveTag")),
+	["CollectionService TagAdded"] = require(Shared.nodes.collectionservice:WaitForChild("TagAdded")),
+	["CollectionService TagRemoved"] = require(Shared.nodes.collectionservice:WaitForChild("TagRemoved")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")

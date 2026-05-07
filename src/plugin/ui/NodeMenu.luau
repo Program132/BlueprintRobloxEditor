@@ -631,6 +631,22 @@ local NODES_DATA = {
 		items = {
 			{ id = "Debris AddItem", name = "Debris AddItem", type = "Method" },
 		}
+	},
+	{
+		category = "CollectionService",
+		color = Color3.fromRGB(240, 150, 20),
+		items = {
+			{ id = "CollectionService AddTag", name = "CollectionService AddTag", type = "Method" },
+			{ id = "CollectionService RemoveTag", name = "CollectionService RemoveTag", type = "Method" },
+			{ id = "CollectionService HasTag", name = "CollectionService HasTag", type = "Function" },
+			{ id = "CollectionService GetTags", name = "CollectionService GetTags", type = "Function" },
+			{ id = "CollectionService GetTagged", name = "CollectionService GetTagged", type = "Function" },
+			{ id = "CollectionService GetAllTags", name = "CollectionService GetAllTags", type = "Function" },
+			{ id = "CollectionService GetInstanceAddedSignal", name = "CollectionService GetInstanceAddedSignal", type = "Event" },
+			{ id = "CollectionService GetInstanceRemovedSignal", name = "CollectionService GetInstanceRemovedSignal", type = "Event" },
+			{ id = "CollectionService TagAdded", name = "CollectionService TagAdded", type = "Event" },
+			{ id = "CollectionService TagRemoved", name = "CollectionService TagRemoved", type = "Event" },
+		}
 	}
 }
 
