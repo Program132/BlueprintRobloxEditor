@@ -624,6 +624,13 @@ local NODES_DATA = {
 			{ id = "Lighting LightingChanged", name = "Lighting LightingChanged", type = "Event" },
 			{ id = "Instance to Lighting", name = "Instance to Lighting", type = "Function" },
 		}
+	},
+	{
+		category = "Debris",
+		color = Color3.fromRGB(200, 50, 50),
+		items = {
+			{ id = "Debris AddItem", name = "Debris AddItem", type = "Method" },
+		}
 	}
 }
 

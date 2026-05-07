@@ -452,6 +452,9 @@ local Nodes = {
 	["Lighting SetMinutesAfterMidnight"] = require(Shared.nodes.lighting:WaitForChild("SetMinutesAfterMidnight")),
 	["Lighting LightingChanged"] = require(Shared.nodes.lighting:WaitForChild("LightingChanged")),
 	["Instance to Lighting"] = require(Shared.nodes.conversions:WaitForChild("InstanceToLighting")),
+
+	-- Debris nodes
+	["Debris AddItem"] = require(Shared.nodes.debris:WaitForChild("AddItem")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")
