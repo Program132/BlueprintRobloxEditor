@@ -239,6 +239,7 @@ local Nodes = {
 	["Tween Create"] = require(Shared.nodes.tween:WaitForChild("Create")),
 	["Tween Play"] = require(Shared.nodes.tween:WaitForChild("Play")),
 	["Instance Workspace Object"] = require(Shared.nodes.instances:WaitForChild("WorkspaceObject")),
+	["Instance new"] = require(Shared.nodes.instances:WaitForChild("New")),
 	["Get Service"] = require(Shared.nodes.instances:WaitForChild("GetService")),
 	["Instance Child"] = require(Shared.nodes.instances:WaitForChild("InstanceChild")),
 	["Instance Get Parent"] = require(Shared.nodes.instances:WaitForChild("GetParent")),
@@ -699,6 +700,16 @@ local Nodes = {
 	["Animator GetTrackByAnimationId"] = require(Shared.nodes.animations:WaitForChild("GetTrackByAnimationId")),
 	["Animator GetPlayingAnimationTracks"] = require(Shared.nodes.animations:WaitForChild("GetPlayingAnimationTracks")),
 	["Animator AnimationPlayed"] = require(Shared.nodes.animations:WaitForChild("AnimationPlayed")),
+
+	-- WorldRoot nodes
+	["WorldRoot Raycast"] = require(Shared.nodes.worldroot:WaitForChild("Raycast")),
+	["WorldRoot Blockcast"] = require(Shared.nodes.worldroot:WaitForChild("Blockcast")),
+	["WorldRoot Spherecast"] = require(Shared.nodes.worldroot:WaitForChild("Spherecast")),
+	["WorldRoot GetPartBoundsInBox"] = require(Shared.nodes.worldroot:WaitForChild("GetPartBoundsInBox")),
+	["WorldRoot GetPartBoundsInRadius"] = require(Shared.nodes.worldroot:WaitForChild("GetPartBoundsInRadius")),
+	["WorldRoot GetPartsInPart"] = require(Shared.nodes.worldroot:WaitForChild("GetPartsInPart")),
+	["WorldRoot ArePartsTouchingOthers"] = require(Shared.nodes.worldroot:WaitForChild("ArePartsTouchingOthers")),
+	["WorldRoot BulkMoveTo"] = require(Shared.nodes.worldroot:WaitForChild("BulkMoveTo")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")

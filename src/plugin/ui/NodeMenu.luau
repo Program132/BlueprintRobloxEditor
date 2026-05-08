@@ -172,6 +172,7 @@ local NODES_DATA = {
 		category = "Instances",
 		color = Color3.fromRGB(100, 180, 255),
 		items = {
+			{ id = "Instance new", name = "Instance new", type = "Action" },
 			{ id = "Instance Workspace Object", name = "Workspace Object", type = "Function" },
 			{ id = "Get Service", name = "Get Service", type = "Function" },
 			{ id = "Instance Child", name = "Instance Child", type = "Function" },
@@ -922,6 +923,20 @@ local NODES_DATA = {
 			{ id = "Animator GetTrackByAnimationId", name = "GetTrackByAnimationId", type = "Function" },
 			{ id = "Animator GetPlayingAnimationTracks", name = "GetPlayingAnimationTracks", type = "Function" },
 			{ id = "Animator AnimationPlayed", name = "AnimationPlayed", type = "Event" },
+		}
+	},
+	{
+		category = "WorldRoot",
+		color = Color3.fromRGB(120, 200, 50),
+		items = {
+			{ id = "WorldRoot Raycast", name = "Raycast", type = "Function" },
+			{ id = "WorldRoot Blockcast", name = "Blockcast", type = "Function" },
+			{ id = "WorldRoot Spherecast", name = "Spherecast", type = "Function" },
+			{ id = "WorldRoot GetPartBoundsInBox", name = "GetPartBoundsInBox", type = "Function" },
+			{ id = "WorldRoot GetPartBoundsInRadius", name = "GetPartBoundsInRadius", type = "Function" },
+			{ id = "WorldRoot GetPartsInPart", name = "GetPartsInPart", type = "Function" },
+			{ id = "WorldRoot ArePartsTouchingOthers", name = "ArePartsTouchingOthers", type = "Function" },
+			{ id = "WorldRoot BulkMoveTo", name = "BulkMoveTo", type = "Method" },
 		}
 	}
 }
