@@ -1,4 +1,4 @@
-local Shared = script.Parent.Parent.Parent
+local Shared = script.Parent.Parent
 local Node = require(Shared.Node)
 local NodeType = require(Shared.NodeType)
 local IO = require(Shared.IO)
