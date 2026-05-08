@@ -627,6 +627,7 @@ local Nodes = {
 	["Instance to ScreenGui"] = require(Shared.nodes.conversions:WaitForChild("InstanceToScreenGui")),
 	["Instance to TextBox"] = require(Shared.nodes.conversions:WaitForChild("InstanceToTextBox")),
 	["Instance to ScrollingFrame"] = require(Shared.nodes.conversions:WaitForChild("InstanceToScrollingFrame")),
+	["Instance to Animator"] = require(Shared.nodes.conversions:WaitForChild("InstanceToAnimator")),
 
 	-- UI Event nodes
 	["UI Activated"] = require(Shared.nodes.ui:WaitForChild("Activated")),
@@ -674,6 +675,30 @@ local Nodes = {
 	["Sound Played"] = require(Shared.nodes.sounds:WaitForChild("Played")),
 	["Sound Resumed"] = require(Shared.nodes.sounds:WaitForChild("Resumed")),
 	["Sound Stopped"] = require(Shared.nodes.sounds:WaitForChild("Stopped")),
+
+	-- Humanoid Instance nodes
+	["Humanoid TakeDamage"] = require(Shared.nodes.humanoids:WaitForChild("TakeDamage")),
+	["Humanoid MoveTo"] = require(Shared.nodes.humanoids:WaitForChild("MoveTo")),
+	["Humanoid ChangeState"] = require(Shared.nodes.humanoids:WaitForChild("ChangeState")),
+	["Humanoid GetMoveVelocity"] = require(Shared.nodes.humanoids:WaitForChild("GetMoveVelocity")),
+	["Humanoid Died"] = require(Shared.nodes.humanoids:WaitForChild("Died")),
+	["Humanoid HealthChanged"] = require(Shared.nodes.humanoids:WaitForChild("HealthChanged")),
+	["Humanoid Running"] = require(Shared.nodes.humanoids:WaitForChild("Running")),
+	["Humanoid StateChanged"] = require(Shared.nodes.humanoids:WaitForChild("StateChanged")),
+	["Humanoid MoveToFinished"] = require(Shared.nodes.humanoids:WaitForChild("MoveToFinished")),
+	["Humanoid EquipTool"] = require(Shared.nodes.humanoids:WaitForChild("EquipTool")),
+	["Humanoid UnequipTools"] = require(Shared.nodes.humanoids:WaitForChild("UnequipTools")),
+	["Humanoid Climbing"] = require(Shared.nodes.humanoids:WaitForChild("Climbing")),
+	["Humanoid Swimming"] = require(Shared.nodes.humanoids:WaitForChild("Swimming")),
+	["Humanoid Touched"] = require(Shared.nodes.humanoids:WaitForChild("Touched")),
+	["Humanoid Seated"] = require(Shared.nodes.humanoids:WaitForChild("Seated")),
+
+	-- Animator Instance nodes
+	["Animator LoadAnimation"] = require(Shared.nodes.animations:WaitForChild("LoadAnimation")),
+	["Animator StepAnimations"] = require(Shared.nodes.animations:WaitForChild("StepAnimations")),
+	["Animator GetTrackByAnimationId"] = require(Shared.nodes.animations:WaitForChild("GetTrackByAnimationId")),
+	["Animator GetPlayingAnimationTracks"] = require(Shared.nodes.animations:WaitForChild("GetPlayingAnimationTracks")),
+	["Animator AnimationPlayed"] = require(Shared.nodes.animations:WaitForChild("AnimationPlayed")),
 }
 
 local networking = Shared.nodes:WaitForChild("networking")

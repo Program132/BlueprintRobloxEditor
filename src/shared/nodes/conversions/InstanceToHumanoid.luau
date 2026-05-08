@@ -8,21 +8,23 @@ InstanceToHumanoid.__index = InstanceToHumanoid
 setmetatable(InstanceToHumanoid, Node)
 
 local PROPERTIES = {
+	-- Humanoid specific
 	"AutoJumpEnabled", "AutomaticScalingEnabled", "AutoRotate", "BreakJointsOnDeath",
 	"CameraOffset", "DisplayDistanceType", "DisplayName", "EvaluateStateMachine",
 	"FloorMaterial", "Health", "HealthDisplayDistance", "HealthDisplayType",
 	"HipHeight", "Jump", "JumpHeight", "JumpPower", "MaxHealth", "MaxSlopeAngle",
 	"MoveDirection", "NameDisplayDistance", "NameOcclusion", "PlatformStand",
 	"RequiresNeck", "RigType", "RootPart", "SeatPart", "Sit", "TargetPoint",
-	"UseJumpPower", "WalkSpeed", "WalkToPart", "WalkToPoint"
+	"UseJumpPower", "WalkSpeed", "WalkToPart", "WalkToPoint",
+	
+	-- Base Instance properties
+	"Archivable", "Capabilities", "Name", "Parent", "PredictionMode", "Sandboxed", "UniqueId"
 }
 
 function InstanceToHumanoid.new()
-	local self = Node.new("Instance To Humanoid", NodeType.FUNCTION)
+	local self = Node.new("Instance to Humanoid", NodeType.FUNCTION)
 	setmetatable(self, InstanceToHumanoid)
-
-	self:editTitle("Instance To Humanoid")
-	self:editColor(Color3.fromRGB(120, 100, 180))
+	self:editColor(Color3.fromRGB(150, 150, 255))
 
 	self:addInput(IO.Input.new("Instance", "nil"))
 
@@ -37,8 +39,7 @@ function InstanceToHumanoid:toLuau()
 	local instVar = self:getInput("Instance").Value or "nil"
 
 	for _, prop in ipairs(PROPERTIES) do
-		local output = self:getOutput(prop)
-		output.Value = string.format("%s.%s", instVar, prop)
+		self:getOutput(prop).Value = `{instVar}.{prop}`
 	end
 
 	return ""

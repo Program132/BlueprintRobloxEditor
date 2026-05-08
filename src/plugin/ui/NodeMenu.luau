@@ -97,8 +97,8 @@ local NODES_DATA = {
 			{ id = "Instance To Tool", name = "Instance To Tool", type = "Function" },
 			{ id = "Instance To StarterGui", name = "Instance To StarterGui", type = "Function" },
 			{ id = "Instance To Camera", name = "Instance To Camera", type = "Function" },
-			{ id = "ToString", name = "To String", type = "Function" },
 			{ id = "ToNumber", name = "To Number", type = "Function" },
+			{ id = "Instance to Animator", name = "Instance to Animator", type = "Function" },
 		}
 	},
 	{
@@ -876,7 +876,7 @@ local NODES_DATA = {
 		}
 	},
 	{
-		name = "Sounds",
+		category = "Sounds",
 		color = Color3.fromRGB(255, 150, 50),
 		items = {
 			{ id = "Sound Play", name = "Sound Play", type = "Method" },
@@ -890,6 +890,38 @@ local NODES_DATA = {
 			{ id = "Sound Played", name = "Sound Played", type = "Event" },
 			{ id = "Sound Resumed", name = "Sound Resumed", type = "Event" },
 			{ id = "Sound Stopped", name = "Sound Stopped", type = "Event" },
+		}
+	},
+	{
+		category = "Humanoids",
+		color = Color3.fromRGB(255, 80, 80),
+		items = {
+			{ id = "Humanoid TakeDamage", name = "TakeDamage", type = "Method" },
+			{ id = "Humanoid MoveTo", name = "MoveTo", type = "Method" },
+			{ id = "Humanoid ChangeState", name = "ChangeState", type = "Method" },
+			{ id = "Humanoid GetMoveVelocity", name = "GetMoveVelocity", type = "Function" },
+			{ id = "Humanoid Died", name = "Died", type = "Event" },
+			{ id = "Humanoid HealthChanged", name = "HealthChanged", type = "Event" },
+			{ id = "Humanoid Running", name = "Running", type = "Event" },
+			{ id = "Humanoid StateChanged", name = "StateChanged", type = "Event" },
+			{ id = "Humanoid MoveToFinished", name = "MoveToFinished", type = "Event" },
+			{ id = "Humanoid EquipTool", name = "EquipTool", type = "Method" },
+			{ id = "Humanoid UnequipTools", name = "UnequipTools", type = "Method" },
+			{ id = "Humanoid Climbing", name = "Climbing", type = "Event" },
+			{ id = "Humanoid Swimming", name = "Swimming", type = "Event" },
+			{ id = "Humanoid Touched", name = "Touched", type = "Event" },
+			{ id = "Humanoid Seated", name = "Seated", type = "Event" },
+		}
+	},
+	{
+		category = "Animations",
+		color = Color3.fromRGB(200, 50, 255),
+		items = {
+			{ id = "Animator LoadAnimation", name = "LoadAnimation", type = "Method" },
+			{ id = "Animator StepAnimations", name = "StepAnimations", type = "Method" },
+			{ id = "Animator GetTrackByAnimationId", name = "GetTrackByAnimationId", type = "Function" },
+			{ id = "Animator GetPlayingAnimationTracks", name = "GetPlayingAnimationTracks", type = "Function" },
+			{ id = "Animator AnimationPlayed", name = "AnimationPlayed", type = "Event" },
 		}
 	}
 }
