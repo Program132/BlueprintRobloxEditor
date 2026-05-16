@@ -13,8 +13,8 @@ function CharacterRemoving.new()
 	self:editColor(Color3.fromRGB(200, 30, 30))
 
 	self:addOutput(IO.Output.new("Exec", ""))
-	self:addOutput(IO.Output.new("Player", "nil"))
-	self:addOutput(IO.Output.new("Character", "nil"))
+	self:addOutput(IO.Output.new("Player", "nil", false, nil, "Player"))
+	self:addOutput(IO.Output.new("Character", "nil", false, nil, "Model"))
 
 	return self
 end

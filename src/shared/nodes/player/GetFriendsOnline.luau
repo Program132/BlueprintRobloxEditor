@@ -12,9 +12,9 @@ function GetFriendsOnline.new()
 	self:editTitle("Get Friends Online")
 	self:editColor(Color3.fromRGB(0, 162, 255))
 
-	self:addInput(IO.Input.new("Instance", "nil"))
-	self:addInput(IO.Input.new("MaxFriends", "200"))
-	self:addOutput(IO.Output.new("Result", "{}"))
+	self:addInput(IO.Input.new("Instance", "nil", false, nil, "Player"))
+	self:addInput(IO.Input.new("MaxFriends", "200", false, nil, "number"))
+	self:addOutput(IO.Output.new("Result", "{}", false, nil, "table"))
 
 	return self
 end

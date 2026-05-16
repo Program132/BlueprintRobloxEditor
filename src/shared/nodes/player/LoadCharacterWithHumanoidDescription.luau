@@ -13,9 +13,9 @@ function LoadCharacterWithHumanoidDescription.new()
 	self:editColor(Color3.fromRGB(0, 162, 255))
 
 	self:addInput(IO.Input.new("Exec", ""))
-	self:addInput(IO.Input.new("Instance", "nil"))
-	self:addInput(IO.Input.new("HumanoidDescription", "nil"))
-	self:addInput(IO.Input.new("AssetTypeVerification", "Enum.AssetTypeVerification.Default"))
+	self:addInput(IO.Input.new("Instance", "nil", false, nil, "Player"))
+	self:addInput(IO.Input.new("HumanoidDescription", "nil", false, nil, "HumanoidDescription"))
+	self:addInput(IO.Input.new("AssetTypeVerification", "Enum.AssetTypeVerification.Default", false, nil, "Enum.AssetTypeVerification"))
 	self:addOutput(IO.Output.new("Exec", ""))
 
 	return self

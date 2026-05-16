@@ -12,9 +12,9 @@ function IsFriendsWithAsync.new()
 	self:editTitle("Is Friends With (Async)")
 	self:editColor(Color3.fromRGB(0, 162, 255))
 
-	self:addInput(IO.Input.new("Instance", "nil"))
-	self:addInput(IO.Input.new("UserId", "0"))
-	self:addOutput(IO.Output.new("Result", "false"))
+	self:addInput(IO.Input.new("Instance", "nil", false, nil, "Player"))
+	self:addInput(IO.Input.new("UserId", "0", false, nil, "number"))
+	self:addOutput(IO.Output.new("Result", "false", false, nil, "boolean"))
 
 	return self
 end

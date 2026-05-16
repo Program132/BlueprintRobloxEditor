@@ -12,7 +12,7 @@ function Warn.new()
 	self:editColor(Color3.fromRGB(255, 160, 0))
 	
 	self:addInput(IO.Input.new("Exec", ""))
-	self:addInput(IO.Input.new("Value", '"Warning message"'))
+	self:addInput(IO.Input.new("Value", "\"Warning\"", false, nil, "variant"))
 	self:addOutput(IO.Output.new("Exec", ""))
 	
 	return self

@@ -12,9 +12,9 @@ function GetRoleInGroup.new()
 	self:editTitle("Get Role In Group")
 	self:editColor(Color3.fromRGB(0, 162, 255))
 
-	self:addInput(IO.Input.new("Instance", "nil"))
-	self:addInput(IO.Input.new("GroupId", "0"))
-	self:addOutput(IO.Output.new("Result", "\"Guest\""))
+	self:addInput(IO.Input.new("Instance", "nil", false, nil, "Player"))
+	self:addInput(IO.Input.new("GroupId", "0", false, nil, "number"))
+	self:addOutput(IO.Output.new("Result", "\"Guest\"", false, nil, "string"))
 
 	return self
 end

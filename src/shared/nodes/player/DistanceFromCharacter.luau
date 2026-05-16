@@ -12,9 +12,9 @@ function DistanceFromCharacter.new()
 	self:editTitle("Distance From Character")
 	self:editColor(Color3.fromRGB(0, 162, 255))
 
-	self:addInput(IO.Input.new("Instance", "nil"))
-	self:addInput(IO.Input.new("Point", "Vector3.new(0,0,0)"))
-	self:addOutput(IO.Output.new("Result", "0"))
+	self:addInput(IO.Input.new("Instance", "nil", false, nil, "Player"))
+	self:addInput(IO.Input.new("Point", "Vector3.new(0,0,0)", false, nil, "Vector3"))
+	self:addOutput(IO.Output.new("Result", "0", false, nil, "number"))
 
 	return self
 end

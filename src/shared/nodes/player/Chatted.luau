@@ -13,9 +13,9 @@ function Chatted.new()
 	self:editColor(Color3.fromRGB(200, 30, 30))
 
 	self:addOutput(IO.Output.new("Exec", ""))
-	self:addOutput(IO.Output.new("Player", "nil"))
-	self:addOutput(IO.Output.new("Message", "\"\""))
-	self:addOutput(IO.Output.new("Recipient", "nil"))
+	self:addOutput(IO.Output.new("Player", "nil", false, nil, "Player"))
+	self:addOutput(IO.Output.new("Message", "\"\"", false, nil, "string"))
+	self:addOutput(IO.Output.new("Recipient", "nil", false, nil, "Player"))
 
 	return self
 end

@@ -11,7 +11,7 @@ function Print.new()
 	setmetatable(self, Print)
 	
 	self:addInput(IO.Input.new("Exec", ""))
-	self:addInput(IO.Input.new("Value", '"Hello"'))
+	self:addInput(IO.Input.new("Value", "\"Hello\"", false, nil, "variant"))
 	self:addOutput(IO.Output.new("Exec", ""))
 	
 	return self

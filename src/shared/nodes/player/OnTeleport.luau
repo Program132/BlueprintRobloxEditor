@@ -13,10 +13,10 @@ function OnTeleport.new()
 	self:editColor(Color3.fromRGB(200, 30, 30))
 
 	self:addOutput(IO.Output.new("Exec", ""))
-	self:addOutput(IO.Output.new("Player", "nil"))
-	self:addOutput(IO.Output.new("TeleportState", "Enum.TeleportState.Requested"))
-	self:addOutput(IO.Output.new("PlaceId", "0"))
-	self:addOutput(IO.Output.new("SpawnName", "\"\""))
+	self:addOutput(IO.Output.new("Player", "nil", false, nil, "Player"))
+	self:addOutput(IO.Output.new("TeleportState", "nil", false, nil, "Enum.TeleportState"))
+	self:addOutput(IO.Output.new("PlaceId", "0", false, nil, "number"))
+	self:addOutput(IO.Output.new("SpawnName", "\"\"", false, nil, "string"))
 
 	return self
 end

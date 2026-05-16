@@ -13,9 +13,9 @@ function MathBinary.create(name, funcName, label1, label2)
 		local self = Node.new(name, NodeType.FUNCTION)
 		setmetatable(self, M)
 		self:editColor(Color3.fromRGB(40, 150, 70))
-		self:addInput(IO.Input.new(label1 or "X", "0"))
-		self:addInput(IO.Input.new(label2 or "Y", "0"))
-		self:addOutput(IO.Output.new("Result", "0"))
+		self:addInput(IO.Input.new(label1 or "X", "0", false, nil, "number"))
+		self:addInput(IO.Input.new(label2 or "Y", "0", false, nil, "number"))
+		self:addOutput(IO.Output.new("Result", "0", false, nil, "number"))
 		return self
 	end
 

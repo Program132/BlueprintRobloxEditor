@@ -12,8 +12,8 @@ function HasAppearanceLoaded.new()
 	self:editTitle("Has Appearance Loaded")
 	self:editColor(Color3.fromRGB(0, 162, 255))
 
-	self:addInput(IO.Input.new("Instance", "nil"))
-	self:addOutput(IO.Output.new("Result", "false"))
+	self:addInput(IO.Input.new("Instance", "nil", false, nil, "Player"))
+	self:addOutput(IO.Output.new("Result", "false", false, nil, "boolean"))
 
 	return self
 end

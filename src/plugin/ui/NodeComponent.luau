@@ -11,7 +11,7 @@ local function makeCorner(parent, radius)
 	return c
 end
 
-local function makePin(parent, labelText, isOutput, isExec, choices, fieldWidth)
+local function makePin(parent, labelText, isOutput, isExec, choices, fieldWidth, dataType)
 	local row = Instance.new("TextButton")
 	row.Text = ""
 	row.AutoButtonColor = false
@@ -43,6 +43,20 @@ local function makePin(parent, labelText, isOutput, isExec, choices, fieldWidth)
 	label.TextXAlignment = isOutput and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
 	label.ZIndex = 11
 	label.Parent = row
+
+	local typeLabel = nil
+	if dataType and not isExec then
+		typeLabel = Instance.new("TextLabel")
+		typeLabel.Size = UDim2.new(1, 0, 1, 0)
+		typeLabel.BackgroundTransparency = 1
+		typeLabel.Text = "(" .. dataType .. ")"
+		typeLabel.TextColor3 = Color3.fromRGB(140, 160, 180) -- Brighter
+		typeLabel.TextSize = 9
+		typeLabel.Font = Enum.Font.GothamMedium -- Bolder
+		typeLabel.TextXAlignment = isOutput and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
+		typeLabel.ZIndex = 11
+		typeLabel.Parent = row
+	end
 
 	local inputField = nil
 	local choiceButton = nil
@@ -86,7 +100,15 @@ local function makePin(parent, labelText, isOutput, isExec, choices, fieldWidth)
 		end
 	end
 
-	return { row = row, pin = pin, inputField = inputField, choiceButton = choiceButton, label = label, fieldWidth = if (not isOutput and not isExec) then (fieldWidth or 50) else 0 }
+	return { 
+		row = row, 
+		pin = pin, 
+		inputField = inputField, 
+		choiceButton = choiceButton, 
+		label = label, 
+		typeLabel = typeLabel,
+		fieldWidth = if (not isOutput and not isExec) then (fieldWidth or 50) else 0 
+	}
 end
 
 local TYPE_COLORS = {
@@ -193,6 +215,10 @@ function NodeComponent.new(canvasParent, nodeData)
 	for _, input in ipairs(nodeData:getInputs()) do
 		if input.Name:sub(1, 2) == "__" then continue end
 		local w = TextService:GetTextSize(input.Name, 11, Enum.Font.GothamMedium, Vector2.new(1000, 1000)).X
+		if input.DataType and not input.IsExec then
+			local typeW = TextService:GetTextSize("(" .. input.DataType .. ")", 9, Enum.Font.Gotham, Vector2.new(1000, 1000)).X
+			w += typeW + 5
+		end
 		if not input.IsExec then
 			w += maxFieldWidth + 20 -- space for input field + padding
 		end
@@ -203,6 +229,10 @@ function NodeComponent.new(canvasParent, nodeData)
 	for _, output in ipairs(nodeData:getOutputs()) do
 		if output.Name:sub(1, 2) == "__" then continue end
 		local w = TextService:GetTextSize(output.Name, 11, Enum.Font.GothamMedium, Vector2.new(1000, 1000)).X
+		if output.DataType and not output.IsExec then
+			local typeW = TextService:GetTextSize("(" .. output.DataType .. ")", 9, Enum.Font.Gotham, Vector2.new(1000, 1000)).X
+			w += typeW + 5
+		end
 		maxRightWidth = math.max(maxRightWidth, w + 25)
 	end
 	
@@ -261,7 +291,7 @@ function NodeComponent.new(canvasParent, nodeData)
 	for _, input in ipairs(nodeData:getInputs()) do
 		if input.Name:sub(1, 2) == "__" then continue end
 		local isExec = input.IsExec
-		local pinObj = makePin(leftFrame, input.Name, false, isExec, input.Choices, maxFieldWidth)
+		local pinObj = makePin(leftFrame, input.Name, false, isExec, input.Choices, maxFieldWidth, input.DataType)
 		self.pins[input.Id] = pinObj
 		
 		if pinObj.inputField then
@@ -319,7 +349,7 @@ function NodeComponent.new(canvasParent, nodeData)
 	for _, output in ipairs(nodeData:getOutputs()) do
 		if output.Name:sub(1, 2) == "__" then continue end
 		local isExec = output.IsExec
-		local pinObj = makePin(rightFrame, output.Name, true, isExec)
+		local pinObj = makePin(rightFrame, output.Name, true, isExec, nil, nil, output.DataType)
 		self.pins[output.Id] = pinObj
 		
 		pinObj.row.InputBegan:Connect(function(inp)
@@ -571,6 +601,10 @@ function NodeComponent:UpdateLayout()
 	for _, input in ipairs(nodeData:getInputs()) do
 		if input.Name:sub(1, 2) == "__" then continue end
 		local w = TextService:GetTextSize(input.Name, 11, Enum.Font.GothamMedium, Vector2.new(1000, 1000)).X
+		if input.DataType and not input.IsExec then
+			local typeW = TextService:GetTextSize("(" .. input.DataType .. ")", 9, Enum.Font.Gotham, Vector2.new(1000, 1000)).X
+			w += typeW + 5
+		end
 		if not input.IsExec then
 			local isConnected = self.connections[input.Id]
 			if not isConnected then
@@ -584,6 +618,10 @@ function NodeComponent:UpdateLayout()
 	for _, output in ipairs(nodeData:getOutputs()) do
 		if output.Name:sub(1, 2) == "__" then continue end
 		local w = TextService:GetTextSize(output.Name, 11, Enum.Font.GothamMedium, Vector2.new(1000, 1000)).X
+		if output.DataType and not output.IsExec then
+			local typeW = TextService:GetTextSize("(" .. output.DataType .. ")", 9, Enum.Font.Gotham, Vector2.new(1000, 1000)).X
+			w += typeW + 5
+		end
 		maxRightWidth = math.max(maxRightWidth, w + 25)
 	end
 	
@@ -606,13 +644,19 @@ function NodeComponent:UpdateLayout()
 			end
 			
 			if pinObj.label then
+				local nameW = TextService:GetTextSize(input.Name, 11, Enum.Font.GothamMedium, Vector2.new(1000, 1000)).X
 				if isConnected then
 					pinObj.label.Position = UDim2.new(0, 15, 0, 0)
-					pinObj.label.Size = UDim2.new(1, -20, 1, 0)
+					pinObj.label.Size = UDim2.new(0, nameW, 1, 0)
 				else
 					local offset = pinObj.fieldWidth + 20
 					pinObj.label.Position = UDim2.new(0, offset, 0, 0)
-					pinObj.label.Size = UDim2.new(1, -offset - 5, 1, 0)
+					pinObj.label.Size = UDim2.new(0, nameW, 1, 0)
+				end
+				
+				if pinObj.typeLabel then
+					pinObj.typeLabel.Position = UDim2.new(0, pinObj.label.Position.X.Offset + nameW + 5, 0, 0)
+					pinObj.typeLabel.Size = UDim2.new(0, 100, 1, 0)
 				end
 			end
 		end
@@ -632,6 +676,17 @@ function NodeComponent:UpdateLayout()
 			pinObj.row.Visible = shouldBeVisible
 			if shouldBeVisible then 
 				visibleOutputs += 1 
+				
+				-- Update type label position for outputs
+				if pinObj.typeLabel and pinObj.label then
+					local nameW = TextService:GetTextSize(output.Name, 11, Enum.Font.GothamMedium, Vector2.new(1000, 1000)).X
+					pinObj.label.Size = UDim2.new(0, nameW, 1, 0)
+					pinObj.label.Position = UDim2.new(1, -nameW - 15, 0, 0)
+					
+					pinObj.typeLabel.Position = UDim2.new(0, 0, 0, 0)
+					pinObj.typeLabel.Size = UDim2.new(1, -nameW - 20, 1, 0)
+					pinObj.typeLabel.TextXAlignment = Enum.TextXAlignment.Right
+				end
 			end
 		end
 	end

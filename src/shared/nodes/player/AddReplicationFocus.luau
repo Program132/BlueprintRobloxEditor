@@ -13,8 +13,8 @@ function AddReplicationFocus.new()
 	self:editColor(Color3.fromRGB(0, 162, 255))
 
 	self:addInput(IO.Input.new("Exec", ""))
-	self:addInput(IO.Input.new("Instance", "nil"))
-	self:addInput(IO.Input.new("Part", "nil"))
+	self:addInput(IO.Input.new("Instance", "nil", false, nil, "Player"))
+	self:addInput(IO.Input.new("Part", "nil", false, nil, "BasePart"))
 	self:addOutput(IO.Output.new("Exec", ""))
 
 	return self

@@ -13,9 +13,9 @@ function Move.new()
 	self:editColor(Color3.fromRGB(0, 162, 255))
 
 	self:addInput(IO.Input.new("Exec", ""))
-	self:addInput(IO.Input.new("Instance", "nil"))
-	self:addInput(IO.Input.new("Direction", "Vector3.new(0,0,0)"))
-	self:addInput(IO.Input.new("RelativeToCamera", "false"))
+	self:addInput(IO.Input.new("Instance", "nil", false, nil, "Player"))
+	self:addInput(IO.Input.new("WalkDir", "Vector3.new(0,0,0)", false, nil, "Vector3"))
+	self:addInput(IO.Input.new("Relative", "false", false, nil, "boolean"))
 	self:addOutput(IO.Output.new("Exec", ""))
 
 	return self

@@ -13,7 +13,7 @@ function LoadCharacterAsync.new()
 	self:editColor(Color3.fromRGB(0, 162, 255))
 
 	self:addInput(IO.Input.new("Exec", ""))
-	self:addInput(IO.Input.new("Instance", "nil"))
+	self:addInput(IO.Input.new("Instance", "nil", false, nil, "Player"))
 	self:addOutput(IO.Output.new("Exec", ""))
 
 	return self

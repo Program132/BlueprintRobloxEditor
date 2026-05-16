@@ -26,6 +26,23 @@ local CATEGORY_COLORS = {
 	["Animator"] = Color3.fromRGB(255, 100, 100),
 }
 
+local function getTypeString(typeInfo)
+	if not typeInfo then return nil end
+	if type(typeInfo) == "string" then return typeInfo end
+	
+	if typeInfo.EnumType then
+		return "Enum." .. typeInfo.EnumType
+	elseif typeInfo.InstanceType then
+		return typeInfo.InstanceType
+	elseif typeInfo.ScriptType then
+		return typeInfo.ScriptType
+	elseif typeInfo.Name then
+		return typeInfo.Name
+	end
+	
+	return nil
+end
+
 local function getCategoryColor(categoryName, isService)
 	if isService then
 		return Color3.fromRGB(255, 170, 0)
@@ -189,7 +206,7 @@ function ReflectionGenerator.createMethodNode(className, methodInfo, overrideNam
 		if not isFunction then
 			self:addInput(IO.Input.new("Exec", ""))
 		end
-		self:addInput(IO.Input.new("Instance", "nil"))
+		self:addInput(IO.Input.new("Instance", "nil", false, nil, className))
 
 		if methodInfo.Parameters then
 			for i, param in ipairs(methodInfo.Parameters) do
@@ -202,7 +219,7 @@ function ReflectionGenerator.createMethodNode(className, methodInfo, overrideNam
 					defaultValue = tostring(param.DefaultValue)
 				end
 				
-				self:addInput(IO.Input.new(paramName, defaultValue))
+				self:addInput(IO.Input.new(paramName, defaultValue, false, nil, getTypeString(param.Type)))
 			end
 		end
 
@@ -211,7 +228,7 @@ function ReflectionGenerator.createMethodNode(className, methodInfo, overrideNam
 		end
 		
 		if isFunction then
-			self:addOutput(IO.Output.new("Result", "nil"))
+			self:addOutput(IO.Output.new("Result", "nil", false, nil, getTypeString(methodInfo.ReturnType)))
 		end
 
 		return self
@@ -260,23 +277,25 @@ function ReflectionGenerator.createEventNode(className, eventInfo, overrideName,
 		setmetatable(self, CustomNode)
 		self:editColor(defaultColor)
 
-		self:addInput(IO.Input.new("Instance", "nil"))
+		self:addInput(IO.Input.new("Instance", "nil", false, nil, className))
 		self:addOutput(IO.Output.new("Exec", ""))
 
 		if eventInfo.Parameters then
 			for i, param in ipairs(eventInfo.Parameters) do
 				local rawName
+				local paramType = nil
 				if type(param) == "string" then
 					rawName = param
 				elseif type(param) == "table" or typeof(param) == "Instance" then
 					rawName = param.Name
+					paramType = getTypeString(param.Type)
 				end
 				
 				if type(rawName) ~= "string" or rawName == "" then
 					rawName = "Param" .. tostring(i)
 				end
 				local paramName = string.upper(string.sub(rawName, 1, 1)) .. string.sub(rawName, 2)
-				self:addOutput(IO.Output.new(paramName, "nil"))
+				self:addOutput(IO.Output.new(paramName, "nil", false, nil, paramType))
 			end
 		end
 		return self
@@ -364,8 +383,8 @@ function ReflectionGenerator.createSetPropertyNode(className, propInfo, override
 		self:editColor(defaultColor)
 
 		self:addInput(IO.Input.new("Exec", ""))
-		self:addInput(IO.Input.new("Instance", "nil"))
-		self:addInput(IO.Input.new("Value", "nil"))
+		self:addInput(IO.Input.new("Instance", "nil", false, nil, className))
+		self:addInput(IO.Input.new("Value", "nil", false, nil, getTypeString(propInfo.Type)))
 		self:addOutput(IO.Output.new("Exec", ""))
 
 		return self
@@ -393,12 +412,12 @@ function ReflectionGenerator.createCastNode(className, readableProperties, overr
 		setmetatable(self, CustomNode)
 		self:editColor(defaultColor)
 
-		self:addInput(IO.Input.new("Instance", "nil"))
+		self:addInput(IO.Input.new("Instance", "nil", false, nil, className))
 		
 		-- Add output pins for every readable property
 		if readableProperties then
 			for _, prop in ipairs(readableProperties) do
-				self:addOutput(IO.Output.new(prop.Name, "nil"))
+				self:addOutput(IO.Output.new(prop.Name, "nil", false, nil, getTypeString(prop.Type)))
 			end
 		end
 

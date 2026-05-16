@@ -13,8 +13,8 @@ function Idled.new()
 	self:editColor(Color3.fromRGB(200, 30, 30))
 
 	self:addOutput(IO.Output.new("Exec", ""))
-	self:addOutput(IO.Output.new("Player", "nil"))
-	self:addOutput(IO.Output.new("Time", "0"))
+	self:addOutput(IO.Output.new("Player", "nil", false, nil, "Player"))
+	self:addOutput(IO.Output.new("Time", "0", false, nil, "number"))
 
 	return self
 end

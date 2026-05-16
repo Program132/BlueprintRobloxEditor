@@ -12,9 +12,9 @@ function LoadInstance.new()
 	self:editTitle("Load Instance")
 	self:editColor(Color3.fromRGB(0, 162, 255))
 
-	self:addInput(IO.Input.new("Instance", "nil"))
-	self:addInput(IO.Input.new("Key", "\"Data\""))
-	self:addOutput(IO.Output.new("Result", "nil"))
+	self:addInput(IO.Input.new("Instance", "nil", false, nil, "Player"))
+	self:addInput(IO.Input.new("AssetId", "0", false, nil, "number"))
+	self:addOutput(IO.Output.new("Result", "nil", false, nil, "Instance"))
 
 	return self
 end

@@ -9,6 +9,7 @@ export type Input = typeof(setmetatable({} :: {
     Name: string,
     Value: string,
     IsExec: boolean,
+    DataType: string?,
     Choices: {string}?,
 }, Input))
 
@@ -17,27 +18,30 @@ export type Output = typeof(setmetatable({} :: {
     Name: string,
     Value: string,
     IsExec: boolean,
+    DataType: string?,
     Choices: {string}?,
 }, Output))
 
 local HttpService = game:GetService("HttpService")
 
-function Input.new(name: string, value: string, isExec: boolean?, choices: {string}?): Input
+function Input.new(name: string, value: string, isExec: boolean?, choices: {string}?, dataType: string?): Input
     return setmetatable({
         Id = HttpService:GenerateGUID(false),
         Name = name,
         Value = value,
         IsExec = if isExec ~= nil then isExec else (name == "Exec"),
+        DataType = dataType,
         Choices = choices
     }, Input)
 end
 
-function Output.new(name: string, value: string, isExec: boolean?, choices: {string}?): Output
+function Output.new(name: string, value: string, isExec: boolean?, choices: {string}?, dataType: string?): Output
     return setmetatable({
         Id = HttpService:GenerateGUID(false),
         Name = name,
         Value = value,
         IsExec = if isExec ~= nil then isExec else (name == "Exec"),
+        DataType = dataType,
         Choices = choices
     }, Output)
 end
