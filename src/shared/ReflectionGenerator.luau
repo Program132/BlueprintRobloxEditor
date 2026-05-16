@@ -178,6 +178,16 @@ function ReflectionGenerator.populate(NodesTable)
 			task.wait()
 		end
 	end
+
+	-- Enums
+	local allEnums = Enum:GetEnums()
+	for _, enum in ipairs(allEnums) do
+		local enumName = tostring(enum)
+		local nodeName = "Enum " .. enumName
+		if not NodesTable[nodeName] then
+			NodesTable[nodeName] = ReflectionGenerator.createEnumNode(enum)
+		end
+	end
 end
 
 function ReflectionGenerator.createMethodNode(className, methodInfo, overrideName, overrideColor)
@@ -435,6 +445,43 @@ function ReflectionGenerator.createCastNode(className, readableProperties, overr
 		end
 		
 		return "" -- No code generated, just propagates values
+	end
+
+	return CustomNode
+end
+
+function ReflectionGenerator.createEnumNode(enum)
+	local CustomNode = {}
+	CustomNode.__index = CustomNode
+	setmetatable(CustomNode, Node)
+
+	local enumName = tostring(enum)
+	local enumItems = enum:GetEnumItems()
+	local choices = {}
+	for _, item in ipairs(enumItems) do
+		table.insert(choices, item.Name)
+	end
+	table.sort(choices)
+
+	local defaultColor = Color3.fromRGB(150, 150, 40)
+	CustomNode.DefaultColor = defaultColor
+
+	function CustomNode.new()
+		local self = Node.new("Enum " .. enumName, NodeType.FUNCTION)
+		setmetatable(self, CustomNode)
+		self:editColor(defaultColor)
+
+		local defaultValue = choices[1] or ""
+		self:addInput(IO.Input.new("Item", defaultValue, false, choices, "Enum." .. enumName))
+		self:addOutput(IO.Output.new("Value", "Enum." .. enumName .. "." .. defaultValue, false, nil, "Enum." .. enumName))
+
+		return self
+	end
+
+	function CustomNode:toLuau()
+		local selected = self:getInput("Item").Value or choices[1] or ""
+		self:getOutput("Value").Value = "Enum." .. enumName .. "." .. selected
+		return ""
 	end
 
 	return CustomNode

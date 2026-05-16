@@ -320,6 +320,7 @@ function NodeComponent.new(canvasParent, nodeData)
 				ChoiceModal.prompt(topContainer, input.Name, input.Choices, function(choice)
 					input.Value = choice
 					pinObj.choiceButton.Text = choice
+					self:UpdateLayout()
 				end, relativePos)
 			end)
 		end
@@ -640,7 +641,7 @@ function NodeComponent:UpdateLayout()
 			if pinObj.choiceButton then
 				pinObj.choiceButton.Visible = not isConnected
 				pinObj.choiceButton.Size = UDim2.new(0, math.max(60, maxFieldWidth), 0, 18)
-				pinObj.fieldWidth = maxFieldWidth
+				pinObj.fieldWidth = math.max(60, maxFieldWidth)
 			end
 			
 			if pinObj.label then
