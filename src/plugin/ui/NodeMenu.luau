@@ -149,7 +149,7 @@ function NodeMenu.prompt(parent, position, extraNodes, onConfirm)
 		elseif category == "Math" or category == "Boolean" then color = Color3.fromRGB(120, 200, 255)
 		elseif category == "Table" then color = Color3.fromRGB(180, 120, 255)
 		elseif category == "Event" then color = Color3.fromRGB(255, 80, 80)
-		elseif category == "Instance" then color = Color3.fromRGB(100, 255, 180)
+		elseif category == "Instance" or category == "Player" or category == "Players" then color = Color3.fromRGB(100, 255, 180)
 		elseif category == "Task" then color = Color3.fromRGB(200, 100, 255)
 		elseif category == "Output" then color = Color3.fromRGB(255, 100, 50)
 		elseif category:find("Service") then color = Color3.fromRGB(255, 150, 50)
@@ -276,20 +276,29 @@ function NodeMenu.prompt(parent, position, extraNodes, onConfirm)
 				end
 			end
 
-			local sortedKeys = {}
+			-- Group registered nodes by category
+			local nodesByCategory = {}
+			local categories = {}
+			
 			for key, _ in pairs(registeredNodes) do
-				table.insert(sortedKeys, key)
-			end
-			table.sort(sortedKeys)
-
-			local lastCategory = nil
-			for _, key in ipairs(sortedKeys) do
 				local displayName, category, color = getNodeInfo(key)
-				if category ~= lastCategory then
-					processHeader(category, color:Lerp(Color3.new(0.8, 0.8, 1), 0.2))
-					lastCategory = category
+				if not nodesByCategory[category] then
+					nodesByCategory[category] = {color = color, items = {}}
+					table.insert(categories, category)
 				end
-				processItem(key, displayName, category, color)
+				table.insert(nodesByCategory[category].items, {id = key, name = displayName})
+			end
+			table.sort(categories)
+
+			for _, cat in ipairs(categories) do
+				local group = nodesByCategory[cat]
+				processHeader(cat, group.color:Lerp(Color3.new(0.8, 0.8, 1), 0.2))
+				
+				table.sort(group.items, function(a, b) return a.name < b.name end)
+				for _, item in ipairs(group.items) do
+					processItem(item.id, item.name, cat, group.color)
+					if itemsCount > 250 then break end
+				end
 				if itemsCount > 250 then break end
 			end
 		else
@@ -304,19 +313,28 @@ function NodeMenu.prompt(parent, position, extraNodes, onConfirm)
 				end
 			end
 
-			-- 2. Search in registeredNodes
-			local sortedKeys = {}
+			-- Search in registeredNodes, grouped by category
+			local resultsByCategory = {}
+			local categories = {}
+
 			for key, _ in pairs(registeredNodes) do
-				local _, category = getNodeInfo(key)
+				local displayName, category, color = getNodeInfo(key)
 				if key:lower():find(filterLower) or category:lower():find(filterLower) then
-					table.insert(sortedKeys, key)
+					if not resultsByCategory[category] then
+						resultsByCategory[category] = {color = color, items = {}}
+						table.insert(categories, category)
+					end
+					table.insert(resultsByCategory[category].items, {id = key, name = displayName})
 				end
 			end
-			table.sort(sortedKeys)
+			table.sort(categories)
 
-			for _, key in ipairs(sortedKeys) do
-				local displayName, category, color = getNodeInfo(key)
-				processItem(key, displayName, category, color)
+			for _, cat in ipairs(categories) do
+				local group = resultsByCategory[cat]
+				for _, item in ipairs(group.items) do
+					processItem(item.id, item.name, cat, group.color)
+					if itemsCount > 100 then break end
+				end
 				if itemsCount > 100 then break end
 			end
 		end
