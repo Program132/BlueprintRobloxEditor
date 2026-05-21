@@ -11,7 +11,7 @@ The project uses Rojo, a VS Code extension for managing Roblox projects.
 
 **DevForum post**: https://devforum.roblox.com/t/v11-blueprint-roblox-editor-visual-programming-tools-for-luau/4058664?u=ptitloup132
 
-**Latest release**: https://github.com/Program132/BlueprintRobloxEditor/releases/tag/V2.0
+**Latest release**: https://github.com/Program132/BlueprintRobloxEditor/releases/tag/V2.1
 
 <img alt="image" src="https://i.imgur.com/bWJH1un.png" />
 <img alt="image" src="https://i.imgur.com/0IkOuSQ.png" />
