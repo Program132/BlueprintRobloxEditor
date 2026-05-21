@@ -129,17 +129,22 @@ function NodeMenu.prompt(parent, position, extraNodes, onConfirm)
 		["Log"] = "Math", ["Exp"] = "Math", ["Rad"] = "Math", ["Deg"] = "Math",
 		["Print"] = "Output", ["Warn"] = "Output", ["Error"] = "Output",
 		["Return"] = "Control", ["If"] = "Control", ["While"] = "Control", ["For"] = "Control",
+		["For In Pairs"] = "Control", ["For In Ipairs"] = "Control",
 	}
 
 	local function getNodeInfo(key)
-		local firstSpace = key:find(" ")
-		local category = MANUAL_CATEGORIES[key] or "General"
+		local category = MANUAL_CATEGORIES[key]
 		local displayName = key
 		local color = Color3.fromRGB(150, 170, 200)
 
-		if firstSpace then
-			category = key:sub(1, firstSpace - 1)
-			displayName = key:sub(firstSpace + 1)
+		if not category then
+			local firstSpace = key:find(" ")
+			if firstSpace then
+				category = key:sub(1, firstSpace - 1)
+				displayName = key:sub(firstSpace + 1)
+			else
+				category = "General"
+			end
 		end
 
 		-- Premium category colors

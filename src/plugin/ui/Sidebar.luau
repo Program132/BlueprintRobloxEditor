@@ -46,7 +46,7 @@ local function makeSection(parent, title, layoutOrder)
 	label.Text = title
 	label.TextColor3 = Color3.fromRGB(190, 205, 230)
 	label.TextSize = 13
-	label.Font = Enum.Font.GothamSemibold
+	label.Font = Enum.Font.GothamMedium
 	label.TextXAlignment = Enum.TextXAlignment.Left
 	label.Parent = header
 
@@ -234,8 +234,25 @@ function Sidebar:AddScript(data, onEdit)
 		return btn
 	end
 
-	local typeStr = data.type == "Function" and "FUN" or (data.type == "Module" and "MOD" or "DEF")
-	local typeBtn = makeTag(typeStr, Color3.fromRGB(30, 60, 50), Color3.fromRGB(90, 200, 150))
+	local typeStr = "DEF"
+	local tagBg = Color3.fromRGB(30, 40, 60)
+	local tagFg = Color3.fromRGB(110, 160, 240)
+
+	if data.type == "Function" then
+		typeStr = "FUN"
+		tagBg = Color3.fromRGB(30, 60, 50)
+		tagFg = Color3.fromRGB(90, 200, 150)
+	elseif data.type == "Module" then
+		typeStr = "MOD"
+		tagBg = Color3.fromRGB(60, 30, 60)
+		tagFg = Color3.fromRGB(200, 90, 200)
+	elseif data.type == "Tool" then
+		typeStr = "TOL"
+		tagBg = Color3.fromRGB(80, 50, 20)
+		tagFg = Color3.fromRGB(250, 160, 50)
+	end
+
+	local typeBtn = makeTag(typeStr, tagBg, tagFg)
 	local editBtn = makeTag("⚙️", Color3.fromRGB(50, 50, 50), Color3.fromRGB(200, 200, 200))
 	local delBtn = makeTag("X", Color3.fromRGB(90, 25, 25), Color3.fromRGB(230, 80, 80))
 

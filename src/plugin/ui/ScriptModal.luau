@@ -62,6 +62,7 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 		outputs = scriptData and scriptData.outputs or {},
 		attributes = scriptData and scriptData.attributes or {},
 		methods = scriptData and scriptData.methods or {},
+		actions = scriptData and scriptData.actions or {},
 		graph = scriptData and scriptData.graph or nil, -- Preserve graph!
 	}
 
@@ -136,7 +137,7 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 	end
 
 	local function addTypeBtn(typeName)
-		local btn = makeButton(typeContainer, typeName, UDim2.new(0, 100, 1, 0), UDim2.new(), Color3.fromRGB(30, 40, 60), Color3.fromRGB(130, 150, 180))
+		local btn = makeButton(typeContainer, typeName, UDim2.new(0, 80, 1, 0), UDim2.new(), Color3.fromRGB(30, 40, 60), Color3.fromRGB(130, 150, 180))
 		btn.ZIndex = 22
 		btn.MouseButton1Click:Connect(function()
 			data.type = typeName
@@ -151,6 +152,7 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 	addTypeBtn("Default")
 	addTypeBtn("Function")
 	addTypeBtn("Module")
+	addTypeBtn("Tool")
 	updateTypeSelection()
 
 	-- Dynamic content area (Scrollable)
@@ -390,6 +392,102 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 		end
 	end
 
+	local function makeActionsSection(title, listData)
+		local section = Instance.new("Frame")
+		section.Size = UDim2.new(1, 0, 0, 0)
+		section.BackgroundTransparency = 1
+		section.AutomaticSize = Enum.AutomaticSize.Y
+		section.ZIndex = 22
+		section.Parent = scroll
+
+		local slayout = Instance.new("UIListLayout")
+		slayout.FillDirection = Enum.FillDirection.Vertical
+		slayout.Padding = UDim.new(0, 6)
+		slayout.Parent = section
+
+		local header = Instance.new("Frame")
+		header.Size = UDim2.new(1, 0, 0, 28)
+		header.BackgroundTransparency = 1
+		header.ZIndex = 22
+		header.Parent = section
+
+		local hLabel = Instance.new("TextLabel")
+		hLabel.Size = UDim2.new(1, -30, 1, 0)
+		hLabel.BackgroundTransparency = 1
+		hLabel.Text = title:upper()
+		hLabel.TextColor3 = Color3.fromRGB(130, 150, 200)
+		hLabel.TextSize = 10
+		hLabel.Font = Enum.Font.GothamBold
+		hLabel.TextXAlignment = Enum.TextXAlignment.Left
+		hLabel.ZIndex = 22
+		hLabel.Parent = header
+		
+		local hLine = Instance.new("Frame")
+		hLine.Size = UDim2.new(1, 0, 0, 1)
+		hLine.Position = UDim2.new(0, 0, 1, -2)
+		hLine.BackgroundColor3 = Color3.fromRGB(45, 60, 90)
+		hLine.BorderSizePixel = 0
+		hLine.Parent = header
+
+		local addBtn = makeButton(header, "+", UDim2.new(0, 24, 0, 24), UDim2.new(1, -24, 0, 0), Color3.fromRGB(40, 55, 90), Color3.fromRGB(180, 210, 255))
+		addBtn.ZIndex = 22
+		addBtn.MouseButton1Click:Connect(function()
+			table.insert(listData, {name = "Action", key = "E"})
+			if ScriptModal._renderDynamic then ScriptModal._renderDynamic() end
+		end)
+
+		-- Gather KeyCodes list
+		local keyCodes = {}
+		for _, item in ipairs(Enum.KeyCode:GetEnumItems()) do
+			table.insert(keyCodes, item.Name)
+		end
+		table.sort(keyCodes)
+
+		for i, item in ipairs(listData) do
+			local row = Instance.new("Frame")
+			row.Size = UDim2.new(1, 0, 0, 28)
+			row.BackgroundTransparency = 1
+			row.ZIndex = 22
+			row.Parent = section
+
+			-- Name box (takes 48% of width)
+			local nameBox = makeTextInput(row, "Action Name...", item.name, UDim2.new(0.48, 0, 1, 0), UDim2.new(0, 0, 0, 0))
+			nameBox.ZIndex = 22
+			nameBox.FocusLost:Connect(function() 
+				-- Replace spaces and non-alphanumeric chars to keep Luau identifier valid
+				local safeName = nameBox.Text:gsub("%s+", ""):gsub("[^%w_]", "")
+				item.name = safeName ~= "" and safeName or "Action"
+				nameBox.Text = item.name
+			end)
+
+			-- Choice button for Key (takes 38% of width)
+			local choiceBtn = makeButton(row, item.key or "E", UDim2.new(0.38, 0, 1, 0), UDim2.new(0.5, 0, 0, 0), Color3.fromRGB(30, 40, 60), Color3.fromRGB(200, 220, 255))
+			choiceBtn.ZIndex = 23
+			
+			local choiceStroke = Instance.new("UIStroke")
+			choiceStroke.Color = Color3.fromRGB(50, 65, 90)
+			choiceStroke.Thickness = 1
+			choiceStroke.Parent = choiceBtn
+
+			choiceBtn.MouseButton1Click:Connect(function()
+				local topContainer = dialog:FindFirstAncestorWhichIsA("LayerCollector") or dialog
+				local ChoiceModal = require(script.Parent.ChoiceModal)
+				ChoiceModal.prompt(topContainer, "Select KeyCode", keyCodes, function(choice)
+					item.key = choice
+					choiceBtn.Text = choice
+				end)
+			end)
+
+			-- Delete button
+			local delBtn = makeButton(row, "✕", UDim2.new(0, 24, 0, 24), UDim2.new(1, -24, 0, 0), Color3.fromRGB(90, 25, 25), Color3.fromRGB(230, 80, 80))
+			delBtn.ZIndex = 22
+			delBtn.MouseButton1Click:Connect(function()
+				table.remove(listData, i)
+				if ScriptModal._renderDynamic then ScriptModal._renderDynamic() end
+			end)
+		end
+	end
+
 	ScriptModal._renderDynamic = function()
 		clearScroll()
 		if data.type == "Function" then
@@ -398,6 +496,9 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 		elseif data.type == "Module" then
 			makeListSection("Attributes (Variables)", data.attributes)
 			makeListSection("Methods", data.methods, true)
+		elseif data.type == "Tool" then
+			data.actions = data.actions or {}
+			makeActionsSection("Actions", data.actions)
 		end
 	end
 

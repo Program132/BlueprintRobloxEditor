@@ -100,6 +100,8 @@ local Nodes = {
 	["While"]       = require(Shared.nodes.control.While),
 	["pcall"]       = require(Shared.nodes.control.Pcall),
 	["For"]         = require(Shared.nodes.control.For),
+	["For In Pairs"] = require(Shared.nodes.control.ForInPairs),
+	["For In Ipairs"] = require(Shared.nodes.control.ForInIpairs),
 	["Require"]     = require(Shared.nodes.modules.Require),
 	["Module Call"] = require(Shared.nodes.modules.ModuleCall),
 	["Task Wait"]   = require(Shared.nodes.task.Wait),
@@ -182,36 +184,7 @@ local Nodes = {
 	["Instance Child"] = require(Shared.nodes.instances:WaitForChild("InstanceChild")),
 	["Instance Get Property"] = require(Shared.nodes.instances:WaitForChild("GetProperty")),
 	["Instance Set Property"] = require(Shared.nodes.instances:WaitForChild("SetProperty")),
-	-- Conversion nodes
-	["Instance To BasePart"] = require(Shared.nodes.conversions:WaitForChild("InstanceToBasePart")),
-	["Instance To Part"] = require(Shared.nodes.conversions:WaitForChild("InstanceToPart")),
-	["Instance To Model"] = require(Shared.nodes.conversions:WaitForChild("InstanceToModel")),
-	["Instance To Folder"] = require(Shared.nodes.conversions:WaitForChild("InstanceToFolder")),
-	["Instance To MeshPart"] = require(Shared.nodes.conversions:WaitForChild("InstanceToMeshPart")),
-	["Instance To Humanoid"] = require(Shared.nodes.conversions:WaitForChild("InstanceToHumanoid")),
-	["Instance To Player"] = require(Shared.nodes.conversions:WaitForChild("InstanceToPlayer")),
-	["Instance To Sound"] = require(Shared.nodes.conversions:WaitForChild("InstanceToSound")),
-	["Instance To Tool"] = require(Shared.nodes.conversions:WaitForChild("InstanceToTool")),
-	["Instance To StarterGui"] = require(Shared.nodes.conversions:WaitForChild("InstanceToStarterGui")),
-	["Instance To Camera"] = require(Shared.nodes.conversions:WaitForChild("InstanceToCamera")),
-	["ToString"] = require(Shared.nodes.conversions:WaitForChild("ToString")),
-	["ToNumber"] = require(Shared.nodes.conversions:WaitForChild("ToNumber")),
-	["Instance to RunService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToRunService")),
-	["Instance to HttpService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToHttpService")),
-	["Instance to Lighting"] = require(Shared.nodes.conversions:WaitForChild("InstanceToLighting")),
-	["Instance to ProximityPrompt"] = require(Shared.nodes.conversions:WaitForChild("InstanceToProximityPrompt")),
-	["Instance to TextChatService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToTextChatService")),
-	["Instance to SoundService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToSoundService")),
-	["Instance to AssetService"] = require(Shared.nodes.conversions:WaitForChild("InstanceToAssetService")),
-	["Instance to TextLabel"] = require(Shared.nodes.conversions:WaitForChild("InstanceToTextLabel")),
-	["Instance to TextButton"] = require(Shared.nodes.conversions:WaitForChild("InstanceToTextButton")),
-	["Instance to Frame"] = require(Shared.nodes.conversions:WaitForChild("InstanceToFrame")),
-	["Instance to ImageLabel"] = require(Shared.nodes.conversions:WaitForChild("InstanceToImageLabel")),
-	["Instance to ImageButton"] = require(Shared.nodes.conversions:WaitForChild("InstanceToImageButton")),
-	["Instance to ScreenGui"] = require(Shared.nodes.conversions:WaitForChild("InstanceToScreenGui")),
-	["Instance to TextBox"] = require(Shared.nodes.conversions:WaitForChild("InstanceToTextBox")),
-	["Instance to ScrollingFrame"] = require(Shared.nodes.conversions:WaitForChild("InstanceToScrollingFrame")),
-	["Instance to Animator"] = require(Shared.nodes.conversions:WaitForChild("InstanceToAnimator")),
+	["Instance Script Parent"] = require(Shared.nodes.instances:WaitForChild("ScriptParent")),
 
 	-- Ray nodes
 	["Ray new"] = require(Shared.nodes.ray:WaitForChild("New")),
@@ -461,9 +434,9 @@ local function registerWireHover(wireObj)
 	hitbox.MouseLeave:Connect(function()
 		if hoveredWire == wireObj then
 			hoveredWire = nil
-			line.BackgroundColor3 = baseColor
-			line.Size = UDim2.new(line.Size.X.Scale, line.Size.X.Offset, 0, 3)
 		end
+		line.BackgroundColor3 = baseColor
+		line.Size = UDim2.new(line.Size.X.Scale, line.Size.X.Offset, 0, 3)
 	end)
 end
 
@@ -865,6 +838,31 @@ local function spawnNode(nodeId, screenPosition, configFunc)
 	local nodeInstance
 	if nodeId == "Function Entry" then
 		nodeInstance = FunctionEntry.new(currentScriptHandle.data.inputs)
+	elseif nodeId:sub(1, 9) == "OnAction:" or nodeId:sub(1, 14) == "OnActionBegan:" or nodeId:sub(1, 14) == "OnActionEnded:" then
+		local actionName
+		local title
+		if nodeId:sub(1, 14) == "OnActionBegan:" then
+			actionName = nodeId:sub(15)
+			title = "On Action Began: " .. actionName
+		elseif nodeId:sub(1, 14) == "OnActionEnded:" then
+			actionName = nodeId:sub(15)
+			title = "On Action Ended: " .. actionName
+		else
+			actionName = nodeId:sub(10)
+			title = "On Action Began: " .. actionName
+		end
+		
+		local Node = require(Shared.Node)
+		local NodeType = require(Shared.NodeType)
+		local IO = require(Shared.IO)
+		
+		nodeInstance = Node.new(title, NodeType.EVENT)
+		nodeInstance.Title = title
+		nodeInstance:addOutput(IO.Output.new("Exec", ""))
+		
+		function nodeInstance:toLuau(block, visited)
+			return block:run_from_port(nodeInstance, "Exec", visited)
+		end
 	elseif nodeId:sub(1, 12) == "MethodEntry:" then
 		local mName = nodeId:sub(13)
 		local mData
@@ -1185,6 +1183,140 @@ local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 		end
 		
 		return dependenciesCode .. moduleHeader .. moduleBody .. "return " .. moduleName .. "\n"
+	elseif sData.type == "Tool" then
+		local header = "-- Tool Script: " .. sData.name .. "\n"
+		header ..= "local UIS = game:GetService(\"UserInputService\")\n"
+		header ..= "local tool = script.Parent\n"
+		header ..= "local toolIsEquipped = false\n\n"
+		
+		header ..= "tool.Equipped:Connect(function()\n"
+		header ..= "\ttoolIsEquipped = true\n"
+		header ..= "end)\n\n"
+		
+		header ..= "tool.Unequipped:Connect(function()\n"
+		header ..= "\ttoolIsEquipped = false\n"
+		header ..= "end)\n\n"
+		
+		local varsCode = ""
+		local sortedVars = {}
+		local usedVars = {}
+		if variables then
+			for _, name in ipairs(variables) do
+				usedVars[name] = true
+			end
+		end
+		for _, node in pairs(graph.nodes) do
+			if node.Name == "Get Variable" or node.Name == "Set Variable" then
+				local nameInput = node:getInput("name")
+				if nameInput and nameInput.Value ~= "" then
+					usedVars[nameInput.Value] = true
+				end
+			end
+		end
+		for varName, _ in pairs(usedVars) do
+			table.insert(sortedVars, varName)
+		end
+		table.sort(sortedVars)
+		for _, varName in ipairs(sortedVars) do
+			varsCode ..= "local var_" .. varName .. " = nil\n"
+		end
+		if varsCode ~= "" then
+			varsCode ..= "\n"
+		end
+		
+		local blocks = graph:build_blocks()
+		
+		-- 1. InputBegan
+		local beganActionsCode = ""
+		for _, action in ipairs(sData.actions or {}) do
+			local actionBlock = nil
+			for _, b in ipairs(blocks) do
+				local pNode = b.parent_node
+				if pNode.Class == "OnActionBegan:" .. action.name or pNode.Class == "OnAction:" .. action.name then
+					actionBlock = b
+					break
+				end
+			end
+			
+			if actionBlock then
+				local runCode = actionBlock:run()
+				if runCode ~= "" then
+					beganActionsCode ..= "if input.KeyCode == Enum.KeyCode." .. action.key .. " then\n"
+					beganActionsCode ..= Block.indentCode(runCode)
+					beganActionsCode ..= "end\n\n"
+				end
+			end
+		end
+		
+		local inputBegan = ""
+		if beganActionsCode ~= "" then
+			inputBegan ..= "UIS.InputBegan:Connect(function(input, gameProcess)\n"
+			inputBegan ..= "\tif gameProcess then return end\n"
+			inputBegan ..= "\tif not toolIsEquipped then return end\n\n"
+			inputBegan ..= Block.indentCode(beganActionsCode)
+			inputBegan ..= "end)\n\n"
+		end
+		
+		-- 2. InputEnded
+		local endedActionsCode = ""
+		for _, action in ipairs(sData.actions or {}) do
+			local actionBlock = nil
+			for _, b in ipairs(blocks) do
+				local pNode = b.parent_node
+				if pNode.Class == "OnActionEnded:" .. action.name then
+					actionBlock = b
+					break
+				end
+			end
+			
+			if actionBlock then
+				local runCode = actionBlock:run()
+				if runCode ~= "" then
+					endedActionsCode ..= "if input.KeyCode == Enum.KeyCode." .. action.key .. " then\n"
+					endedActionsCode ..= Block.indentCode(runCode)
+					endedActionsCode ..= "end\n\n"
+				end
+			end
+		end
+		
+		local inputEnded = ""
+		if endedActionsCode ~= "" then
+			inputEnded ..= "UIS.InputEnded:Connect(function(input, gameProcess)\n"
+			inputEnded ..= "\tif gameProcess then return end\n"
+			inputEnded ..= "\tif not toolIsEquipped then return end\n\n"
+			inputEnded ..= Block.indentCode(endedActionsCode)
+			inputEnded ..= "end)\n\n"
+		end
+		
+		-- 3. General (non-action) blocks, like Event UserInputService InputEnded/Began, Event Players PlayerAdded, etc.
+		local otherBlocksCode = ""
+		for _, b in ipairs(blocks) do
+			local pNode = b.parent_node
+			local isActionBlock = false
+			for _, action in ipairs(sData.actions or {}) do
+				if pNode.Class == "OnActionBegan:" .. action.name 
+					or pNode.Class == "OnActionEnded:" .. action.name 
+					or pNode.Class == "OnAction:" .. action.name then
+					isActionBlock = true
+					break
+				end
+			end
+			if not isActionBlock then
+				local runCode = b:run()
+				if runCode ~= "" then
+					otherBlocksCode ..= runCode .. "\n"
+				end
+			end
+		end
+
+		local actionsCompiled = inputBegan .. inputEnded
+		if actionsCompiled == "" and otherBlocksCode == "" then
+			actionsCompiled = "-- No action logic defined\n"
+		else
+			actionsCompiled ..= otherBlocksCode
+		end
+		
+		return dependenciesCode .. header .. varsCode .. actionsCompiled
 	else
 		-- Default scripts just get the dependencies + their code
 		return dependenciesCode .. code
@@ -1199,6 +1331,10 @@ local function performExport(sData, variables, callback)
 			local instance = fm:ExportToScript(sData.name, choice, code)
 			if callback then callback(instance) end
 		end)
+	elseif sData.type == "Tool" then
+		local code = compileScriptData(sData, variables, allScripts)
+		local instance = fm:ExportToScript(sData.name, "LocalScript", code)
+		if callback then callback(instance) end
 	else
 		local code = compileScriptData(sData, variables, allScripts)
 		local instance = fm:ExportToScript(sData.name, sData.type, code)
@@ -1365,6 +1501,19 @@ canvas:OnRightClick(function(position)
 				{ id = "Function Return", name = "Function Return", type = "Method" },
 			}
 		})
+	elseif currentScriptHandle and currentScriptHandle.data.type == "Tool" then
+		local actionItems = {}
+		for _, action in ipairs(currentScriptHandle.data.actions or {}) do
+			table.insert(actionItems, { id = "OnActionBegan:" .. action.name, name = "On Action Began: " .. action.name, type = "Event" })
+			table.insert(actionItems, { id = "OnActionEnded:" .. action.name, name = "On Action Ended: " .. action.name, type = "Event" })
+		end
+		if #actionItems > 0 then
+			table.insert(extraNodes, {
+				category = "Tool Actions",
+				color = Color3.fromRGB(240, 140, 40),
+				items = actionItems
+			})
+		end
 	elseif currentScriptHandle and currentScriptHandle.data.type == "Module" then
 		local methodItems = {}
 		for _, m in ipairs(currentScriptHandle.data.methods or {}) do

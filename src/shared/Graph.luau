@@ -210,6 +210,11 @@ end
 function Graph:toLuau(variables)
     -- Identify used variables to declare them locally
     local usedVars = {}
+    if variables then
+        for _, name in ipairs(variables) do
+            usedVars[name] = true
+        end
+    end
     for _, node in pairs(self.nodes) do
         if node.Name == "Get Variable" or node.Name == "Set Variable" then
             local nameInput = node:getInput("name")
@@ -300,6 +305,37 @@ function Graph.from_data(data, Nodes, context)
                 nodeClass = Nodes["Function Entry"]
             elseif nData.Class:sub(1, 13) == "MethodReturn:" then
                 nodeClass = Nodes["Function Return"]
+            elseif nData.Class:sub(1, 9) == "OnAction:" or nData.Class:sub(1, 14) == "OnActionBegan:" or nData.Class:sub(1, 14) == "OnActionEnded:" then
+                local actionName
+                local title
+                if nData.Class:sub(1, 14) == "OnActionBegan:" then
+                    actionName = nData.Class:sub(15)
+                    title = "On Action Began: " .. actionName
+                elseif nData.Class:sub(1, 14) == "OnActionEnded:" then
+                    actionName = nData.Class:sub(15)
+                    title = "On Action Ended: " .. actionName
+                else
+                    actionName = nData.Class:sub(10)
+                    title = "On Action Began: " .. actionName
+                end
+
+                nodeClass = {
+                    new = function()
+                        local Node = require(script.Parent.Node)
+                        local NodeType = require(script.Parent.NodeType)
+                        local IO = require(script.Parent.IO)
+                        
+                        local self = Node.new(title, NodeType.EVENT)
+                        self.Title = title
+                        self:addOutput(IO.Output.new("Exec", ""))
+                        
+                        function self:toLuau(block, visited)
+                            return block:run_from_port(self, "Exec", visited)
+                        end
+                        
+                        return self
+                    end
+                }
             end
         end
 
