@@ -178,6 +178,7 @@ local Nodes = {
 	["Divide"] = require(Shared.nodes.math:WaitForChild("Divide")),
 	["Concat"] = require(Shared.nodes.string:WaitForChild("Concat")),
 	["TweenInfo new"] = require(Shared.nodes.tween:WaitForChild("TweenInfoNew")),
+	["Simple Tween"] = require(Shared.nodes.tween:WaitForChild("SimpleTween")),
 	["Instance Workspace Object"] = require(Shared.nodes.instances:WaitForChild("WorkspaceObject")),
 	["Instance new"] = require(Shared.nodes.instances:WaitForChild("New")),
 	["Get Service"] = require(Shared.nodes.instances:WaitForChild("GetService")),
@@ -193,6 +194,7 @@ local Nodes = {
 	["Ray Unit"] = require(Shared.nodes.ray:WaitForChild("Unit")),
 	["Ray origin"]  = require(Shared.nodes.ray:WaitForChild("Origin")),
 	["Ray direction"] = require(Shared.nodes.ray:WaitForChild("Direction")),
+	["Simple Raycast"] = require(Shared.nodes.ray:WaitForChild("SimpleRaycast")),
 }
 
 local playerNodes = Shared.nodes:WaitForChild("player")

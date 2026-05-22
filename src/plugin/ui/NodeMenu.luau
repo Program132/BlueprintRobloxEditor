@@ -158,6 +158,9 @@ function NodeMenu.prompt(parent, position, extraNodes, scriptType, onConfirm)
 		elseif category == "NPC" then color = Color3.fromRGB(80, 240, 240)
 		elseif category == "Task" then color = Color3.fromRGB(200, 100, 255)
 		elseif category == "Output" then color = Color3.fromRGB(255, 100, 50)
+		elseif category == "Simple" then color = Color3.fromRGB(230, 80, 150)
+		elseif category == "Tween" or category == "TweenInfo" then color = Color3.fromRGB(255, 130, 0)
+		elseif category == "Ray" then color = Color3.fromRGB(130, 80, 250)
 		elseif category:find("Service") then color = Color3.fromRGB(255, 150, 50)
 		end
 
