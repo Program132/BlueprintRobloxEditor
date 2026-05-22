@@ -16,7 +16,7 @@ function NodeMenu.registerNodes(nodes)
 	registeredNodes = nodes
 end
 
-function NodeMenu.prompt(parent, position, extraNodes, onConfirm)
+function NodeMenu.prompt(parent, position, extraNodes, scriptType, onConfirm)
 	-- 1. Create Overlay
 	local overlay = Instance.new("TextButton")
 	overlay.Name = "NodeMenuOverlay"
@@ -155,6 +155,7 @@ function NodeMenu.prompt(parent, position, extraNodes, onConfirm)
 		elseif category == "Table" then color = Color3.fromRGB(180, 120, 255)
 		elseif category == "Event" then color = Color3.fromRGB(255, 80, 80)
 		elseif category == "Instance" or category == "Player" or category == "Players" then color = Color3.fromRGB(100, 255, 180)
+		elseif category == "NPC" then color = Color3.fromRGB(80, 240, 240)
 		elseif category == "Task" then color = Color3.fromRGB(200, 100, 255)
 		elseif category == "Output" then color = Color3.fromRGB(255, 100, 50)
 		elseif category:find("Service") then color = Color3.fromRGB(255, 150, 50)
@@ -287,6 +288,9 @@ function NodeMenu.prompt(parent, position, extraNodes, onConfirm)
 			
 			for key, _ in pairs(registeredNodes) do
 				local displayName, category, color = getNodeInfo(key)
+				if category == "NPC" and scriptType ~= "NPC" then
+					continue
+				end
 				if not nodesByCategory[category] then
 					nodesByCategory[category] = {color = color, items = {}}
 					table.insert(categories, category)
@@ -324,6 +328,9 @@ function NodeMenu.prompt(parent, position, extraNodes, onConfirm)
 
 			for key, _ in pairs(registeredNodes) do
 				local displayName, category, color = getNodeInfo(key)
+				if category == "NPC" and scriptType ~= "NPC" then
+					continue
+				end
 				if key:lower():find(filterLower) or category:lower():find(filterLower) then
 					if not resultsByCategory[category] then
 						resultsByCategory[category] = {color = color, items = {}}

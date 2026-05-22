@@ -243,6 +243,30 @@ Nodes["OnServerInvoke"] = require(networking:WaitForChild("OnServerInvoke"))
 Nodes["OnClientInvoke"] = require(networking:WaitForChild("OnClientInvoke"))
 Nodes["Remote Return"] = require(networking:WaitForChild("RemoteReturn"))
 
+-- NPC nodes
+local npcNodes = Shared.nodes:WaitForChild("npc")
+Nodes["NPC On Death"] = require(npcNodes:WaitForChild("OnDeath"))
+Nodes["NPC On Damaged"] = require(npcNodes:WaitForChild("OnDamaged"))
+Nodes["NPC On Loop"] = require(npcNodes:WaitForChild("OnLoop"))
+Nodes["NPC On Child Added"] = require(npcNodes:WaitForChild("OnChildAdded"))
+Nodes["NPC On Child Removed"] = require(npcNodes:WaitForChild("OnChildRemoved"))
+Nodes["NPC On Target Reached"] = require(npcNodes:WaitForChild("OnTargetReached"))
+Nodes["NPC On State Changed"] = require(npcNodes:WaitForChild("OnStateChanged"))
+Nodes["NPC Move To"] = require(npcNodes:WaitForChild("MoveTo"))
+Nodes["NPC Stop Moving"] = require(npcNodes:WaitForChild("StopMoving"))
+Nodes["NPC Pathfind To"] = require(npcNodes:WaitForChild("PathfindTo"))
+Nodes["NPC Look At"] = require(npcNodes:WaitForChild("LookAt"))
+Nodes["NPC Play Animation"] = require(npcNodes:WaitForChild("PlayAnimation"))
+Nodes["NPC Stop Animation"] = require(npcNodes:WaitForChild("StopAnimation"))
+Nodes["NPC Equip Tool"] = require(npcNodes:WaitForChild("EquipTool"))
+Nodes["NPC Unequip Tools"] = require(npcNodes:WaitForChild("UnequipTools"))
+Nodes["NPC Set WalkSpeed"] = require(npcNodes:WaitForChild("SetWalkSpeed"))
+Nodes["NPC Set JumpPower"] = require(npcNodes:WaitForChild("SetJumpPower"))
+Nodes["NPC Get Closest Player"] = require(npcNodes:WaitForChild("GetClosestPlayer"))
+Nodes["NPC Can See Target"] = require(npcNodes:WaitForChild("CanSeeTarget"))
+Nodes["NPC Respawn"] = require(npcNodes:WaitForChild("Respawn"))
+
+
 -- Special nodes handled dynamically
 Nodes["Function Entry"] = FunctionEntry
 Nodes["Function Return"] = FunctionReturn
@@ -995,7 +1019,32 @@ local function onEditScript(handle)
 		handle.data = updatedData
 		-- Update UI
 		handle.nameLabel.Text = updatedData.name
-		handle.typeBtn.Text = updatedData.type == "Function" and "FUN" or (updatedData.type == "Module" and "MOD" or "DEF")
+		
+		local typeStr = "DEF"
+		local tagBg = Color3.fromRGB(30, 40, 60)
+		local tagFg = Color3.fromRGB(110, 160, 240)
+
+		if updatedData.type == "Function" then
+			typeStr = "FUN"
+			tagBg = Color3.fromRGB(30, 60, 50)
+			tagFg = Color3.fromRGB(90, 200, 150)
+		elseif updatedData.type == "Module" then
+			typeStr = "MOD"
+			tagBg = Color3.fromRGB(60, 30, 60)
+			tagFg = Color3.fromRGB(200, 90, 200)
+		elseif updatedData.type == "Tool" then
+			typeStr = "TOL"
+			tagBg = Color3.fromRGB(80, 50, 20)
+			tagFg = Color3.fromRGB(250, 160, 50)
+		elseif updatedData.type == "NPC" then
+			typeStr = "NPC"
+			tagBg = Color3.fromRGB(20, 60, 60)
+			tagFg = Color3.fromRGB(50, 220, 220)
+		end
+
+		handle.typeBtn.Text = typeStr
+		handle.typeBtn.BackgroundColor3 = tagBg
+		handle.typeBtn.TextColor3 = tagFg
 	end)
 end
 
@@ -1317,6 +1366,70 @@ local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 		end
 		
 		return dependenciesCode .. header .. varsCode .. actionsCompiled
+	elseif sData.type == "NPC" then
+		local header = "-- NPC Script: " .. sData.name .. "\n"
+		header ..= "local Players = game:GetService(\"Players\")\n"
+		header ..= "local PathfindingService = game:GetService(\"PathfindingService\")\n\n"
+		
+		local charPath = sData.characterPath or "script.Parent"
+		if charPath == "" then charPath = "script.Parent" end
+		header ..= "local char = " .. charPath .. "\n"
+		
+		local humPath = sData.humanoidPath or "Humanoid"
+		if humPath == "" then humPath = "Humanoid" end
+		
+		local humResolver = ""
+		if humPath:sub(1, 4) == "char" or humPath:sub(1, 6) == "script" then
+			humResolver = humPath
+		elseif humPath:find("%.") or humPath:find(":") or humPath:find("/") then
+			humResolver = "char." .. humPath
+		else
+			humResolver = "char:WaitForChild(\"" .. humPath .. "\")"
+		end
+		
+		header ..= "local humanoid = " .. humResolver .. "\n\n"
+		
+		local hasRespawn = false
+		for _, node in pairs(graph.nodes) do
+			if node.Name == "NPC Respawn" then
+				hasRespawn = true
+				break
+			end
+		end
+		if hasRespawn then
+			header ..= "local player = Players:GetPlayerFromCharacter(char)\n"
+			header ..= "if player then\n"
+			header ..= "\tif not player:HasAppearanceLoaded() then\n"
+			header ..= "\t\tplayer.CharacterAppearanceLoaded:Wait()\n"
+			header ..= "\tend\n"
+			header ..= "else\n"
+			header ..= "\tchar:WaitForChild(\"HumanoidRootPart\", 5)\n"
+			header ..= "\ttask.wait(0.2)\n"
+			header ..= "end\n\n"
+			header ..= "local existingBackup = game:GetService(\"ServerStorage\"):FindFirstChild(char.Name .. \"_backup\")\n"
+			header ..= "if not existingBackup then\n"
+			header ..= "\tlocal wasArchivable = char.Archivable\n"
+			header ..= "\tchar.Archivable = true\n"
+			header ..= "\tlocal wasArchivableParts = {}\n"
+			header ..= "\tfor _, child in pairs(char:GetChildren()) do\n"
+			header ..= "\t\tif child:IsA(\"BasePart\") then\n"
+			header ..= "\t\t\twasArchivableParts[child] = child.Archivable\n"
+			header ..= "\t\t\tchild.Archivable = true\n"
+			header ..= "\t\t\tend\n"
+			header ..= "\tend\n"
+			header ..= "\tlocal backup = char:Clone()\n"
+			header ..= "\tchar.Archivable = wasArchivable\n"
+			header ..= "\tfor child, wasArchivable in pairs(wasArchivableParts) do\n"
+			header ..= "\t\tchild.Archivable = wasArchivable\n"
+			header ..= "\tend\n"
+			header ..= "\tif backup then\n"
+			header ..= "\t\tbackup.Name = char.Name .. \"_backup\"\n"
+			header ..= "\t\tbackup.Parent = game:GetService(\"ServerStorage\")\n"
+			header ..= "\tend\n"
+			header ..= "end\n\n"
+		end
+		
+		return dependenciesCode .. header .. code
 	else
 		-- Default scripts just get the dependencies + their code
 		return dependenciesCode .. code
@@ -1544,7 +1657,8 @@ canvas:OnRightClick(function(position)
 		})
 	end
 	
-	NodeMenu.prompt(widget, position, extraNodes, function(nodeId)
+	local scriptType = currentScriptHandle and currentScriptHandle.data.type or "Default"
+	NodeMenu.prompt(widget, position, extraNodes, scriptType, function(nodeId)
 		spawnNode(nodeId, position)
 	end)
 end)

@@ -63,6 +63,8 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 		attributes = scriptData and scriptData.attributes or {},
 		methods = scriptData and scriptData.methods or {},
 		actions = scriptData and scriptData.actions or {},
+		characterPath = scriptData and scriptData.characterPath or "script.Parent",
+		humanoidPath = scriptData and scriptData.humanoidPath or "Humanoid",
 		graph = scriptData and scriptData.graph or nil, -- Preserve graph!
 	}
 
@@ -120,7 +122,7 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 
 	local typeLayout = Instance.new("UIListLayout")
 	typeLayout.FillDirection = Enum.FillDirection.Horizontal
-	typeLayout.Padding = UDim.new(0, 8)
+	typeLayout.Padding = UDim.new(0, 4)
 	typeLayout.Parent = typeContainer
 
 	local typeBtns = {}
@@ -137,7 +139,7 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 	end
 
 	local function addTypeBtn(typeName)
-		local btn = makeButton(typeContainer, typeName, UDim2.new(0, 80, 1, 0), UDim2.new(), Color3.fromRGB(30, 40, 60), Color3.fromRGB(130, 150, 180))
+		local btn = makeButton(typeContainer, typeName, UDim2.new(0, 62, 1, 0), UDim2.new(), Color3.fromRGB(30, 40, 60), Color3.fromRGB(130, 150, 180))
 		btn.ZIndex = 22
 		btn.MouseButton1Click:Connect(function()
 			data.type = typeName
@@ -153,6 +155,7 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 	addTypeBtn("Function")
 	addTypeBtn("Module")
 	addTypeBtn("Tool")
+	addTypeBtn("NPC")
 	updateTypeSelection()
 
 	-- Dynamic content area (Scrollable)
@@ -170,6 +173,7 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 
 	local scrollLayout = Instance.new("UIListLayout")
 	scrollLayout.FillDirection = Enum.FillDirection.Vertical
+	scrollLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	scrollLayout.Padding = UDim.new(0, 12)
 	scrollLayout.Parent = scroll
 
@@ -319,12 +323,14 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 		doneBtn.MouseButton1Click:Connect(function() subOverlay:Destroy() end)
 	end
 
-	local function makeListSection(title, listData, hasParams)
+	local function makeListSection(title, listData, hasParams, layoutOrder)
 		local section = Instance.new("Frame")
+		section.Name = title .. "Section"
 		section.Size = UDim2.new(1, 0, 0, 0)
 		section.BackgroundTransparency = 1
 		section.AutomaticSize = Enum.AutomaticSize.Y
 		section.ZIndex = 22
+		section.LayoutOrder = layoutOrder
 		section.Parent = scroll
 
 		local slayout = Instance.new("UIListLayout")
@@ -392,12 +398,14 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 		end
 	end
 
-	local function makeActionsSection(title, listData)
+	local function makeActionsSection(title, listData, layoutOrder)
 		local section = Instance.new("Frame")
+		section.Name = title .. "Section"
 		section.Size = UDim2.new(1, 0, 0, 0)
 		section.BackgroundTransparency = 1
 		section.AutomaticSize = Enum.AutomaticSize.Y
 		section.ZIndex = 22
+		section.LayoutOrder = layoutOrder
 		section.Parent = scroll
 
 		local slayout = Instance.new("UIListLayout")
@@ -491,14 +499,65 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 	ScriptModal._renderDynamic = function()
 		clearScroll()
 		if data.type == "Function" then
-			makeListSection("Inputs", data.inputs)
-			makeListSection("Outputs (Returns)", data.outputs)
+			makeListSection("Inputs", data.inputs, false, 1)
+			makeListSection("Outputs (Returns)", data.outputs, false, 2)
 		elseif data.type == "Module" then
-			makeListSection("Attributes (Variables)", data.attributes)
-			makeListSection("Methods", data.methods, true)
+			makeListSection("Attributes (Variables)", data.attributes, false, 1)
+			makeListSection("Methods", data.methods, true, 2)
 		elseif data.type == "Tool" then
 			data.actions = data.actions or {}
-			makeActionsSection("Actions", data.actions)
+			makeActionsSection("Actions", data.actions, 1)
+		elseif data.type == "NPC" then
+			local charLabel = Instance.new("TextLabel")
+			charLabel.Name = "CharLabel"
+			charLabel.Size = UDim2.new(1, 0, 0, 18)
+			charLabel.BackgroundTransparency = 1
+			charLabel.Text = "CHARACTER PATH"
+			charLabel.TextColor3 = Color3.fromRGB(130, 150, 200)
+			charLabel.TextSize = 10
+			charLabel.Font = Enum.Font.GothamBold
+			charLabel.TextXAlignment = Enum.TextXAlignment.Left
+			charLabel.ZIndex = 22
+			charLabel.LayoutOrder = 1
+			charLabel.Parent = scroll
+
+			local charInput = makeTextInput(scroll, "Character Path (e.g. script.Parent)", data.characterPath, UDim2.new(1, 0, 0, 30), UDim2.new(0, 0, 0, 0))
+			charInput.Name = "CharInput"
+			charInput.ZIndex = 22
+			charInput.LayoutOrder = 2
+			charInput.FocusLost:Connect(function()
+				data.characterPath = charInput.Text
+			end)
+
+			-- Spacer
+			local s1 = Instance.new("Frame")
+			s1.Name = "Spacer1"
+			s1.Size = UDim2.new(1, 0, 0, 4)
+			s1.BackgroundTransparency = 1
+			s1.ZIndex = 22
+			s1.LayoutOrder = 3
+			s1.Parent = scroll
+
+			local humLabel = Instance.new("TextLabel")
+			humLabel.Name = "HumLabel"
+			humLabel.Size = UDim2.new(1, 0, 0, 18)
+			humLabel.BackgroundTransparency = 1
+			humLabel.Text = "HUMANOID PATH / NAME (Relative to Character)"
+			humLabel.TextColor3 = Color3.fromRGB(130, 150, 200)
+			humLabel.TextSize = 10
+			humLabel.Font = Enum.Font.GothamBold
+			humLabel.TextXAlignment = Enum.TextXAlignment.Left
+			humLabel.ZIndex = 22
+			humLabel.LayoutOrder = 4
+			humLabel.Parent = scroll
+
+			local humInput = makeTextInput(scroll, "Humanoid Path (e.g. Humanoid)", data.humanoidPath, UDim2.new(1, 0, 0, 30), UDim2.new(0, 0, 0, 0))
+			humInput.Name = "HumInput"
+			humInput.ZIndex = 22
+			humInput.LayoutOrder = 5
+			humInput.FocusLost:Connect(function()
+				data.humanoidPath = humInput.Text
+			end)
 		end
 	end
 
