@@ -10,6 +10,13 @@ local DOT_SIZE    = 2
 local DOT_COLOR   = Color3.fromRGB(42, 58, 85)
 local BG_COLOR    = Color3.fromRGB(14, 19, 30)
 
+local function makeCorner(parent, radius)
+	local c = Instance.new("UICorner")
+	c.CornerRadius = UDim.new(0, radius)
+	c.Parent = parent
+	return c
+end
+
 function Canvas.new(parent)
 	local self = setmetatable({}, Canvas)
 
@@ -56,6 +63,53 @@ function Canvas.new(parent)
 	uiScale.Scale = self._zoom
 	uiScale.Parent = self._nodeContainer
 	self._uiScale = uiScale
+
+	-- Floating Control Bar
+	local controlBar = Instance.new("Frame")
+	controlBar.Name = "CanvasControls"
+	controlBar.Size = UDim2.new(0, 36, 0, 36)
+	controlBar.Position = UDim2.new(1, -48, 1, -48)
+	controlBar.BackgroundColor3 = Color3.fromRGB(20, 26, 40)
+	controlBar.BorderSizePixel = 0
+	controlBar.ZIndex = 15
+	controlBar.Visible = false
+	controlBar.Parent = group
+	makeCorner(controlBar, 6)
+
+	local controlStroke = Instance.new("UIStroke")
+	controlStroke.Color = Color3.fromRGB(45, 60, 90)
+	controlStroke.Thickness = 1
+	controlStroke.Parent = controlBar
+
+	local resetBtn = Instance.new("TextButton")
+	resetBtn.Name = "ResetViewBtn"
+	resetBtn.Size = UDim2.new(1, 0, 1, 0)
+	resetBtn.BackgroundTransparency = 1
+	resetBtn.Text = "🎯"
+	resetBtn.TextSize = 16
+	resetBtn.TextColor3 = Color3.fromRGB(150, 180, 240)
+	resetBtn.ZIndex = 16
+	resetBtn.Parent = controlBar
+
+	resetBtn.MouseEnter:Connect(function()
+		controlBar.BackgroundColor3 = Color3.fromRGB(30, 40, 60)
+		controlStroke.Color = Color3.fromRGB(56, 125, 255)
+		resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	end)
+	resetBtn.MouseLeave:Connect(function()
+		controlBar.BackgroundColor3 = Color3.fromRGB(20, 26, 40)
+		controlStroke.Color = Color3.fromRGB(45, 60, 90)
+		resetBtn.TextColor3 = Color3.fromRGB(150, 180, 240)
+	end)
+
+	resetBtn.MouseButton1Click:Connect(function()
+		if self._onResetViewCallback then
+			self._onResetViewCallback()
+		end
+	end)
+
+	self._controlBar = controlBar
+	self._onResetViewCallback = nil
 
 	self:_setupPanning()
 
@@ -250,6 +304,9 @@ function Canvas:ShowGrid()
 	self._gridActive = true
 
 	self._placeholder.Visible = false
+	if self._controlBar then
+		self._controlBar.Visible = true
+	end
 
 	local gridFrame = Instance.new("Frame")
 	gridFrame.Name = "Grid"
@@ -291,6 +348,10 @@ function Canvas:OnKeyDown(callback)
 	self._onKeyDownCallback = callback
 end
 
+function Canvas:OnResetView(callback)
+	self._onResetViewCallback = callback
+end
+
 function Canvas:HideGrid()
 	self._gridActive = false
 	if self._resizeConn then
@@ -300,6 +361,9 @@ function Canvas:HideGrid()
 	if self._gridFrame then
 		self._gridFrame:Destroy()
 		self._gridFrame = nil
+	end
+	if self._controlBar then
+		self._controlBar.Visible = false
 	end
 end
 

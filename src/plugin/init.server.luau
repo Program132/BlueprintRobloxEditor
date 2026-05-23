@@ -1052,6 +1052,30 @@ onSwitchToGraph = function(nodeInstance)
 end
 
 
+local function centerOnFirstNode()
+	if not projectActive or not currentGraph then return end
+	
+	local targetNode = nil
+	for _, node in pairs(currentGraph.nodes) do
+		if node.Type == "EVENT" then
+			targetNode = node
+			break
+		end
+	end
+	if not targetNode then
+		for _, node in pairs(currentGraph.nodes) do
+			targetNode = node
+			break
+		end
+	end
+	
+	if targetNode then
+		canvas:CenterOnPosition(targetNode.Position)
+	else
+		canvas:CenterOnPosition(Vector2.zero)
+	end
+end
+
 local function switchScript(handle)
 	if not projectActive then return end
 	
@@ -1097,6 +1121,8 @@ local function switchScript(handle)
 	else
 		renderGraph(currentGraph)
 	end
+	
+	task.defer(centerOnFirstNode)
 end
 
 
@@ -1731,6 +1757,7 @@ canvas:OnMouseMove(function(position)
 end)
 
 canvas:OnKeyDown(handleKeyDown)
+canvas:OnResetView(centerOnFirstNode)
 
 -- ── Keyboard Shortcuts ────────────────────────────────────────────────────────
 UserInputService.InputBegan:Connect(function(input, gpe)
