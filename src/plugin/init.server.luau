@@ -20,6 +20,7 @@ local Sidebar = require(UI.Sidebar)
 local Modal   = require(UI.Modal)
 local ScriptModal = require(UI.ScriptModal)
 local ChoiceModal = require(UI.ChoiceModal)
+local ImportModal = require(UI.ImportModal)
 local UiDesigner  = require(UI.UiDesigner)
 local NodeMenu = require(UI.NodeMenu)
 local NodeComponent = require(UI.NodeComponent)
@@ -314,10 +315,12 @@ local openProjectBtn = topBar:AddButton("OpenProjectBtn", "Open Project")
 openProjectBtn:GetInstance().LayoutOrder = 2
 local saveProjectBtn = topBar:AddButton("SaveProjectBtn", "Save Project")
 saveProjectBtn:GetInstance().LayoutOrder = 3
+local importBtn      = topBar:AddButton("ImportBtn",      "Import Scripts")
+importBtn:GetInstance().LayoutOrder = 4
 local exportBtn      = topBar:AddButton("ExportBtn",      "Export Current")
-exportBtn:GetInstance().LayoutOrder = 4
+exportBtn:GetInstance().LayoutOrder = 5
 local exportAllBtn   = topBar:AddButton("ExportAllBtn",   "Export All")
-exportAllBtn:GetInstance().LayoutOrder = 5
+exportAllBtn:GetInstance().LayoutOrder = 6
 
 -- UI Designer mode toggles (right aligned segmented toggle)
 local modeToggle = topBar:AddSegmentedToggle("ModeToggle", {"Design", "Graph"})
@@ -1262,6 +1265,57 @@ saveProjectBtn:OnClick(function()
 	)
 	task.delay(3, function()
 		if projectActive then canvas:HidePlaceholder() end
+	end)
+end)
+
+-- ── Import Scripts ─────────────────────────────────────────────────────────────
+importBtn:OnClick(function()
+	if not projectActive then return end
+
+	local project = fm:OpenJSON({"json"})
+	if project == nil or project.data == nil or project.data.scripts == nil then return end
+
+	ImportModal.prompt(widget, project.data.scripts, function(selectedScripts)
+		-- Check name collisions and rename if necessary
+		local currentScripts = sidebar:GetScripts()
+		for _, sData in ipairs(selectedScripts) do
+			local baseName = sData.name or "Script"
+			local name = baseName
+			local count = 0
+			
+			local function isNameColliding(checkName)
+				for _, curScript in ipairs(currentScripts) do
+					if curScript.name == checkName then
+						return true
+					end
+				end
+				return false
+			end
+
+			while isNameColliding(name) do
+				count += 1
+				name = baseName .. "_" .. count
+			end
+
+			sData.name = name
+			
+			-- Add the script to the sidebar
+			local handle = sidebar:AddScript(sData, onEditScript)
+			handle.data.variables = sData.variables or {}
+			handle.data.graph = sData.graph
+			
+			-- Add it to our current list of scripts to prevent subsequent imports in the same batch from colliding with each other
+			table.insert(currentScripts, sData)
+		end
+		
+		-- Save the newly imported scripts into the project representation/export
+		local data = gatherProjectData()
+		fm:ExportToStringValue(data)
+		
+		canvas:SetPlaceholder("Successfully imported " .. #selectedScripts .. " script(s)!")
+		task.delay(3, function()
+			if projectActive then canvas:HidePlaceholder() end
+		end)
 	end)
 end)
 

@@ -144,6 +144,7 @@ function TopBar.new(parent)
 	local layout = Instance.new("UIListLayout")
 	layout.FillDirection = Enum.FillDirection.Horizontal
 	layout.VerticalAlignment = Enum.VerticalAlignment.Center
+	layout.SortOrder = Enum.SortOrder.LayoutOrder
 	layout.Padding = UDim.new(0, 6)
 	layout.Parent = inner
 
@@ -163,6 +164,7 @@ function TopBar.new(parent)
 	rightLayout.FillDirection = Enum.FillDirection.Horizontal
 	rightLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 	rightLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+	rightLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	rightLayout.Padding = UDim.new(0, 6)
 	rightLayout.Parent = rightInner
 
