@@ -4,6 +4,24 @@ local ScriptModal = {
 	_renderDynamic = nil
 }
 
+local TYPE_DESCRIPTIONS = {
+	Default = "A general purpose script. Best for server or client logic and basic blueprint events.",
+	Function = "Defines a reusable function with inputs and outputs that can be executed from other graphs.",
+	Module = "A modular script containing public methods and attributes that can be imported elsewhere.",
+	Tool = "Designed for interactive backpack Tools. Allows binding keypresses to custom actions.",
+	NPC = "An AI controller for humanoid NPCs. Handles movement, pathfinding, and behaviors.",
+	UI = "Connected to a screen layout. Allows designing interface components and screen events."
+}
+
+local TYPE_ICONS = {
+	Default = "📜",
+	Function = "⚙️",
+	Module = "📦",
+	Tool = "🔧",
+	NPC = "🤖",
+	UI = "🖥️"
+}
+
 local function makeCorner(parent, radius)
 	local c = Instance.new("UICorner")
 	c.CornerRadius = UDim.new(0, radius)
@@ -16,12 +34,12 @@ local function makeTextInput(parent, placeholder, text, size, pos)
 	local input = Instance.new("TextBox")
 	input.Size = size
 	input.Position = pos
-	input.BackgroundColor3 = Color3.fromRGB(12, 16, 26)
+	input.BackgroundColor3 = Color3.fromRGB(11, 15, 26)
 	input.BorderSizePixel = 0
 	input.Text = text or ""
 	input.PlaceholderText = placeholder
 	input.PlaceholderColor3 = Color3.fromRGB(70, 85, 110)
-	input.TextColor3 = Color3.fromRGB(210, 225, 250)
+	input.TextColor3 = Color3.fromRGB(240, 245, 255)
 	input.TextSize = 12
 	input.Font = Enum.Font.Gotham
 	input.ClearTextOnFocus = false
@@ -29,10 +47,20 @@ local function makeTextInput(parent, placeholder, text, size, pos)
 	makeCorner(input, 6)
 	
 	local stroke = Instance.new("UIStroke")
-	stroke.Color = Color3.fromRGB(40, 50, 75)
+	stroke.Color = Color3.fromRGB(35, 48, 75)
 	stroke.Thickness = 1
 	stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	stroke.Parent = input
+
+	-- Focus animation
+	input.Focused:Connect(function()
+		stroke.Color = Color3.fromRGB(56, 125, 255)
+		stroke.Thickness = 1.5
+	end)
+	input.FocusLost:Connect(function()
+		stroke.Color = Color3.fromRGB(35, 48, 75)
+		stroke.Thickness = 1
+	end)
 	
 	return input
 end
@@ -47,9 +75,31 @@ local function makeButton(parent, label, size, pos, bg, fg)
 	btn.TextColor3 = fg
 	btn.TextSize = 12
 	btn.Font = Enum.Font.GothamMedium
-	btn.AutoButtonColor = true
+	btn.AutoButtonColor = false
 	btn.Parent = parent
 	makeCorner(btn, 6)
+
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(math.min(bg.R * 1.15, 1), math.min(bg.G * 1.15, 1), math.min(bg.B * 1.15, 1))
+	stroke.Thickness = 1
+	stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	stroke.Parent = btn
+
+	-- Hover animation
+	local hoverBg = Color3.new(
+		math.clamp(bg.R * 1.2, 0, 1),
+		math.clamp(bg.G * 1.2, 0, 1),
+		math.clamp(bg.B * 1.2, 0, 1)
+	)
+	btn.MouseEnter:Connect(function()
+		btn.BackgroundColor3 = hoverBg
+		stroke.Thickness = 1.5
+	end)
+	btn.MouseLeave:Connect(function()
+		btn.BackgroundColor3 = bg
+		stroke.Thickness = 1
+	end)
+
 	return btn
 end
 
@@ -72,8 +122,8 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 	local overlay = Instance.new("TextButton")
 	overlay.Name = "ScriptModalOverlay"
 	overlay.Size = UDim2.new(1, 0, 1, 0)
-	overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	overlay.BackgroundTransparency = 0.5
+	overlay.BackgroundColor3 = Color3.fromRGB(8, 12, 20)
+	overlay.BackgroundTransparency = 0.65
 	overlay.BorderSizePixel = 0
 	overlay.Text = ""
 	overlay.AutoButtonColor = false
@@ -83,64 +133,104 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 	-- Main dialog
 	local dialog = Instance.new("Frame")
 	dialog.Name = "ScriptModalDialog"
-	dialog.Size = UDim2.new(0, 380, 0, 460)
-	dialog.Position = UDim2.new(0.5, -190, 0.5, -230)
-	dialog.BackgroundColor3 = Color3.fromRGB(20, 26, 40)
+	dialog.Size = UDim2.new(0, 390, 0, 480)
+	dialog.Position = UDim2.new(0.5, -195, 0.5, -240)
+	dialog.BackgroundColor3 = Color3.fromRGB(16, 22, 36)
 	dialog.BorderSizePixel = 0
 	dialog.ZIndex = 21
 	dialog.Parent = parent
-	makeCorner(dialog, 10)
+	makeCorner(dialog, 12)
 
 	local stroke = Instance.new("UIStroke")
-	stroke.Color = Color3.fromRGB(60, 80, 130)
+	stroke.Color = Color3.fromRGB(35, 48, 75)
 	stroke.Thickness = 1.5
 	stroke.Parent = dialog
 
 	-- Title
 	local titleLabel = Instance.new("TextLabel")
 	titleLabel.Size = UDim2.new(1, 0, 0, 40)
-	titleLabel.Position = UDim2.new(0, 0, 0, 8)
+	titleLabel.Position = UDim2.new(0, 0, 0, 12)
 	titleLabel.BackgroundTransparency = 1
 	titleLabel.Text = scriptData and "Edit Script" or "New Script"
-	titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	titleLabel.TextColor3 = Color3.fromRGB(240, 245, 255)
 	titleLabel.TextSize = 16
 	titleLabel.Font = Enum.Font.GothamBold
 	titleLabel.ZIndex = 22
 	titleLabel.Parent = dialog
 
 	-- Name input
-	local nameInput = makeTextInput(dialog, "Script Name...", data.name, UDim2.new(1, -32, 0, 30), UDim2.new(0, 16, 0, 50))
+	local nameInput = makeTextInput(dialog, "Script Name...", data.name, UDim2.new(1, -32, 0, 30), UDim2.new(0, 16, 0, 52))
 	nameInput.ZIndex = 22
 
 	-- Type selector
 	local typeContainer = Instance.new("Frame")
 	typeContainer.Size = UDim2.new(1, -32, 0, 30)
-	typeContainer.Position = UDim2.new(0, 16, 0, 90)
-	typeContainer.BackgroundTransparency = 1
+	typeContainer.Position = UDim2.new(0, 16, 0, 92)
+	typeContainer.BackgroundColor3 = Color3.fromRGB(11, 15, 26)
+	typeContainer.BorderSizePixel = 0
 	typeContainer.ZIndex = 22
 	typeContainer.Parent = dialog
+	makeCorner(typeContainer, 6)
+
+	local typeContainerStroke = Instance.new("UIStroke")
+	typeContainerStroke.Color = Color3.fromRGB(30, 40, 60)
+	typeContainerStroke.Thickness = 1
+	typeContainerStroke.Parent = typeContainer
 
 	local typeLayout = Instance.new("UIListLayout")
 	typeLayout.FillDirection = Enum.FillDirection.Horizontal
+	typeLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	typeLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 	typeLayout.Padding = UDim.new(0, 4)
 	typeLayout.Parent = typeContainer
 
 	local typeBtns = {}
 	local function updateTypeSelection()
 		for t, btn in typeBtns do
-			if t == data.type then
-				btn.BackgroundColor3 = Color3.fromRGB(45, 85, 145)
-				btn.TextColor3 = Color3.fromRGB(240, 240, 240)
-			else
-				btn.BackgroundColor3 = Color3.fromRGB(30, 40, 60)
-				btn.TextColor3 = Color3.fromRGB(130, 150, 180)
+			local isSelected = (t == data.type)
+			btn.BackgroundColor3 = isSelected and Color3.fromRGB(56, 125, 255) or Color3.fromRGB(11, 15, 26)
+			btn.TextColor3 = isSelected and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(130, 150, 180)
+			btn.Font = isSelected and Enum.Font.GothamBold or Enum.Font.GothamMedium
+			
+			local btnStroke = btn:FindFirstChildOfClass("UIStroke")
+			if btnStroke then
+				btnStroke.Color = isSelected and Color3.fromRGB(56, 125, 255) or Color3.fromRGB(24, 32, 50)
 			end
 		end
 	end
 
 	local function addTypeBtn(typeName)
-		local btn = makeButton(typeContainer, typeName, UDim2.new(0, 52, 1, 0), UDim2.new(), Color3.fromRGB(30, 40, 60), Color3.fromRGB(130, 150, 180))
+		local btn = Instance.new("TextButton")
+		btn.Size = UDim2.new(0, 54, 0, 24)
+		btn.BackgroundColor3 = Color3.fromRGB(11, 15, 26)
+		btn.BorderSizePixel = 0
+		btn.Text = typeName
+		btn.TextColor3 = Color3.fromRGB(130, 150, 180)
+		btn.TextSize = 10
+		btn.Font = Enum.Font.GothamMedium
+		btn.AutoButtonColor = false
 		btn.ZIndex = 22
+		btn.Parent = typeContainer
+		makeCorner(btn, 4)
+
+		local btnStroke = Instance.new("UIStroke")
+		btnStroke.Color = Color3.fromRGB(24, 32, 50)
+		btnStroke.Thickness = 1
+		btnStroke.Parent = btn
+
+		btn.MouseEnter:Connect(function()
+			if data.type ~= typeName then
+				btn.BackgroundColor3 = Color3.fromRGB(24, 32, 50)
+				btn.TextColor3 = Color3.fromRGB(200, 220, 255)
+			end
+		end)
+		btn.MouseLeave:Connect(function()
+			if data.type ~= typeName then
+				btn.BackgroundColor3 = Color3.fromRGB(11, 15, 26)
+				btn.TextColor3 = Color3.fromRGB(130, 150, 180)
+			end
+		end)
+
 		btn.MouseButton1Click:Connect(function()
 			data.type = typeName
 			updateTypeSelection()
@@ -161,8 +251,8 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 
 	-- Dynamic content area (Scrollable)
 	local scroll = Instance.new("ScrollingFrame")
-	scroll.Size = UDim2.new(1, -32, 1, -210)
-	scroll.Position = UDim2.new(0, 16, 0, 135)
+	scroll.Size = UDim2.new(1, -32, 1, -215)
+	scroll.Position = UDim2.new(0, 16, 0, 138)
 	scroll.BackgroundTransparency = 1
 	scroll.BorderSizePixel = 0
 	scroll.ScrollBarThickness = 3
@@ -202,14 +292,14 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 		subDialog.Name = "SubDialog"
 		subDialog.Size = UDim2.new(0, 320, 0, 400)
 		subDialog.Position = UDim2.new(0.5, -160, 0.5, -200)
-		subDialog.BackgroundColor3 = Color3.fromRGB(18, 22, 34)
+		subDialog.BackgroundColor3 = Color3.fromRGB(16, 22, 36)
 		subDialog.BorderSizePixel = 0
 		subDialog.ZIndex = 41
 		subDialog.Parent = subOverlay
-		makeCorner(subDialog, 10)
+		makeCorner(subDialog, 12)
 		
 		local subStroke = Instance.new("UIStroke")
-		subStroke.Color = Color3.fromRGB(60, 80, 130)
+		subStroke.Color = Color3.fromRGB(35, 48, 75)
 		subStroke.Thickness = 1.5
 		subStroke.Parent = subDialog
 		
@@ -217,8 +307,8 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 		sLabel.Size = UDim2.new(1, 0, 0, 50)
 		sLabel.BackgroundTransparency = 1
 		sLabel.Text = "Parameters: " .. method.name
-		sLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-		sLabel.TextSize = 15
+		sLabel.TextColor3 = Color3.fromRGB(240, 245, 255)
+		sLabel.TextSize = 14
 		sLabel.Font = Enum.Font.GothamBold
 		sLabel.ZIndex = 42
 		sLabel.Parent = subDialog
@@ -277,7 +367,7 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 				local inp = makeTextInput(r, "Name", it.name, UDim2.new(1, -34, 1, 0), UDim2.new(0, 0, 0, 0))
 				inp.FocusLost:Connect(function() it.name = inp.Text end)
 
-				local d = makeButton(r, "✕", UDim2.new(0, 26, 0, 26), UDim2.new(1, -26, 0.5, -13), Color3.fromRGB(70, 30, 30), Color3.fromRGB(255, 120, 120))
+				local d = makeButton(r, "✕", UDim2.new(0, 26, 0, 26), UDim2.new(1, -26, 0.5, -13), Color3.fromRGB(90, 35, 35), Color3.fromRGB(255, 120, 120))
 				d.Font = Enum.Font.GothamBold
 				d.TextSize = 14
 				d.MouseButton1Click:Connect(function()
@@ -319,7 +409,7 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 		renderSubList("Inputs", method.inputs)
 		renderSubList("Outputs", method.outputs)
 
-		local doneBtn = makeButton(subDialog, "Done", UDim2.new(0, 100, 0, 32), UDim2.new(0.5, -50, 1, -50), Color3.fromRGB(45, 85, 155), Color3.fromRGB(255, 255, 255))
+		local doneBtn = makeButton(subDialog, "Done", UDim2.new(0, 100, 0, 32), UDim2.new(0.5, -50, 1, -50), Color3.fromRGB(56, 125, 255), Color3.fromRGB(255, 255, 255))
 		doneBtn.ZIndex = 42
 		doneBtn.MouseButton1Click:Connect(function() subOverlay:Destroy() end)
 	end
@@ -383,14 +473,14 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 			nameBox.FocusLost:Connect(function() item.name = nameBox.Text end)
 
 			if hasParams then
-				local paramBtn = makeButton(row, "...", UDim2.new(0, 24, 0, 24), UDim2.new(1, -54, 0, 2), Color3.fromRGB(45, 100, 180), Color3.fromRGB(240, 240, 240))
-				paramBtn.ZIndex = 23 -- Higher ZIndex to be sure
+				local paramBtn = makeButton(row, "⚙️", UDim2.new(0, 24, 0, 24), UDim2.new(1, -54, 0, 2), Color3.fromRGB(45, 100, 180), Color3.fromRGB(240, 240, 240))
+				paramBtn.ZIndex = 23
 				paramBtn.MouseButton1Click:Connect(function()
 					promptMethodParams(item)
 				end)
 			end
 
-			local delBtn = makeButton(row, "X", UDim2.new(0, 24, 0, 24), UDim2.new(1, -24, 0, 2), Color3.fromRGB(90, 25, 25), Color3.fromRGB(230, 80, 80))
+			local delBtn = makeButton(row, "✕", UDim2.new(0, 24, 0, 24), UDim2.new(1, -24, 0, 2), Color3.fromRGB(90, 25, 25), Color3.fromRGB(230, 80, 80))
 			delBtn.ZIndex = 22
 			delBtn.MouseButton1Click:Connect(function()
 				table.remove(listData, i)
@@ -463,7 +553,6 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 			local nameBox = makeTextInput(row, "Action Name...", item.name, UDim2.new(0.48, 0, 1, 0), UDim2.new(0, 0, 0, 0))
 			nameBox.ZIndex = 22
 			nameBox.FocusLost:Connect(function() 
-				-- Replace spaces and non-alphanumeric chars to keep Luau identifier valid
 				local safeName = nameBox.Text:gsub("%s+", ""):gsub("[^%w_]", "")
 				item.name = safeName ~= "" and safeName or "Action"
 				nameBox.Text = item.name
@@ -499,6 +588,46 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 
 	ScriptModal._renderDynamic = function()
 		clearScroll()
+
+		-- Description card
+		local descCard = Instance.new("Frame")
+		descCard.Name = "DescCard"
+		descCard.Size = UDim2.new(1, 0, 0, 52)
+		descCard.BackgroundColor3 = Color3.fromRGB(24, 32, 50)
+		descCard.BorderSizePixel = 0
+		descCard.ZIndex = 22
+		descCard.LayoutOrder = 0
+		descCard.Parent = scroll
+		makeCorner(descCard, 6)
+
+		local descStroke = Instance.new("UIStroke")
+		descStroke.Color = Color3.fromRGB(38, 50, 78)
+		descStroke.Thickness = 1
+		descStroke.Parent = descCard
+
+		local descIcon = Instance.new("TextLabel")
+		descIcon.Size = UDim2.new(0, 32, 0, 32)
+		descIcon.Position = UDim2.new(0, 10, 0.5, -16)
+		descIcon.BackgroundTransparency = 1
+		descIcon.Text = TYPE_ICONS[data.type] or "📜"
+		descIcon.TextSize = 18
+		descIcon.ZIndex = 23
+		descIcon.Parent = descCard
+
+		local descText = Instance.new("TextLabel")
+		descText.Size = UDim2.new(1, -56, 1, -12)
+		descText.Position = UDim2.new(0, 46, 0, 6)
+		descText.BackgroundTransparency = 1
+		descText.Text = TYPE_DESCRIPTIONS[data.type] or ""
+		descText.TextColor3 = Color3.fromRGB(150, 170, 200)
+		descText.TextSize = 10
+		descText.Font = Enum.Font.GothamMedium
+		descText.TextWrapped = true
+		descText.TextXAlignment = Enum.TextXAlignment.Left
+		descText.TextYAlignment = Enum.TextYAlignment.Center
+		descText.ZIndex = 23
+		descText.Parent = descCard
+
 		if data.type == "Function" then
 			makeListSection("Inputs", data.inputs, false, 1)
 			makeListSection("Outputs (Returns)", data.outputs, false, 2)
@@ -565,11 +694,12 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 	ScriptModal._renderDynamic()
 
 	-- Bottom Buttons
-	local cancelBtn = makeButton(dialog, "Cancel", UDim2.new(0, 110, 0, 32), UDim2.new(0.5, -118, 1, -50), Color3.fromRGB(60, 35, 35), Color3.fromRGB(255, 150, 150))
+	local cancelBtn = makeButton(dialog, "Cancel", UDim2.new(0, 110, 0, 32), UDim2.new(0.5, -118, 1, -50), Color3.fromRGB(38, 30, 38), Color3.fromRGB(220, 130, 130))
 	cancelBtn.ZIndex = 22
 	
-	local okBtn = makeButton(dialog, "Save", UDim2.new(0, 110, 0, 32), UDim2.new(0.5, 8, 1, -50), Color3.fromRGB(45, 90, 165), Color3.fromRGB(255, 255, 255))
+	local okBtn = makeButton(dialog, "Save", UDim2.new(0, 110, 0, 32), UDim2.new(0.5, 8, 1, -50), Color3.fromRGB(56, 125, 255), Color3.fromRGB(255, 255, 255))
 	okBtn.ZIndex = 22
+	okBtn.Font = Enum.Font.GothamBold
 
 	local function close()
 		overlay:Destroy()
