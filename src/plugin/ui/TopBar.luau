@@ -10,7 +10,7 @@ function SegmentedToggle.new(parent, name, options)
 	local container = Instance.new("Frame")
 	container.Name = name
 	container.Size = UDim2.new(0, 180, 0, 26)
-	container.BackgroundColor3 = Color3.fromRGB(16, 22, 36)
+	container.BackgroundColor3 = Color3.fromRGB(18, 22, 34)
 	container.BorderSizePixel = 0
 	
 	local corner = Instance.new("UICorner")
@@ -18,7 +18,7 @@ function SegmentedToggle.new(parent, name, options)
 	corner.Parent = container
 
 	local stroke = Instance.new("UIStroke")
-	stroke.Color = Color3.fromRGB(38, 50, 72)
+	stroke.Color = Color3.fromRGB(40, 50, 72)
 	stroke.Thickness = 1
 	stroke.Parent = container
 
@@ -37,11 +37,11 @@ function SegmentedToggle.new(parent, name, options)
 		btn.Size = UDim2.new(pct, -3, 1, -4)
 		btn.Position = UDim2.new(pct * (i - 1), (i == 1) and 2 or 1, 0, 2)
 		
-		btn.BackgroundColor3 = Color3.fromRGB(38, 110, 200)
+		btn.BackgroundColor3 = Color3.fromRGB(30, 80, 200)
 		btn.BackgroundTransparency = 1
 		btn.BorderSizePixel = 0
 		btn.Text = opt
-		btn.TextColor3 = Color3.fromRGB(130, 170, 230)
+		btn.TextColor3 = Color3.fromRGB(140, 175, 220)
 		btn.TextSize = 11
 		btn.Font = Enum.Font.GothamBold
 		btn.AutoButtonColor = false
@@ -55,15 +55,15 @@ function SegmentedToggle.new(parent, name, options)
 
 		btn.MouseEnter:Connect(function()
 			if self._selected ~= opt then
-				btn.BackgroundTransparency = 0.8
-				btn.BackgroundColor3 = Color3.fromRGB(130, 170, 230)
+				btn.BackgroundTransparency = 0.5
+				btn.BackgroundColor3 = Color3.fromRGB(24, 28, 42)
 				btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 			end
 		end)
 		btn.MouseLeave:Connect(function()
 			if self._selected ~= opt then
 				btn.BackgroundTransparency = 1
-				btn.TextColor3 = Color3.fromRGB(130, 170, 230)
+				btn.TextColor3 = Color3.fromRGB(140, 175, 220)
 			end
 		end)
 
@@ -83,11 +83,11 @@ function SegmentedToggle:Select(option)
 	for opt, btn in pairs(self._buttons) do
 		if opt == option then
 			btn.BackgroundTransparency = 0
-			btn.BackgroundColor3 = Color3.fromRGB(38, 110, 200)
+			btn.BackgroundColor3 = Color3.fromRGB(30, 80, 200)
 			btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 		else
 			btn.BackgroundTransparency = 1
-			btn.TextColor3 = Color3.fromRGB(130, 170, 230)
+			btn.TextColor3 = Color3.fromRGB(140, 175, 220)
 		end
 	end
 end
@@ -120,7 +120,7 @@ function TopBar.new(parent)
 	wrapper.Name = "TopBar"
 	wrapper.Size = UDim2.new(1, 0, 0, 40)
 	wrapper.Position = UDim2.new(0, 0, 0, 0)
-	wrapper.BackgroundColor3 = Color3.fromRGB(12, 16, 28)
+	wrapper.BackgroundColor3 = Color3.fromRGB(12, 16, 24)
 	wrapper.BorderSizePixel = 0
 	wrapper.ZIndex = 3
 	wrapper.Parent = parent
@@ -130,7 +130,7 @@ function TopBar.new(parent)
 	border.Name = "Border"
 	border.Size = UDim2.new(1, 0, 0, 1)
 	border.Position = UDim2.new(0, 0, 1, -1)
-	border.BackgroundColor3 = Color3.fromRGB(38, 50, 72)
+	border.BackgroundColor3 = Color3.fromRGB(40, 50, 72)
 	border.BorderSizePixel = 0
 	border.Parent = wrapper
 
@@ -180,16 +180,27 @@ function TopBar.new(parent)
 	return self
 end
 
-function TopBar:AddButton(name, label)
-	local btn = Button.new(self._inner, name, label)
+function TopBar:AddButton(name, label, style)
+	local btn = Button.new(self._inner, name, label, style)
 	self._buttons[name] = btn
 	return btn
 end
 
-function TopBar:AddRightButton(name, label)
-	local btn = Button.new(self._rightInner, name, label)
+function TopBar:AddRightButton(name, label, style)
+	local btn = Button.new(self._rightInner, name, label, style)
 	self._buttons[name] = btn
 	return btn
+end
+
+function TopBar:AddSeparator(layoutOrder)
+	local sep = Instance.new("Frame")
+	sep.Name = "Separator_" .. layoutOrder
+	sep.Size = UDim2.new(0, 1, 0, 16)
+	sep.BackgroundColor3 = Color3.fromRGB(40, 50, 72)
+	sep.BorderSizePixel = 0
+	sep.LayoutOrder = layoutOrder
+	sep.Parent = self._inner
+	return sep
 end
 
 function TopBar:AddSegmentedToggle(name, options)

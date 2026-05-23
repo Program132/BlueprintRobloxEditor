@@ -309,18 +309,21 @@ local topBar  = TopBar.new(widget)   -- top layer
 -- Offset canvas to the right of the sidebar
 canvas:SetLeftOffset(sidebar:GetWidth())
 
-local newProjectBtn  = topBar:AddButton("NewProjectBtn",  "+ New Project")
+local newProjectBtn  = topBar:AddButton("NewProjectBtn",  "+ New Project", "primary")
 newProjectBtn:GetInstance().LayoutOrder = 1
-local openProjectBtn = topBar:AddButton("OpenProjectBtn", "Open Project")
+local openProjectBtn = topBar:AddButton("OpenProjectBtn", "Open Project", "secondary")
 openProjectBtn:GetInstance().LayoutOrder = 2
-local saveProjectBtn = topBar:AddButton("SaveProjectBtn", "Save Project")
+local saveProjectBtn = topBar:AddButton("SaveProjectBtn", "Save Project", "secondary")
 saveProjectBtn:GetInstance().LayoutOrder = 3
-local importBtn      = topBar:AddButton("ImportBtn",      "Import Scripts")
+local importBtn      = topBar:AddButton("ImportBtn",      "Import Scripts", "secondary")
 importBtn:GetInstance().LayoutOrder = 4
-local exportBtn      = topBar:AddButton("ExportBtn",      "Export Current")
-exportBtn:GetInstance().LayoutOrder = 5
-local exportAllBtn   = topBar:AddButton("ExportAllBtn",   "Export All")
-exportAllBtn:GetInstance().LayoutOrder = 6
+
+local _separator     = topBar:AddSeparator(5)
+
+local exportBtn      = topBar:AddButton("ExportBtn",      "Export Current", "secondary")
+exportBtn:GetInstance().LayoutOrder = 6
+local exportAllBtn   = topBar:AddButton("ExportAllBtn",   "Export All", "accent")
+exportAllBtn:GetInstance().LayoutOrder = 7
 
 -- UI Designer mode toggles (right aligned segmented toggle)
 local modeToggle = topBar:AddSegmentedToggle("ModeToggle", {"Design", "Graph"})
