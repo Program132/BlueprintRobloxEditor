@@ -47,7 +47,21 @@ local SUPPORTED_CLASSES = {
 	"TextButton",
 	"TextBox",
 	"ImageLabel",
-	"ImageButton"
+	"ImageButton",
+	"UIAspectRatioConstraint",
+	"UICorner",
+	"UIDragDetector",
+	"UIFlexItem",
+	"UIGradient",
+	"UIGridLayout",
+	"UIListLayout",
+	"UIPadding",
+	"UIPageLayout",
+	"UIScale",
+	"UISizeConstraint",
+	"UIStroke",
+	"UITableLayout",
+	"UITextSizeConstraint"
 }
 
 local DEFAULT_PROPERTIES = {
@@ -152,6 +166,93 @@ local DEFAULT_PROPERTIES = {
 		Visible = true,
 		Image = "rbxassetid://0",
 		ImageTransparency = 0,
+	},
+	UIAspectRatioConstraint = {
+		AspectRatio = 1,
+		AspectType = "Fit",
+		DominantAxis = "Width",
+	},
+	UICorner = {
+		CornerRadius = {0, 8},
+	},
+	UIDragDetector = {
+		DragStyle = "TranslateLine",
+		Enabled = true,
+		ResponseStyle = "TrackMouse",
+		RunLocally = true,
+	},
+	UIFlexItem = {
+		FlexMode = "None",
+		GrowRatio = 0,
+		ShrinkRatio = 1,
+	},
+	UIGradient = {
+		Enabled = true,
+		Rotation = 0,
+		Offset = {0, 0},
+	},
+	UIGridLayout = {
+		CellPadding = {0, 5, 0, 5},
+		CellSize = {0, 100, 0, 100},
+		FillDirection = "Horizontal",
+		HorizontalAlignment = "Left",
+		VerticalAlignment = "Top",
+		SortOrder = "LayoutOrder",
+		StartCorner = "TopLeft",
+	},
+	UIListLayout = {
+		FillDirection = "Vertical",
+		HorizontalAlignment = "Left",
+		VerticalAlignment = "Top",
+		SortOrder = "LayoutOrder",
+		Padding = {0, 0},
+	},
+	UIPadding = {
+		PaddingTop = {0, 0},
+		PaddingBottom = {0, 0},
+		PaddingLeft = {0, 0},
+		PaddingRight = {0, 0},
+	},
+	UIPageLayout = {
+		Animated = true,
+		Circular = false,
+		EasingDirection = "Out",
+		EasingStyle = "Sine",
+		FillDirection = "Horizontal",
+		HorizontalAlignment = "Center",
+		VerticalAlignment = "Center",
+		SortOrder = "LayoutOrder",
+		Padding = {0, 0},
+		GamepadInputEnabled = true,
+		ScrollWheelInputEnabled = true,
+		TouchInputEnabled = true,
+		TweenTime = 0.3,
+	},
+	UIScale = {
+		Scale = 1,
+	},
+	UISizeConstraint = {
+		MaxSize = {2048, 2048},
+		MinSize = {0, 0},
+	},
+	UIStroke = {
+		Color = {0, 0, 0},
+		Enabled = true,
+		Thickness = 1,
+		Transparency = 0,
+		ApplyStrokeMode = "Contextual",
+		LineJoinMode = "Round",
+	},
+	UITableLayout = {
+		FillDirection = "Horizontal",
+		HorizontalAlignment = "Left",
+		VerticalAlignment = "Top",
+		SortOrder = "LayoutOrder",
+		MajorAxis = "Row",
+	},
+	UITextSizeConstraint = {
+		MaxTextSize = 100,
+		MinTextSize = 1,
 	}
 }
 
@@ -271,6 +372,20 @@ local CLASS_ICONS = {
 	TextBox          = "Bx",
 	ImageLabel       = "Im",
 	ImageButton      = "Ib",
+	UIAspectRatioConstraint = "Ar",
+	UICorner         = "Co",
+	UIDragDetector   = "Dd",
+	UIFlexItem       = "Fi",
+	UIGradient       = "Gr",
+	UIGridLayout     = "Gl",
+	UIListLayout     = "Ll",
+	UIPadding        = "Pd",
+	UIPageLayout     = "Pl",
+	UIScale          = "Sl",
+	UISizeConstraint = "Sz",
+	UIStroke         = "St",
+	UITableLayout    = "Tl",
+	UITextSizeConstraint = "Ts",
 }
 local CLASS_ICON_COLORS = {
 	Frame            = Color3.fromRGB(100, 160, 255),
@@ -280,6 +395,20 @@ local CLASS_ICON_COLORS = {
 	TextBox          = Color3.fromRGB(255, 140, 80),
 	ImageLabel       = Color3.fromRGB(200, 130, 255),
 	ImageButton      = Color3.fromRGB(255, 100, 150),
+	UIAspectRatioConstraint = Color3.fromRGB(210, 100, 250),
+	UICorner         = Color3.fromRGB(230, 120, 230),
+	UIDragDetector   = Color3.fromRGB(90, 180, 220),
+	UIFlexItem       = Color3.fromRGB(130, 220, 100),
+	UIGradient       = Color3.fromRGB(240, 180, 80),
+	UIGridLayout     = Color3.fromRGB(100, 210, 150),
+	UIListLayout     = Color3.fromRGB(80, 210, 180),
+	UIPadding        = Color3.fromRGB(220, 140, 100),
+	UIPageLayout     = Color3.fromRGB(120, 180, 240),
+	UIScale          = Color3.fromRGB(200, 200, 200),
+	UISizeConstraint = Color3.fromRGB(180, 120, 220),
+	UIStroke         = Color3.fromRGB(240, 100, 100),
+	UITableLayout    = Color3.fromRGB(140, 200, 120),
+	UITextSizeConstraint = Color3.fromRGB(255, 160, 80),
 }
 
 local function parseColor(str)
@@ -1761,44 +1890,65 @@ function UiDesigner:refreshViewport()
 			ensureDefaultProperties(el)
 			local inst = Instance.new(el.class)
 			inst.Name = el.name
-			inst.ZIndex = 2
+			if inst:IsA("GuiObject") then
+				inst.ZIndex = 2
+			end
 			self._activeInstances[el.id] = inst
 			
 			-- Apply properties
 			for p, val in pairs(el.properties or {}) do
-				if p == "Position" then
-					inst.Position = UDim2.new(unpack(val))
-				elseif p == "Size" then
-					inst.Size = UDim2.new(unpack(val))
-				elseif p == "CanvasSize" then
-					inst.CanvasSize = UDim2.new(unpack(val))
-				elseif p == "AnchorPoint" then
-					inst.AnchorPoint = Vector2.new(unpack(val))
-				elseif p == "BackgroundColor3" or p == "BorderColor3" or p == "TextColor3" or p == "ScrollBarImageColor3" then
-					inst[p] = Color3.fromRGB(val[1], val[2], val[3])
-				elseif p == "Visible" or p == "TextWrapped" then
-					inst[p] = val
-				elseif p == "Text" or p == "PlaceholderText" or p == "Image" then
-					inst[p] = val
-				elseif p == "TextSize" or p == "BackgroundTransparency" or p == "BorderSizePixel" or p == "TextTransparency" or p == "ScrollBarThickness" or p == "ImageTransparency" then
-					inst[p] = val
-				elseif p == "Font" or p == "TextXAlignment" or p == "TextYAlignment" then
-					inst[p] = Enum[p][val]
-				end
+				pcall(function()
+					if p == "Position" or p == "Size" or p == "CanvasSize" or p == "CellSize" or p == "CellPadding" then
+						inst[p] = UDim2.new(unpack(val))
+					elseif p == "CornerRadius" or p == "Padding" or p == "PaddingTop" or p == "PaddingBottom" or p == "PaddingLeft" or p == "PaddingRight" then
+						inst[p] = UDim.new(unpack(val))
+					elseif p == "AnchorPoint" or p == "MaxSize" or p == "MinSize" or p == "Offset" then
+						inst[p] = Vector2.new(unpack(val))
+					elseif p == "BackgroundColor3" or p == "BorderColor3" or p == "TextColor3" or p == "ScrollBarImageColor3" or p == "Color" then
+						inst[p] = Color3.fromRGB(val[1], val[2], val[3])
+					elseif typeof(val) == "boolean" or typeof(val) == "number" or typeof(val) == "string" then
+						local enumTypes = {
+							Font = true, TextXAlignment = true, TextYAlignment = true,
+							FillDirection = true, HorizontalAlignment = true, VerticalAlignment = true,
+							SortOrder = true, AspectType = true, DominantAxis = true,
+							DragStyle = true, ResponseStyle = true, FlexMode = true,
+							EasingDirection = true, EasingStyle = true, ApplyStrokeMode = true,
+							LineJoinMode = true, TableMajorAxis = true, StartCorner = true
+						}
+						local enumName = p
+						if p == "MajorAxis" then
+							enumName = "TableMajorAxis"
+						elseif p == "DragStyle" then
+							enumName = "DragDetectorDragStyle"
+						elseif p == "ResponseStyle" then
+							enumName = "DragDetectorResponseStyle"
+						elseif p == "FlexMode" then
+							enumName = "UIFlexMode"
+						end
+						
+						if enumTypes[p] or enumTypes[enumName] then
+							inst[p] = Enum[enumName][val]
+						else
+							inst[p] = val
+						end
+					end
+				end)
 			end
 			
 			inst.Parent = parentGui
 
-			-- Invisible hit block for drag-and-drop
-			local hitbox = Instance.new("TextButton")
-			hitbox.Name = "Hitbox"
-			hitbox.Size = UDim2.new(1, 0, 1, 0)
-			hitbox.BackgroundTransparency = 1
-			hitbox.Text = ""
-			hitbox.ZIndex = 1
-			hitbox.Parent = inst
+			if inst:IsA("GuiObject") then
+				-- Invisible hit block for drag-and-drop
+				local hitbox = Instance.new("TextButton")
+				hitbox.Name = "Hitbox"
+				hitbox.Size = UDim2.new(1, 0, 1, 0)
+				hitbox.BackgroundTransparency = 1
+				hitbox.Text = ""
+				hitbox.ZIndex = 1
+				hitbox.Parent = inst
 
-			self:hookUpHitbox(el, hitbox, inst)
+				self:hookUpHitbox(el, hitbox, inst)
+			end
 
 			-- Recurse children
 			if el.children and #el.children > 0 then
@@ -1825,7 +1975,9 @@ function UiDesigner:updateSelectionOutline()
 
 	-- Reset ZIndex of all active instances to 2
 	for _, activeInst in pairs(self._activeInstances) do
-		activeInst.ZIndex = 2
+		if activeInst:IsA("GuiObject") then
+			activeInst.ZIndex = 2
+		end
 	end
 
 	local el = self._selectedElement
@@ -1835,62 +1987,66 @@ function UiDesigner:updateSelectionOutline()
 	if not inst then return end
 
 	-- Boost selected instance ZIndex so outline & handles are drawn on top
-	inst.ZIndex = 10000
+	if inst:IsA("GuiObject") then
+		inst.ZIndex = 10000
+	end
 
 	-- Draw selection outline
-	local outline = Instance.new("UIStroke")
-	outline.Name = "SelectionOutline"
-	outline.Color = Color3.fromRGB(45, 130, 240)
-	outline.Thickness = 2
-	outline.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	outline.Parent = inst
+	if inst:IsA("GuiObject") then
+		local outline = Instance.new("UIStroke")
+		outline.Name = "SelectionOutline"
+		outline.Color = Color3.fromRGB(45, 130, 240)
+		outline.Thickness = 2
+		outline.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+		outline.Parent = inst
 
-	-- Create the 4 corner handles
-	local handles = {
-		TL = UDim2.new(0, -4, 0, -4),
-		TR = UDim2.new(1, -4, 0, -4),
-		BL = UDim2.new(0, -4, 1, -4),
-		BR = UDim2.new(1, -4, 1, -4),
-	}
+		-- Create the 4 corner handles
+		local handles = {
+			TL = UDim2.new(0, -4, 0, -4),
+			TR = UDim2.new(1, -4, 0, -4),
+			BL = UDim2.new(0, -4, 1, -4),
+			BR = UDim2.new(1, -4, 1, -4),
+		}
 
-	for name, pos in pairs(handles) do
-		local handle = Instance.new("TextButton")
-		handle.Name = "ResizeHandle"
-		handle.Size = UDim2.fromOffset(8, 8)
-		handle.Position = pos
-		handle.BackgroundColor3 = Color3.fromRGB(45, 130, 240)
-		handle.BorderSizePixel = 0
-		handle.Text = ""
-		handle.ZIndex = 1001 -- higher than hitbox
-		handle.Active = true
-		makeCorner(handle, 2)
-		handle.Parent = inst
+		for name, pos in pairs(handles) do
+			local handle = Instance.new("TextButton")
+			handle.Name = "ResizeHandle"
+			handle.Size = UDim2.fromOffset(8, 8)
+			handle.Position = pos
+			handle.BackgroundColor3 = Color3.fromRGB(45, 130, 240)
+			handle.BorderSizePixel = 0
+			handle.Text = ""
+			handle.ZIndex = 1001 -- higher than hitbox
+			handle.Active = true
+			makeCorner(handle, 2)
+			handle.Parent = inst
 
-		handle.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
-				self._isResizing = true
-				self._resizedElement = el
-				self._resizedInstance = inst
-				self._resizeHandleType = name
-				self._resizeStartMousePos = input.Position
-				self._resizeStartElementSize = getElementVirtualPixelSize(self, el)
-				self._resizeStartElementPos = getElementVirtualPixelPos(self, el)
+			handle.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					self._isResizing = true
+					self._resizedElement = el
+					self._resizedInstance = inst
+					self._resizeHandleType = name
+					self._resizeStartMousePos = input.Position
+					self._resizeStartElementSize = getElementVirtualPixelSize(self, el)
+					self._resizeStartElementPos = getElementVirtualPixelPos(self, el)
 
-				local endConn
-				endConn = input.Changed:Connect(function()
-					if input.UserInputState == Enum.UserInputState.End then
-						self._isResizing = false
-						self._resizedElement = nil
-						self._resizedInstance = nil
-						self._resizeHandleType = nil
-						self:SaveState()
-						self:refreshViewport()
-						self:refreshDetails()
-						endConn:Disconnect()
-					end
-				end)
-			end
-		end)
+					local endConn
+					endConn = input.Changed:Connect(function()
+						if input.UserInputState == Enum.UserInputState.End then
+							self._isResizing = false
+							self._resizedElement = nil
+							self._resizedInstance = nil
+							self._resizeHandleType = nil
+							self:SaveState()
+							self:refreshViewport()
+							self:refreshDetails()
+							endConn:Disconnect()
+						end
+					end)
+				end
+			end)
+		end
 	end
 end
 
@@ -2434,182 +2590,487 @@ function UiDesigner:refreshDetails()
 		end)
 	end)
 
-	-- Size
-	createField("Size X (S, O)", 0.6, function(parent)
-		local cur = el.properties.Size or {0, 100, 0, 100}
-		local inpS = makeTextInput(parent, tostring(cur[1]), function(v)
-			cur[1] = tonumber(v) or 0
-			el.properties.Size = cur
-			self:SaveState()
-			self:refreshViewport()
-		end)
-		inpS.Size = UDim2.new(0.45, 0, 0, 24)
+	if el.properties.Size ~= nil then
+		-- Size
+		createField("Size X (S, O)", 0.6, function(parent)
+			local cur = el.properties.Size or {0, 100, 0, 100}
+			local inpS = makeTextInput(parent, tostring(cur[1]), function(v)
+				cur[1] = tonumber(v) or 0
+				el.properties.Size = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpS.Size = UDim2.new(0.45, 0, 0, 24)
 
-		local inpO = makeTextInput(parent, tostring(cur[2]), function(v)
-			cur[2] = tonumber(v) or 0
-			el.properties.Size = cur
-			self:SaveState()
-			self:refreshViewport()
+			local inpO = makeTextInput(parent, tostring(cur[2]), function(v)
+				cur[2] = tonumber(v) or 0
+				el.properties.Size = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpO.Size = UDim2.new(0.45, 0, 0, 24)
+			inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
 		end)
-		inpO.Size = UDim2.new(0.45, 0, 0, 24)
-		inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
-	end)
 
-	createField("Size Y (S, O)", 0.6, function(parent)
-		local cur = el.properties.Size or {0, 100, 0, 100}
-		local inpS = makeTextInput(parent, tostring(cur[3]), function(v)
-			cur[3] = tonumber(v) or 0
-			el.properties.Size = cur
-			self:SaveState()
-			self:refreshViewport()
+		createField("Size Y (S, O)", 0.6, function(parent)
+			local cur = el.properties.Size or {0, 100, 0, 100}
+			local inpS = makeTextInput(parent, tostring(cur[3]), function(v)
+				cur[3] = tonumber(v) or 0
+				el.properties.Size = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpS.Size = UDim2.new(0.45, 0, 0, 24)
+
+			local inpO = makeTextInput(parent, tostring(cur[4]), function(v)
+				cur[4] = tonumber(v) or 0
+				el.properties.Size = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpO.Size = UDim2.new(0.45, 0, 0, 24)
+			inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
 		end)
-		inpS.Size = UDim2.new(0.45, 0, 0, 24)
 
-		local inpO = makeTextInput(parent, tostring(cur[4]), function(v)
-			cur[4] = tonumber(v) or 0
-			el.properties.Size = cur
-			self:SaveState()
-			self:refreshViewport()
+		-- Position
+		createField("Pos X (S, O)", 0.6, function(parent)
+			local cur = el.properties.Position or {0, 0, 0, 0}
+			local inpS = makeTextInput(parent, tostring(cur[1]), function(v)
+				cur[1] = tonumber(v) or 0
+				el.properties.Position = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpS.Size = UDim2.new(0.45, 0, 0, 24)
+
+			local inpO = makeTextInput(parent, tostring(cur[2]), function(v)
+				cur[2] = tonumber(v) or 0
+				el.properties.Position = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpO.Size = UDim2.new(0.45, 0, 0, 24)
+			inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
 		end)
-		inpO.Size = UDim2.new(0.45, 0, 0, 24)
-		inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
-	end)
 
-	-- Position
-	createField("Pos X (S, O)", 0.6, function(parent)
-		local cur = el.properties.Position or {0, 0, 0, 0}
-		local inpS = makeTextInput(parent, tostring(cur[1]), function(v)
-			cur[1] = tonumber(v) or 0
-			el.properties.Position = cur
-			self:SaveState()
-			self:refreshViewport()
+		createField("Pos Y (S, O)", 0.6, function(parent)
+			local cur = el.properties.Position or {0, 0, 0, 0}
+			local inpS = makeTextInput(parent, tostring(cur[3]), function(v)
+				cur[3] = tonumber(v) or 0
+				el.properties.Position = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpS.Size = UDim2.new(0.45, 0, 0, 24)
+
+			local inpO = makeTextInput(parent, tostring(cur[4]), function(v)
+				cur[4] = tonumber(v) or 0
+				el.properties.Position = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpO.Size = UDim2.new(0.45, 0, 0, 24)
+			inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
 		end)
-		inpS.Size = UDim2.new(0.45, 0, 0, 24)
 
-		local inpO = makeTextInput(parent, tostring(cur[2]), function(v)
-			cur[2] = tonumber(v) or 0
-			el.properties.Position = cur
-			self:SaveState()
-			self:refreshViewport()
+		-- Anchor Point
+		createField("Anchor (X, Y)", 0.6, function(parent)
+			local cur = el.properties.AnchorPoint or {0, 0}
+			local inpX = makeTextInput(parent, tostring(cur[1]), function(v)
+				cur[1] = tonumber(v) or 0
+				el.properties.AnchorPoint = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpX.Size = UDim2.new(0.45, 0, 0, 24)
+
+			local inpY = makeTextInput(parent, tostring(cur[2]), function(v)
+				cur[2] = tonumber(v) or 0
+				el.properties.AnchorPoint = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpY.Size = UDim2.new(0.45, 0, 0, 24)
+			inpY.Position = UDim2.new(0.55, 0, 0.5, -12)
 		end)
-		inpO.Size = UDim2.new(0.45, 0, 0, 24)
-		inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
-	end)
 
-	createField("Pos Y (S, O)", 0.6, function(parent)
-		local cur = el.properties.Position or {0, 0, 0, 0}
-		local inpS = makeTextInput(parent, tostring(cur[3]), function(v)
-			cur[3] = tonumber(v) or 0
-			el.properties.Position = cur
-			self:SaveState()
-			self:refreshViewport()
-		end)
-		inpS.Size = UDim2.new(0.45, 0, 0, 24)
-
-		local inpO = makeTextInput(parent, tostring(cur[4]), function(v)
-			cur[4] = tonumber(v) or 0
-			el.properties.Position = cur
-			self:SaveState()
-			self:refreshViewport()
-		end)
-		inpO.Size = UDim2.new(0.45, 0, 0, 24)
-		inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
-	end)
-
-	-- Anchor Point
-	createField("Anchor (X, Y)", 0.6, function(parent)
-		local cur = el.properties.AnchorPoint or {0, 0}
-		local inpX = makeTextInput(parent, tostring(cur[1]), function(v)
-			cur[1] = tonumber(v) or 0
-			el.properties.AnchorPoint = cur
-			self:SaveState()
-			self:refreshViewport()
-		end)
-		inpX.Size = UDim2.new(0.45, 0, 0, 24)
-
-		local inpY = makeTextInput(parent, tostring(cur[2]), function(v)
-			cur[2] = tonumber(v) or 0
-			el.properties.AnchorPoint = cur
-			self:SaveState()
-			self:refreshViewport()
-		end)
-		inpY.Size = UDim2.new(0.45, 0, 0, 24)
-		inpY.Position = UDim2.new(0.55, 0, 0.5, -12)
-	end)
-
-	-- Anchor Preset
-	createField("Anchor Preset", 0.6, function(parent)
-		local curAnchor = el.properties.AnchorPoint or {0, 0}
-		local curPos = el.properties.Position or {0, 0, 0, 0}
-		local detectedPreset = "Custom"
-		
-		local presets = {
-			{ name = "Top Left", anchor = {0, 0}, posScale = {0, 0} },
-			{ name = "Top Center", anchor = {0.5, 0}, posScale = {0.5, 0} },
-			{ name = "Top Right", anchor = {1, 0}, posScale = {1, 0} },
-			{ name = "Center Left", anchor = {0, 0.5}, posScale = {0, 0.5} },
-			{ name = "Center", anchor = {0.5, 0.5}, posScale = {0.5, 0.5} },
-			{ name = "Center Right", anchor = {1, 0.5}, posScale = {1, 0.5} },
-			{ name = "Bottom Left", anchor = {0, 1}, posScale = {0, 1} },
-			{ name = "Bottom Center", anchor = {0.5, 1}, posScale = {0.5, 1} },
-			{ name = "Bottom Right", anchor = {1, 1}, posScale = {1, 1} }
-		}
-		
-		for _, p in ipairs(presets) do
-			if math.abs(curAnchor[1] - p.anchor[1]) < 0.01 and math.abs(curAnchor[2] - p.anchor[2]) < 0.01 then
-				if math.abs(curPos[1] - p.posScale[1]) < 0.01 and math.abs(curPos[3] - p.posScale[2]) < 0.01 then
-					detectedPreset = p.name
-					break
+		-- Anchor Preset
+		createField("Anchor Preset", 0.6, function(parent)
+			local curAnchor = el.properties.AnchorPoint or {0, 0}
+			local curPos = el.properties.Position or {0, 0, 0, 0}
+			local detectedPreset = "Custom"
+			
+			local presets = {
+				{ name = "Top Left", anchor = {0, 0}, posScale = {0, 0} },
+				{ name = "Top Center", anchor = {0.5, 0}, posScale = {0.5, 0} },
+				{ name = "Top Right", anchor = {1, 0}, posScale = {1, 0} },
+				{ name = "Center Left", anchor = {0, 0.5}, posScale = {0, 0.5} },
+				{ name = "Center", anchor = {0.5, 0.5}, posScale = {0.5, 0.5} },
+				{ name = "Center Right", anchor = {1, 0.5}, posScale = {1, 0.5} },
+				{ name = "Bottom Left", anchor = {0, 1}, posScale = {0, 1} },
+				{ name = "Bottom Center", anchor = {0.5, 1}, posScale = {0.5, 1} },
+				{ name = "Bottom Right", anchor = {1, 1}, posScale = {1, 1} }
+			}
+			
+			for _, p in ipairs(presets) do
+				if math.abs(curAnchor[1] - p.anchor[1]) < 0.01 and math.abs(curAnchor[2] - p.anchor[2]) < 0.01 then
+					if math.abs(curPos[1] - p.posScale[1]) < 0.01 and math.abs(curPos[3] - p.posScale[2]) < 0.01 then
+						detectedPreset = p.name
+						break
+					end
 				end
 			end
-		end
-		
-		local btn = Instance.new("TextButton")
-		btn.Size = UDim2.new(1, 0, 0, 24)
-		btn.Position = UDim2.new(0, 0, 0.5, -12)
-		btn.BackgroundColor3 = Color3.fromRGB(24, 30, 48)
-		btn.BorderSizePixel = 0
-		btn.Text = "  " .. detectedPreset
-		btn.TextColor3 = Color3.fromRGB(230, 240, 255)
-		btn.TextSize = 11
-		btn.Font = Enum.Font.GothamMedium
-		btn.TextXAlignment = Enum.TextXAlignment.Left
-		makeCorner(btn, 4)
-		btn.Parent = parent
+			
+			local btn = Instance.new("TextButton")
+			btn.Size = UDim2.new(1, 0, 0, 24)
+			btn.Position = UDim2.new(0, 0, 0.5, -12)
+			btn.BackgroundColor3 = Color3.fromRGB(24, 30, 48)
+			btn.BorderSizePixel = 0
+			btn.Text = "  " .. detectedPreset
+			btn.TextColor3 = Color3.fromRGB(230, 240, 255)
+			btn.TextSize = 11
+			btn.Font = Enum.Font.GothamMedium
+			btn.TextXAlignment = Enum.TextXAlignment.Left
+			makeCorner(btn, 4)
+			btn.Parent = parent
 
-		local stroke = Instance.new("UIStroke")
-		stroke.Color = Color3.fromRGB(50, 60, 80)
-		stroke.Thickness = 1
-		stroke.Parent = btn
+			local stroke = Instance.new("UIStroke")
+			stroke.Color = Color3.fromRGB(50, 60, 80)
+			stroke.Thickness = 1
+			stroke.Parent = btn
 
-		local arrow = Instance.new("TextLabel")
-		arrow.Size = UDim2.new(0, 20, 1, 0)
-		arrow.Position = UDim2.new(1, -20, 0, 0)
-		arrow.BackgroundTransparency = 1
-		arrow.Text = "v"
-		arrow.TextColor3 = Color3.fromRGB(100, 120, 160)
-		arrow.TextSize = 9
-		arrow.Font = Enum.Font.GothamBold
-		arrow.Parent = btn
+			local arrow = Instance.new("TextLabel")
+			arrow.Size = UDim2.new(0, 20, 1, 0)
+			arrow.Position = UDim2.new(1, -20, 0, 0)
+			arrow.BackgroundTransparency = 1
+			arrow.Text = "v"
+			arrow.TextColor3 = Color3.fromRGB(100, 120, 160)
+			arrow.TextSize = 9
+			arrow.Font = Enum.Font.GothamBold
+			arrow.Parent = btn
 
-		btn.MouseButton1Click:Connect(function()
-			local targetPos = btn.AbsolutePosition
-			local choices = {}
-			for _, p in ipairs(presets) do
-				table.insert(choices, p.name)
-			end
-			ChoiceModal.prompt(self._widget, "Anchor Preset", choices, function(selected)
-				applyAnchorPreset(self, el, selected)
-			end, targetPos)
+			btn.MouseButton1Click:Connect(function()
+				local targetPos = btn.AbsolutePosition
+				local choices = {}
+				for _, p in ipairs(presets) do
+					table.insert(choices, p.name)
+				end
+				ChoiceModal.prompt(self._widget, "Anchor Preset", choices, function(selected)
+					applyAnchorPreset(self, el, selected)
+				end, targetPos)
+			end)
 		end)
-	end)
 
-	-- Background & Borders
-	createColorField("BG Color", "BackgroundColor3")
-	createNumericField("BG Trans.", "BackgroundTransparency", 0)
-	createNumericField("Border Size", "BorderSizePixel", 0)
-	createColorField("Border Color", "BorderColor3")
-	createToggleField("Visible", "Visible")
+		-- Background & Borders
+		createColorField("BG Color", "BackgroundColor3")
+		createNumericField("BG Trans.", "BackgroundTransparency", 0)
+		createNumericField("Border Size", "BorderSizePixel", 0)
+		createColorField("Border Color", "BorderColor3")
+		createToggleField("Visible", "Visible")
+	end
+
+	-- AspectRatio / AspectType / DominantAxis
+	if el.properties.AspectRatio ~= nil then
+		createNumericField("Aspect Ratio", "AspectRatio", 1)
+	end
+	if el.properties.AspectType ~= nil then
+		createChoiceField("Aspect Type", "AspectType", {"Fit", "ScaleWithWidth", "ScaleWithHeight"})
+	end
+	if el.properties.DominantAxis ~= nil then
+		createChoiceField("Dominant Axis", "DominantAxis", {"Width", "Height"})
+	end
+
+	-- CornerRadius
+	if el.properties.CornerRadius ~= nil then
+		createField("Corner Radius (S, O)", 0.6, function(parent)
+			local cur = el.properties.CornerRadius or {0, 8}
+			local inpS = makeTextInput(parent, tostring(cur[1]), function(v)
+				cur[1] = tonumber(v) or 0
+				el.properties.CornerRadius = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpS.Size = UDim2.new(0.45, 0, 0, 24)
+
+			local inpO = makeTextInput(parent, tostring(cur[2]), function(v)
+				cur[2] = tonumber(v) or 0
+				el.properties.CornerRadius = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpO.Size = UDim2.new(0.45, 0, 0, 24)
+			inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
+		end)
+	end
+
+	-- DragStyle / Enabled / ResponseStyle / RunLocally
+	if el.properties.DragStyle ~= nil then
+		createChoiceField("Drag Style", "DragStyle", {"TranslateLine", "TranslatePlane", "Rotate", "BestFit", "BestFitAxis"})
+	end
+	if el.properties.Enabled ~= nil then
+		createToggleField("Enabled", "Enabled")
+	end
+	if el.properties.ResponseStyle ~= nil then
+		createChoiceField("Response Style", "ResponseStyle", {"TrackMouse", "Physics"})
+	end
+	if el.properties.RunLocally ~= nil then
+		createToggleField("Run Locally", "RunLocally")
+	end
+
+	-- FlexMode / GrowRatio / ShrinkRatio
+	if el.properties.FlexMode ~= nil then
+		createChoiceField("Flex Mode", "FlexMode", {"None", "Grow", "Shrink", "Fill", "Custom"})
+	end
+	if el.properties.GrowRatio ~= nil then
+		createNumericField("Grow Ratio", "GrowRatio", 0)
+	end
+	if el.properties.ShrinkRatio ~= nil then
+		createNumericField("Shrink Ratio", "ShrinkRatio", 1)
+	end
+
+	-- UIGradient Rotation
+	if el.properties.Rotation ~= nil and el.properties.Text == nil then
+		createNumericField("Rotation", "Rotation", 0)
+	end
+
+	-- CellPadding / CellSize / StartCorner
+	if el.properties.CellSize ~= nil then
+		createField("CellSize X (S, O)", 0.6, function(parent)
+			local cur = el.properties.CellSize or {0, 100, 0, 100}
+			local inpS = makeTextInput(parent, tostring(cur[1]), function(v)
+				cur[1] = tonumber(v) or 0
+				el.properties.CellSize = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpS.Size = UDim2.new(0.45, 0, 0, 24)
+
+			local inpO = makeTextInput(parent, tostring(cur[2]), function(v)
+				cur[2] = tonumber(v) or 0
+				el.properties.CellSize = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpO.Size = UDim2.new(0.45, 0, 0, 24)
+			inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
+		end)
+		createField("CellSize Y (S, O)", 0.6, function(parent)
+			local cur = el.properties.CellSize or {0, 100, 0, 100}
+			local inpS = makeTextInput(parent, tostring(cur[3]), function(v)
+				cur[3] = tonumber(v) or 0
+				el.properties.CellSize = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpS.Size = UDim2.new(0.45, 0, 0, 24)
+
+			local inpO = makeTextInput(parent, tostring(cur[4]), function(v)
+				cur[4] = tonumber(v) or 0
+				el.properties.CellSize = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpO.Size = UDim2.new(0.45, 0, 0, 24)
+			inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
+		end)
+	end
+	if el.properties.CellPadding ~= nil then
+		createField("CellPadding X (S, O)", 0.6, function(parent)
+			local cur = el.properties.CellPadding or {0, 5, 0, 5}
+			local inpS = makeTextInput(parent, tostring(cur[1]), function(v)
+				cur[1] = tonumber(v) or 0
+				el.properties.CellPadding = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpS.Size = UDim2.new(0.45, 0, 0, 24)
+
+			local inpO = makeTextInput(parent, tostring(cur[2]), function(v)
+				cur[2] = tonumber(v) or 0
+				el.properties.CellPadding = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpO.Size = UDim2.new(0.45, 0, 0, 24)
+			inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
+		end)
+		createField("CellPadding Y (S, O)", 0.6, function(parent)
+			local cur = el.properties.CellPadding or {0, 5, 0, 5}
+			local inpS = makeTextInput(parent, tostring(cur[3]), function(v)
+				cur[3] = tonumber(v) or 0
+				el.properties.CellPadding = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpS.Size = UDim2.new(0.45, 0, 0, 24)
+
+			local inpO = makeTextInput(parent, tostring(cur[4]), function(v)
+				cur[4] = tonumber(v) or 0
+				el.properties.CellPadding = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpO.Size = UDim2.new(0.45, 0, 0, 24)
+			inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
+		end)
+	end
+	if el.properties.StartCorner ~= nil then
+		createChoiceField("Start Corner", "StartCorner", {"TopLeft", "TopRight", "BottomLeft", "BottomRight"})
+	end
+
+	-- Layout common properties (FillDirection, HorizontalAlignment, VerticalAlignment, SortOrder)
+	if el.properties.FillDirection ~= nil then
+		createChoiceField("Fill Direction", "FillDirection", {"Horizontal", "Vertical"})
+	end
+	if el.properties.HorizontalAlignment ~= nil and el.properties.Text == nil then
+		createChoiceField("Align Horizontal", "HorizontalAlignment", {"Left", "Center", "Right"})
+	end
+	if el.properties.VerticalAlignment ~= nil and el.properties.Text == nil then
+		createChoiceField("Align Vertical", "VerticalAlignment", {"Top", "Center", "Bottom"})
+	end
+	if el.properties.SortOrder ~= nil then
+		createChoiceField("Sort Order", "SortOrder", {"LayoutOrder", "Name"})
+	end
+
+	-- Padding (for UIListLayout, UIPageLayout)
+	if el.properties.Padding ~= nil and el.properties.PaddingTop == nil then
+		createField("Padding (S, O)", 0.6, function(parent)
+			local cur = el.properties.Padding or {0, 0}
+			local inpS = makeTextInput(parent, tostring(cur[1]), function(v)
+				cur[1] = tonumber(v) or 0
+				el.properties.Padding = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpS.Size = UDim2.new(0.45, 0, 0, 24)
+
+			local inpO = makeTextInput(parent, tostring(cur[2]), function(v)
+				cur[2] = tonumber(v) or 0
+				el.properties.Padding = cur
+				self:SaveState()
+				self:refreshViewport()
+			end)
+			inpO.Size = UDim2.new(0.45, 0, 0, 24)
+			inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
+		end)
+	end
+
+	-- UIPadding specific properties
+	local paddingDirs = {"PaddingTop", "PaddingBottom", "PaddingLeft", "PaddingRight"}
+	for _, dir in ipairs(paddingDirs) do
+		if el.properties[dir] ~= nil then
+			createField(dir .. " (S, O)", 0.6, function(parent)
+				local cur = el.properties[dir] or {0, 0}
+				local inpS = makeTextInput(parent, tostring(cur[1]), function(v)
+					cur[1] = tonumber(v) or 0
+					el.properties[dir] = cur
+					self:SaveState()
+					self:refreshViewport()
+				end)
+				inpS.Size = UDim2.new(0.45, 0, 0, 24)
+
+				local inpO = makeTextInput(parent, tostring(cur[2]), function(v)
+					cur[2] = tonumber(v) or 0
+					el.properties[dir] = cur
+					self:SaveState()
+					self:refreshViewport()
+				end)
+				inpO.Size = UDim2.new(0.45, 0, 0, 24)
+				inpO.Position = UDim2.new(0.55, 0, 0.5, -12)
+			end)
+		end
+	end
+
+	-- UIPageLayout specific
+	if el.properties.Animated ~= nil then
+		createToggleField("Animated", "Animated")
+	end
+	if el.properties.Circular ~= nil then
+		createToggleField("Circular", "Circular")
+	end
+	if el.properties.EasingDirection ~= nil then
+		createChoiceField("Easing Dir.", "EasingDirection", {"In", "Out", "InOut"})
+	end
+	if el.properties.EasingStyle ~= nil then
+		createChoiceField("Easing Style", "EasingStyle", {"Linear", "Sine", "Back", "Quad", "Quart", "Quint", "Bounce", "Elastic"})
+	end
+	if el.properties.GamepadInputEnabled ~= nil then
+		createToggleField("Gamepad Input", "GamepadInputEnabled")
+	end
+	if el.properties.ScrollWheelInputEnabled ~= nil then
+		createToggleField("Scroll Input", "ScrollWheelInputEnabled")
+	end
+	if el.properties.TouchInputEnabled ~= nil then
+		createToggleField("Touch Input", "TouchInputEnabled")
+	end
+	if el.properties.TweenTime ~= nil then
+		createNumericField("Tween Time", "TweenTime", 0.3)
+	end
+
+	-- UIScale specific
+	if el.properties.Scale ~= nil then
+		createNumericField("Scale", "Scale", 1)
+	end
+
+	-- Vector2 props: MaxSize, MinSize, Offset
+	local vector2Props = {
+		MaxSize = {2048, 2048},
+		MinSize = {0, 0},
+		Offset = {0, 0}
+	}
+	for propName, defaultVal in pairs(vector2Props) do
+		if el.properties[propName] ~= nil then
+			createField(propName .. " (X, Y)", 0.6, function(parent)
+				local cur = el.properties[propName] or defaultVal
+				local inpX = makeTextInput(parent, tostring(cur[1]), function(v)
+					cur[1] = tonumber(v) or 0
+					el.properties[propName] = cur
+					self:SaveState()
+					self:refreshViewport()
+				end)
+				inpX.Size = UDim2.new(0.45, 0, 0, 24)
+
+				local inpY = makeTextInput(parent, tostring(cur[2]), function(v)
+					cur[2] = tonumber(v) or 0
+					el.properties[propName] = cur
+					self:SaveState()
+					self:refreshViewport()
+				end)
+				inpY.Size = UDim2.new(0.45, 0, 0, 24)
+				inpY.Position = UDim2.new(0.55, 0, 0.5, -12)
+			end)
+		end
+	end
+
+	-- UIStroke specific
+	if el.properties.Color ~= nil and el.properties.BackgroundColor3 == nil then
+		createColorField("Color", "Color")
+	end
+	if el.properties.Thickness ~= nil then
+		createNumericField("Thickness", "Thickness", 1)
+	end
+	if el.properties.Transparency ~= nil and el.properties.BackgroundTransparency == nil then
+		createNumericField("Transparency", "Transparency", 0)
+	end
+	if el.properties.ApplyStrokeMode ~= nil then
+		createChoiceField("Stroke Mode", "ApplyStrokeMode", {"Contextual", "Border"})
+	end
+	if el.properties.LineJoinMode ~= nil then
+		createChoiceField("Line Join", "LineJoinMode", {"Round", "Bevel", "Miter"})
+	end
+
+	-- UITableLayout MajorAxis
+	if el.properties.MajorAxis ~= nil then
+		createChoiceField("Major Axis", "MajorAxis", {"Row", "Column"})
+	end
+
+	-- UITextSizeConstraint
+	if el.properties.MaxTextSize ~= nil then
+		createNumericField("Max Text Size", "MaxTextSize", 100)
+	end
+	if el.properties.MinTextSize ~= nil then
+		createNumericField("Min Text Size", "MinTextSize", 1)
+	end
 
 	-- ScrollingFrame specific properties
 	if el.properties.CanvasSize ~= nil then

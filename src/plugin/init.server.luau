@@ -1598,6 +1598,20 @@ local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 		creationCode ..= "screenGui.Parent = PlayerGui\n\n"
 		
 		local HttpService = game:GetService("HttpService")
+		local ENUM_MAPPINGS = {
+			MajorAxis = "TableMajorAxis",
+			DragStyle = "DragDetectorDragStyle",
+			ResponseStyle = "DragDetectorResponseStyle",
+			FlexMode = "UIFlexMode",
+		}
+		local UI_ENUM_TYPES = {
+			Font = true, TextXAlignment = true, TextYAlignment = true,
+			FillDirection = true, HorizontalAlignment = true, VerticalAlignment = true,
+			SortOrder = true, ApplyStrokeMode = true, LineJoinMode = true,
+			AspectType = true, DominantAxis = true, DragDetectorDragStyle = true,
+			DragDetectorResponseStyle = true, UIFlexMode = true, EasingDirection = true,
+			EasingStyle = true, TableMajorAxis = true, StartCorner = true
+		}
 		local function genElCode(el, parentVarName)
 			local varName = el.name
 			local lines = {}
@@ -1605,7 +1619,9 @@ local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 			table.insert(lines, varName .. ".Name = \"" .. el.name .. "\"")
 			for p, val in pairs(el.properties or {}) do
 				if typeof(val) == "table" then
-					if #val == 4 then
+					if p == "CornerRadius" or p == "PaddingTop" or p == "PaddingBottom" or p == "PaddingLeft" or p == "PaddingRight" or p == "Padding" then
+						table.insert(lines, varName .. "." .. p .. " = UDim.new(" .. table.concat(val, ", ") .. ")")
+					elseif #val == 4 then
 						table.insert(lines, varName .. "." .. p .. " = UDim2.new(" .. table.concat(val, ", ") .. ")")
 					elseif #val == 2 then
 						table.insert(lines, varName .. "." .. p .. " = Vector2.new(" .. table.concat(val, ", ") .. ")")
@@ -1615,8 +1631,9 @@ local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 				elseif typeof(val) == "boolean" or typeof(val) == "number" then
 					table.insert(lines, varName .. "." .. p .. " = " .. tostring(val))
 				elseif typeof(val) == "string" then
-					if p == "Font" or p == "TextXAlignment" or p == "TextYAlignment" then
-						table.insert(lines, varName .. "." .. p .. " = Enum." .. p .. "." .. val)
+					local enumName = ENUM_MAPPINGS[p] or p
+					if UI_ENUM_TYPES[enumName] then
+						table.insert(lines, varName .. "." .. p .. " = Enum." .. enumName .. "." .. val)
 					else
 						table.insert(lines, varName .. "." .. p .. " = " .. HttpService:JSONEncode(val))
 					end
