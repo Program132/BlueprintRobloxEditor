@@ -1,6 +1,114 @@
 -- TopBar : a generic horizontal action bar
 local Button = require(script.Parent.Button)
 
+local SegmentedToggle = {}
+SegmentedToggle.__index = SegmentedToggle
+
+function SegmentedToggle.new(parent, name, options)
+	local self = setmetatable({}, SegmentedToggle)
+
+	local container = Instance.new("Frame")
+	container.Name = name
+	container.Size = UDim2.new(0, 180, 0, 26)
+	container.BackgroundColor3 = Color3.fromRGB(16, 22, 36)
+	container.BorderSizePixel = 0
+	
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 4)
+	corner.Parent = container
+
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(38, 50, 72)
+	stroke.Thickness = 1
+	stroke.Parent = container
+
+	container.Parent = parent
+	self._container = container
+	self._buttons = {}
+	self._callbacks = {}
+	self._selected = nil
+
+	local numOptions = #options
+	for i, opt in ipairs(options) do
+		local btn = Instance.new("TextButton")
+		btn.Name = opt .. "Btn"
+		
+		local pct = 1 / numOptions
+		btn.Size = UDim2.new(pct, -3, 1, -4)
+		btn.Position = UDim2.new(pct * (i - 1), (i == 1) and 2 or 1, 0, 2)
+		
+		btn.BackgroundColor3 = Color3.fromRGB(38, 110, 200)
+		btn.BackgroundTransparency = 1
+		btn.BorderSizePixel = 0
+		btn.Text = opt
+		btn.TextColor3 = Color3.fromRGB(130, 170, 230)
+		btn.TextSize = 11
+		btn.Font = Enum.Font.GothamBold
+		btn.AutoButtonColor = false
+
+		local btnCorner = Instance.new("UICorner")
+		btnCorner.CornerRadius = UDim.new(0, 3)
+		btnCorner.Parent = btn
+
+		btn.Parent = container
+		self._buttons[opt] = btn
+
+		btn.MouseEnter:Connect(function()
+			if self._selected ~= opt then
+				btn.BackgroundTransparency = 0.8
+				btn.BackgroundColor3 = Color3.fromRGB(130, 170, 230)
+				btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+			end
+		end)
+		btn.MouseLeave:Connect(function()
+			if self._selected ~= opt then
+				btn.BackgroundTransparency = 1
+				btn.TextColor3 = Color3.fromRGB(130, 170, 230)
+			end
+		end)
+
+		btn.MouseButton1Click:Connect(function()
+			self:Select(opt)
+			for _, cb in ipairs(self._callbacks) do
+				task.spawn(cb, opt)
+			end
+		end)
+	end
+
+	return self
+end
+
+function SegmentedToggle:Select(option)
+	self._selected = option
+	for opt, btn in pairs(self._buttons) do
+		if opt == option then
+			btn.BackgroundTransparency = 0
+			btn.BackgroundColor3 = Color3.fromRGB(38, 110, 200)
+			btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+		else
+			btn.BackgroundTransparency = 1
+			btn.TextColor3 = Color3.fromRGB(130, 170, 230)
+		end
+	end
+end
+
+function SegmentedToggle:OnToggle(callback)
+	table.insert(self._callbacks, callback)
+end
+
+function SegmentedToggle:SetVisible(visible)
+	self._container.Visible = visible
+end
+
+function SegmentedToggle:GetVisible()
+	return self._container.Visible
+end
+
+function SegmentedToggle:GetInstance()
+	return self._container
+end
+
+
 local TopBar = {}
 TopBar.__index = TopBar
 
@@ -26,10 +134,10 @@ function TopBar.new(parent)
 	border.BorderSizePixel = 0
 	border.Parent = wrapper
 
-	-- Inner container: holds the buttons via UIListLayout
+	-- Inner container: holds the buttons via UIListLayout (restricted width to avoid overlap)
 	local inner = Instance.new("Frame")
 	inner.Name = "ButtonRow"
-	inner.Size = UDim2.new(1, 0, 1, 0)
+	inner.Size = UDim2.new(1, -250, 1, 0)
 	inner.BackgroundTransparency = 1
 	inner.Parent = wrapper
 
@@ -43,8 +151,28 @@ function TopBar.new(parent)
 	padding.PaddingLeft = UDim.new(0, 8)
 	padding.Parent = inner
 
+	-- Right container: holds right-aligned buttons (Design/Graph toggles)
+	local rightInner = Instance.new("Frame")
+	rightInner.Name = "RightButtonRow"
+	rightInner.Size = UDim2.new(0, 240, 1, 0)
+	rightInner.Position = UDim2.new(1, -248, 0, 0)
+	rightInner.BackgroundTransparency = 1
+	rightInner.Parent = wrapper
+
+	local rightLayout = Instance.new("UIListLayout")
+	rightLayout.FillDirection = Enum.FillDirection.Horizontal
+	rightLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+	rightLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+	rightLayout.Padding = UDim.new(0, 6)
+	rightLayout.Parent = rightInner
+
+	local rightPadding = Instance.new("UIPadding")
+	rightPadding.PaddingRight = UDim.new(0, 8)
+	rightPadding.Parent = rightInner
+
 	self._wrapper = wrapper
 	self._inner   = inner
+	self._rightInner = rightInner
 	self._buttons = {}
 
 	return self
@@ -54,6 +182,18 @@ function TopBar:AddButton(name, label)
 	local btn = Button.new(self._inner, name, label)
 	self._buttons[name] = btn
 	return btn
+end
+
+function TopBar:AddRightButton(name, label)
+	local btn = Button.new(self._rightInner, name, label)
+	self._buttons[name] = btn
+	return btn
+end
+
+function TopBar:AddSegmentedToggle(name, options)
+	local toggle = SegmentedToggle.new(self._rightInner, name, options)
+	self._buttons[name] = toggle
+	return toggle
 end
 
 function TopBar:GetButton(name)

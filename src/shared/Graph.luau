@@ -305,6 +305,8 @@ function Graph.from_data(data, Nodes, context)
                 nodeClass = Nodes["Function Entry"]
             elseif nData.Class:sub(1, 13) == "MethodReturn:" then
                 nodeClass = Nodes["Function Return"]
+            elseif nData.Class:sub(1, 8) == "UIEvent:" then
+                nodeClass = Nodes["UIEvent"]
             elseif nData.Class:sub(1, 9) == "OnAction:" or nData.Class:sub(1, 14) == "OnActionBegan:" or nData.Class:sub(1, 14) == "OnActionEnded:" then
                 local actionName
                 local title

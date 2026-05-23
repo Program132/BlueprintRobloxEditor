@@ -521,9 +521,7 @@ function NodeComponent:Deselect()
 end
 
 function NodeComponent:_makeDraggable()
-	local RunService = game:GetService("RunService")
 	local dragging = false
-	local dragInput = nil
 	local dragStart = nil
 	local startPos = nil
 
@@ -537,28 +535,37 @@ function NodeComponent:_makeDraggable()
 			self.OnSelect:Fire()
 			
 			local endConn
+			local dragConn
+
 			endConn = input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then
 					dragging = false
+					if dragConn then
+						dragConn:Disconnect()
+						dragConn = nil
+					end
 					endConn:Disconnect()
 				end
 			end)
-		end
-	end)
+			
+			local canvasFrame = self.frame.Parent and self.frame.Parent.Parent
+			if canvasFrame and canvasFrame:IsA("GuiObject") then
+				dragConn = canvasFrame.InputChanged:Connect(function(moveInput)
+					if moveInput.UserInputType == Enum.UserInputType.MouseMovement and dragging then
+						local zoom = 1
+						if self.frame.Parent then
+							local uiScale = self.frame.Parent:FindFirstChildOfClass("UIScale")
+							if uiScale then zoom = uiScale.Scale end
+						end
 
-	self.header.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement then
-			dragInput = input
-		end
-	end)
-
-	RunService.Heartbeat:Connect(function()
-		if dragging and dragInput then
-			local delta = dragInput.Position - dragStart
-			local newX = startPos.X.Offset + delta.X
-			local newY = startPos.Y.Offset + delta.Y
-			self.frame.Position = UDim2.new(0, newX, 0, newY)
-			self.nodeData:editPosition(Vector2.new(newX, newY))
+						local delta = moveInput.Position - dragStart
+						local newX = startPos.X.Offset + (delta.X / zoom)
+						local newY = startPos.Y.Offset + (delta.Y / zoom)
+						self.frame.Position = UDim2.new(0, newX, 0, newY)
+						self.nodeData:editPosition(Vector2.new(newX, newY))
+					end
+				end)
+			end
 		end
 	end)
 end

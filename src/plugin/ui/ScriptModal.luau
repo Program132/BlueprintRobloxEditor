@@ -139,7 +139,7 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 	end
 
 	local function addTypeBtn(typeName)
-		local btn = makeButton(typeContainer, typeName, UDim2.new(0, 62, 1, 0), UDim2.new(), Color3.fromRGB(30, 40, 60), Color3.fromRGB(130, 150, 180))
+		local btn = makeButton(typeContainer, typeName, UDim2.new(0, 52, 1, 0), UDim2.new(), Color3.fromRGB(30, 40, 60), Color3.fromRGB(130, 150, 180))
 		btn.ZIndex = 22
 		btn.MouseButton1Click:Connect(function()
 			data.type = typeName
@@ -156,6 +156,7 @@ function ScriptModal.prompt(parent, scriptData, onConfirm)
 	addTypeBtn("Module")
 	addTypeBtn("Tool")
 	addTypeBtn("NPC")
+	addTypeBtn("UI")
 	updateTypeSelection()
 
 	-- Dynamic content area (Scrollable)

@@ -254,6 +254,10 @@ function Sidebar:AddScript(data, onEdit)
 		typeStr = "NPC"
 		tagBg = Color3.fromRGB(20, 60, 60)
 		tagFg = Color3.fromRGB(50, 220, 220)
+	elseif data.type == "UI" then
+		typeStr = "UI "
+		tagBg = Color3.fromRGB(45, 30, 80)
+		tagFg = Color3.fromRGB(180, 120, 255)
 	end
 
 	local typeBtn = makeTag(typeStr, tagBg, tagFg)

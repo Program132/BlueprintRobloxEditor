@@ -20,6 +20,7 @@ local Sidebar = require(UI.Sidebar)
 local Modal   = require(UI.Modal)
 local ScriptModal = require(UI.ScriptModal)
 local ChoiceModal = require(UI.ChoiceModal)
+local UiDesigner  = require(UI.UiDesigner)
 local NodeMenu = require(UI.NodeMenu)
 local NodeComponent = require(UI.NodeComponent)
 local FunctionEntry = require(Shared.nodes.FunctionEntry)
@@ -27,6 +28,7 @@ local FunctionReturn = require(Shared.nodes.FunctionReturn)
 local FunctionCall = require(Shared.nodes.FunctionCall)
 
 local Nodes = {
+	["UIEvent"]     = require(Shared.nodes.events.UIEvent),
 	["Start Event"] = require(Shared.nodes.events.Start),
 	["Return"]      = require(Shared.nodes.Return),
 	["Print"]       = require(Shared.nodes.Print),
@@ -307,10 +309,35 @@ local topBar  = TopBar.new(widget)   -- top layer
 canvas:SetLeftOffset(sidebar:GetWidth())
 
 local newProjectBtn  = topBar:AddButton("NewProjectBtn",  "+ New Project")
+newProjectBtn:GetInstance().LayoutOrder = 1
 local openProjectBtn = topBar:AddButton("OpenProjectBtn", "Open Project")
+openProjectBtn:GetInstance().LayoutOrder = 2
 local saveProjectBtn = topBar:AddButton("SaveProjectBtn", "Save Project")
+saveProjectBtn:GetInstance().LayoutOrder = 3
 local exportBtn      = topBar:AddButton("ExportBtn",      "Export Current")
+exportBtn:GetInstance().LayoutOrder = 4
 local exportAllBtn   = topBar:AddButton("ExportAllBtn",   "Export All")
+exportAllBtn:GetInstance().LayoutOrder = 5
+
+-- UI Designer mode toggles (right aligned segmented toggle)
+local modeToggle = topBar:AddSegmentedToggle("ModeToggle", {"Design", "Graph"})
+modeToggle:GetInstance().LayoutOrder = 1
+modeToggle:SetVisible(false)
+
+local editorMode = "Graph"
+local uiDesigner = nil
+local setEditorMode = nil
+local onSwitchToGraph = nil
+
+modeToggle:OnToggle(function(mode)
+	if setEditorMode then setEditorMode(mode) end
+end)
+
+uiDesigner = UiDesigner.new(widget, function(...)
+	if onSwitchToGraph then
+		onSwitchToGraph(...)
+	end
+end)
 
 -- Initialise services
 local fm           = FileManager.new(plugin)
@@ -976,11 +1003,63 @@ local function renderGraph(graph)
 end
 
 
+setEditorMode = function(mode)
+	editorMode = mode
+	if not modeToggle then return end
+	
+	modeToggle:Select(mode)
+	
+	if editorMode == "Design" then
+		sidebar:GetInstance().Visible = false
+		canvas:GetInstance().Visible = false
+		if uiDesigner then
+			uiDesigner:GetInstance().Visible = true
+			if currentScriptHandle then
+				uiDesigner:LoadScript(currentScriptHandle.data, currentGraph)
+			end
+		end
+	else
+		sidebar:GetInstance().Visible = true
+		canvas:GetInstance().Visible = true
+		if uiDesigner then
+			uiDesigner:GetInstance().Visible = false
+			uiDesigner:SaveState()
+		end
+		
+		clearCanvas()
+		if currentGraph then
+			renderGraph(currentGraph)
+		end
+	end
+end
+
+onSwitchToGraph = function(nodeInstance)
+	setEditorMode("Graph")
+	task.wait()
+	
+	local targetVisualNode = nil
+	for _, vNode in ipairs(visualNodes) do
+		if vNode.nodeData == nodeInstance then
+			targetVisualNode = vNode
+			break
+		end
+	end
+	
+	if targetVisualNode then
+		targetVisualNode:Select()
+		canvas:CenterOnPosition(nodeInstance.Position)
+	end
+end
+
+
 local function switchScript(handle)
 	if not projectActive then return end
 	
 	-- 1. Save current state to the old handle
 	if currentScriptHandle then
+		if currentScriptHandle.data.type == "UI" and uiDesigner then
+			uiDesigner:SaveState()
+		end
 		currentScriptHandle.data.graph = currentGraph:serialize()
 		currentScriptHandle.data.variables = sidebar:GetVariables()
 		currentScriptHandle:Deselect()
@@ -1006,8 +1085,18 @@ local function switchScript(handle)
 		addVariableToSidebar(vName)
 	end
 	
-	-- 5. Render
-	renderGraph(currentGraph)
+	-- 5. Show/hide UI Designer elements
+	if modeToggle then
+		if handle.data.type == "UI" then
+			modeToggle:SetVisible(true)
+			setEditorMode(editorMode)
+		else
+			modeToggle:SetVisible(false)
+			setEditorMode("Graph")
+		end
+	else
+		renderGraph(currentGraph)
+	end
 end
 
 
@@ -1042,6 +1131,10 @@ local function onEditScript(handle)
 			typeStr = "NPC"
 			tagBg = Color3.fromRGB(20, 60, 60)
 			tagFg = Color3.fromRGB(50, 220, 220)
+		elseif updatedData.type == "UI" then
+			typeStr = "UI "
+			tagBg = Color3.fromRGB(45, 30, 80)
+			tagFg = Color3.fromRGB(180, 120, 255)
 		end
 
 		handle.typeBtn.Text = typeStr
@@ -1095,6 +1188,9 @@ end
 local function gatherProjectData()
 	-- Save active graph and variables
 	if currentScriptHandle then
+		if currentScriptHandle.data.type == "UI" and uiDesigner then
+			uiDesigner:SaveState()
+		end
 		currentScriptHandle.data.graph = currentGraph:serialize()
 		currentScriptHandle.data.variables = sidebar:GetVariables()
 	end
@@ -1147,12 +1243,16 @@ end)
 
 local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 	alreadyInlined = alreadyInlined or {}
-	if not sData.graph then return "-- No graph data for " .. sData.name .. "\n" end
 	if alreadyInlined[sData.name] then return "" end -- Already inlined
 	
 	-- 1. Restore the graph to find dependencies
-	local context = { script = sData, projectScripts = allScripts }
-	local graph = Graph.from_data(sData.graph, Nodes, context)
+	local graph
+	if sData.graph then
+		local context = { script = sData, projectScripts = allScripts }
+		graph = Graph.from_data(sData.graph, Nodes, context)
+	else
+		graph = Graph.new()
+	end
 	
 	-- 2. Resolve dependencies (functions called by this script)
 	local dependenciesCode = ""
@@ -1432,6 +1532,90 @@ local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 		end
 		
 		return dependenciesCode .. header .. code
+	elseif sData.type == "UI" then
+		local header = "-- UI Script: " .. sData.name .. "\n"
+		header ..= "local Players = game:GetService(\"Players\")\n"
+		header ..= "local localPlayer = Players.LocalPlayer\n"
+		header ..= "local PlayerGui = localPlayer:WaitForChild(\"PlayerGui\")\n\n"
+		
+		-- Gather all element names for local declarations
+		local elemNames = {}
+		local function gatherNames(elements)
+			for _, el in ipairs(elements) do
+				table.insert(elemNames, el.name)
+				if el.children then
+					gatherNames(el.children)
+				end
+			end
+		end
+		if sData.uiElements then
+			gatherNames(sData.uiElements)
+		end
+		
+		local declsCode = "-- UI Elements local declarations\n"
+		local hasDecls = false
+		for _, name in ipairs(elemNames) do
+			declsCode ..= "local " .. name .. " = nil\n"
+			hasDecls = true
+		end
+		if hasDecls then
+			declsCode ..= "\n"
+		else
+			declsCode = ""
+		end
+		
+		-- Create the ScreenGui and elements recursively
+		local creationCode = "-- Create UI Hierarchy\n"
+		creationCode ..= "local screenGui = Instance.new(\"ScreenGui\")\n"
+		creationCode ..= "screenGui.Name = \"" .. sData.name .. "\"\n"
+		creationCode ..= "screenGui.ResetOnSpawn = false\n"
+		creationCode ..= "screenGui.Parent = PlayerGui\n\n"
+		
+		local HttpService = game:GetService("HttpService")
+		local function genElCode(el, parentVarName)
+			local varName = el.name
+			local lines = {}
+			table.insert(lines, varName .. " = Instance.new(\"" .. el.class .. "\")")
+			table.insert(lines, varName .. ".Name = \"" .. el.name .. "\"")
+			for p, val in pairs(el.properties or {}) do
+				if typeof(val) == "table" then
+					if #val == 4 then
+						table.insert(lines, varName .. "." .. p .. " = UDim2.new(" .. table.concat(val, ", ") .. ")")
+					elseif #val == 2 then
+						table.insert(lines, varName .. "." .. p .. " = Vector2.new(" .. table.concat(val, ", ") .. ")")
+					elseif #val == 3 then
+						table.insert(lines, varName .. "." .. p .. " = Color3.fromRGB(" .. val[1] .. ", " .. val[2] .. ", " .. val[3] .. ")")
+					end
+				elseif typeof(val) == "boolean" or typeof(val) == "number" then
+					table.insert(lines, varName .. "." .. p .. " = " .. tostring(val))
+				elseif typeof(val) == "string" then
+					if p == "Font" or p == "TextXAlignment" or p == "TextYAlignment" then
+						table.insert(lines, varName .. "." .. p .. " = Enum." .. p .. "." .. val)
+					else
+						table.insert(lines, varName .. "." .. p .. " = " .. HttpService:JSONEncode(val))
+					end
+				end
+			end
+			
+			table.insert(lines, varName .. ".Parent = " .. parentVarName)
+			table.insert(lines, "")
+			
+			local blockCode = table.concat(lines, "\n")
+			if el.children then
+				for _, child in ipairs(el.children) do
+					blockCode ..= genElCode(child, varName)
+				end
+			end
+			return blockCode
+		end
+		
+		if sData.uiElements then
+			for _, el in ipairs(sData.uiElements) do
+				creationCode ..= genElCode(el, "screenGui")
+			end
+		end
+		
+		return dependenciesCode .. header .. declsCode .. creationCode .. code
 	else
 		-- Default scripts just get the dependencies + their code
 		return dependenciesCode .. code
@@ -1447,6 +1631,10 @@ local function performExport(sData, variables, callback)
 			if callback then callback(instance) end
 		end)
 	elseif sData.type == "Tool" then
+		local code = compileScriptData(sData, variables, allScripts)
+		local instance = fm:ExportToScript(sData.name, "LocalScript", code)
+		if callback then callback(instance) end
+	elseif sData.type == "UI" then
 		local code = compileScriptData(sData, variables, allScripts)
 		local instance = fm:ExportToScript(sData.name, "LocalScript", code)
 		if callback then callback(instance) end

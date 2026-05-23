@@ -338,4 +338,11 @@ function Canvas:GetZoom()
 	return self._zoom
 end
 
+function Canvas:CenterOnPosition(pos)
+	local size = self._group.AbsoluteSize
+	self._panX = -pos.X + (size.X / (2 * self._zoom))
+	self._panY = -pos.Y + (size.Y / (2 * self._zoom))
+	self:_updateLayout()
+end
+
 return Canvas
