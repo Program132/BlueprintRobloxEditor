@@ -364,6 +364,38 @@ local hoveredNode        = nil
 local hoveredWire        = nil
 local currentScriptHandle = nil
 
+-- Multi-selection state
+local selectedNodes = {} -- set: { [NodeComponent] = true }
+
+local function getSelectedNodesList()
+	local list = {}
+	for vn in pairs(selectedNodes) do
+		table.insert(list, vn)
+	end
+	return list
+end
+
+local function _selectNode(vNode, addToSelection)
+	if not addToSelection then
+		-- Deselect all others
+		for vn in pairs(selectedNodes) do
+			if vn ~= vNode then
+				vn:Deselect()
+			end
+		end
+		selectedNodes = {}
+	end
+	vNode:Select()
+	selectedNodes[vNode] = true
+end
+
+local function deselectAll()
+	for vn in pairs(selectedNodes) do
+		vn:Deselect()
+	end
+	selectedNodes = {}
+end
+
 local UserInputService = game:GetService("UserInputService")
 
 local ctrlHeld = false
@@ -372,7 +404,6 @@ local function handleKeyDown(keyCode)
 	local focused = UserInputService:GetFocusedTextBox()
 	if focused and focused.Name ~= "KeyboardCapture" then return end
 	
-	print("[BlueprintGlobal] handleKeyDown: Key =", keyCode.Name, "CtrlHeld =", ctrlHeld)
 	
 	if editorMode == "Animation" then
 		if animationEditor and animationEditor.handleKeyDown then
@@ -382,43 +413,55 @@ local function handleKeyDown(keyCode)
 	end
 	
 	if (keyCode == Enum.KeyCode.Delete or keyCode == Enum.KeyCode.Backspace) then
-		if hoveredNode then
-			--print("[Editor] Deleting node: " .. hoveredNode.nodeData.Name)
-			
-			-- 1. Remove from Graph
-			currentGraph:remove_node(hoveredNode.nodeData)
-			
-			-- 2. Remove connected visual wires
-			for i = #visualWires, 1, -1 do
-				local wire = visualWires[i]
-				if wire.fromNode == hoveredNode.nodeData or wire.toNode == hoveredNode.nodeData then
-					-- Show input field again if it was a target pin
-					if wire.toNode ~= hoveredNode.nodeData and wire.toPinId then
-						for _, vNode in ipairs(visualNodes) do
-							if vNode.nodeData == wire.toNode then
-								vNode:UpdatePinState(wire.toPinId, false)
-								break
+		-- Collect nodes to delete: prefer selected nodes, fallback to hovered
+		local nodesToDelete = {}
+		local hasSelected = next(selectedNodes) ~= nil
+		if hasSelected then
+			for vn in pairs(selectedNodes) do
+				table.insert(nodesToDelete, vn)
+			end
+		elseif hoveredNode then
+			table.insert(nodesToDelete, hoveredNode)
+		end
+		
+		if #nodesToDelete > 0 then
+			for _, nodeToDelete in ipairs(nodesToDelete) do
+				-- 1. Remove from Graph
+				currentGraph:remove_node(nodeToDelete.nodeData)
+				
+				-- 2. Remove connected visual wires
+				for i = #visualWires, 1, -1 do
+					local wire = visualWires[i]
+					if wire.fromNode == nodeToDelete.nodeData or wire.toNode == nodeToDelete.nodeData then
+						-- Show input field again if it was a target pin
+						if wire.toNode ~= nodeToDelete.nodeData and wire.toPinId then
+							for _, vNode in ipairs(visualNodes) do
+								if vNode.nodeData == wire.toNode then
+									vNode:UpdatePinState(wire.toPinId, false)
+									break
+								end
 							end
 						end
+						
+						wire.line:Destroy()
+						if wire.hbConn then wire.hbConn:Disconnect() end
+						table.remove(visualWires, i)
 					end
-					
-					wire.line:Destroy()
-					if wire.hbConn then wire.hbConn:Disconnect() end
-					table.remove(visualWires, i)
 				end
-			end
-			
-			-- 3. Remove from visualNodes list
-			for i, vNode in ipairs(visualNodes) do
-				if vNode == hoveredNode then
-					table.remove(visualNodes, i)
-					break
+				
+				-- 3. Remove from visualNodes list
+				for i, vNode in ipairs(visualNodes) do
+					if vNode == nodeToDelete then
+						table.remove(visualNodes, i)
+						break
+					end
 				end
+				
+				-- 4. Destroy UI
+				nodeToDelete:Destroy()
+				if hoveredNode == nodeToDelete then hoveredNode = nil end
 			end
-			
-			-- 4. Destroy UI
-			hoveredNode:Destroy()
-			hoveredNode = nil
+			selectedNodes = {}
 		elseif hoveredWire then
 			-- Deleting a connection
 			-- 1. Remove from Graph
@@ -447,8 +490,6 @@ local function handleKeyDown(keyCode)
 			end
 			
 			hoveredWire = nil
-		else
-			--print("[Editor] Delete pressed but nothing hovered")
 		end
 	end
 end
@@ -529,6 +570,7 @@ local function clearCanvas()
 	visualWires = {}
 	
 	hoveredNode = nil
+	selectedNodes = {}
 end
 
 local function renderWiresOnly(graph)
@@ -718,13 +760,30 @@ end
 
 local function hookUpNodeEvents(visualNode, nodeInstance)
 	visualNode.OnSelect.Event:Connect(function()
-		for _, v in ipairs(visualNodes) do
-			if v ~= visualNode then
-				v:Deselect()
+		-- If Ctrl held, toggle this node in the selection without clearing others
+		if ctrlHeld then
+			if selectedNodes[visualNode] then
+				-- Already selected → deselect it (toggle off)
+				visualNode:Deselect()
+				selectedNodes[visualNode] = nil
+			else
+				visualNode:Select()
+				selectedNodes[visualNode] = true
 			end
+		else
+			-- Plain click: select only this node
+			for vn in pairs(selectedNodes) do
+				if vn ~= visualNode then
+					vn:Deselect()
+				end
+			end
+			selectedNodes = { [visualNode] = true }
 		end
 	end)
 	
+	-- Inject multi-select context (must be done after _makeDraggable is called inside NodeComponent.new)
+	visualNode:SetMultiSelectContext(getSelectedNodesList, canvas)
+
 	visualNode.OnHover.Event:Connect(function()
 		--print("[Editor] Hovering node: " .. nodeInstance.Name)
 		hoveredNode = visualNode
@@ -770,6 +829,13 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 		-- Update hoveredNode if it was the one being changed
 		if hoveredNode == visualNode then
 			hoveredNode = newNode
+		end
+		
+		-- Update selectedNodes if the old node was selected
+		if selectedNodes[visualNode] then
+			selectedNodes[visualNode] = nil
+			selectedNodes[newNode] = true
+			newNode:Select()
 		end
 
 		-- 3. Update wire references
@@ -1966,12 +2032,35 @@ canvas:OnLeftClick(function()
 	if not projectActive then return end
 	
 	-- Deselect all nodes
-	for _, v in ipairs(visualNodes) do
-		v:Deselect()
-	end
+	deselectAll()
 end)
 
 
+
+canvas:OnSelectionBox(function(rect)
+	if not projectActive then return end
+	
+	-- Select all nodes whose frame intersects the selection rect
+	local additive = ctrlHeld
+	if not additive then
+		deselectAll()
+	end
+	
+	for _, vNode in ipairs(visualNodes) do
+		local frame = vNode.frame
+		local fPos  = frame.AbsolutePosition
+		local fSize = frame.AbsoluteSize
+		local fMaxX = fPos.X + fSize.X
+		local fMaxY = fPos.Y + fSize.Y
+		
+		-- AABB overlap test
+		if fPos.X < rect.maxX and fMaxX > rect.minX
+			and fPos.Y < rect.maxY and fMaxY > rect.minY then
+			vNode:Select()
+			selectedNodes[vNode] = true
+		end
+	end
+end)
 
 canvas:OnMouseMove(function(position)
 	dragMousePos = Vector2.new(position.X, position.Y)
@@ -1985,7 +2074,6 @@ UserInputService.InputBegan:Connect(function(input, gpe)
 	if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
 		ctrlHeld = true
 	end
-	print("[BlueprintGlobal] UIS.InputBegan: Key =", input.KeyCode.Name, "CtrlHeld =", ctrlHeld, "GPE =", gpe)
 	-- Fallback global listener
 	handleKeyDown(input.KeyCode)
 end)
@@ -1994,7 +2082,6 @@ UserInputService.InputEnded:Connect(function(input, gpe)
 	if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
 		ctrlHeld = false
 	end
-	print("[BlueprintGlobal] UIS.InputEnded: Key =", input.KeyCode.Name, "CtrlHeld =", ctrlHeld, "GPE =", gpe)
 end)
 
 -- We now use OnPinDragEnd instead of UserInputService.InputEnded for robustness

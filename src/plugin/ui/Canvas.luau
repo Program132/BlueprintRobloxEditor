@@ -125,6 +125,65 @@ function Canvas:_setupPanning()
 	local startPanX = 0
 	local startPanY = 0
 
+	-- Box-selection state
+	local boxSelecting = false
+	local boxStartPos = nil  -- absolute screen position where drag started
+	local selectionBox = nil -- the visual rectangle Frame
+	local BOX_DRAG_THRESHOLD = 6 -- pixels before we commit to box-select
+
+	local function createSelectionBox()
+		if selectionBox then selectionBox:Destroy() end
+		local box = Instance.new("Frame")
+		box.Name = "SelectionBox"
+		box.BackgroundColor3 = Color3.fromRGB(56, 125, 255)
+		box.BackgroundTransparency = 0.80
+		box.BorderSizePixel = 0
+		box.ZIndex = 20
+		box.Parent = self._group
+
+		local stroke = Instance.new("UIStroke")
+		stroke.Color = Color3.fromRGB(100, 170, 255)
+		stroke.Thickness = 1.5
+		stroke.Parent = box
+		
+		selectionBox = box
+		return box
+	end
+
+	local function updateSelectionBox(currentPos)
+		if not selectionBox then return end
+		local groupPos = self._group.AbsolutePosition
+		local x0 = math.min(boxStartPos.X, currentPos.X) - groupPos.X
+		local y0 = math.min(boxStartPos.Y, currentPos.Y) - groupPos.Y
+		local w  = math.abs(currentPos.X - boxStartPos.X)
+		local h  = math.abs(currentPos.Y - boxStartPos.Y)
+		selectionBox.Position = UDim2.fromOffset(x0, y0)
+		selectionBox.Size     = UDim2.fromOffset(w, h)
+		if self._onSelectionBoxDragCallback then
+			self._onSelectionBoxDragCallback()
+		end
+	end
+
+	local function finishSelectionBox(currentPos)
+		if not selectionBox then return end
+		-- Build rect in absolute screen coords
+		local x0 = math.min(boxStartPos.X, currentPos.X)
+		local y0 = math.min(boxStartPos.Y, currentPos.Y)
+		local x1 = math.max(boxStartPos.X, currentPos.X)
+		local y1 = math.max(boxStartPos.Y, currentPos.Y)
+		local rect = {
+			minX = x0, minY = y0,
+			maxX = x1, maxY = y1,
+		}
+		selectionBox:Destroy()
+		selectionBox = nil
+		boxSelecting = false
+		self.isBoxSelecting = false
+		if self._onSelectionBoxCallback then
+			self._onSelectionBoxCallback(rect)
+		end
+	end
+
 	local mouseInCanvas = false
 	local keys = {
 		[Enum.KeyCode.Up] = false,
@@ -138,17 +197,14 @@ function Canvas:_setupPanning()
 	}
 
 	self._group.MouseEnter:Connect(function() 
-		--print("[Canvas] Mouse entered canvas area")
 		mouseInCanvas = true 
 	end)
 	self._group.MouseLeave:Connect(function() 
-		--print("[Canvas] Mouse left canvas area")
 		mouseInCanvas = false 
 	end)
 
 	self._group.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton2 or input.UserInputType == Enum.UserInputType.MouseButton3 then
-			--print("[Canvas] Panning started (Right/Middle click)")
 			panning = true
 			panStartPos = input.Position
 			startPanX = self._panX
@@ -164,17 +220,51 @@ function Canvas:_setupPanning()
 					if input.UserInputType == Enum.UserInputType.MouseButton2 then
 						local delta = input.Position - panStartPos
 						if delta.Magnitude < 5 and self._onRightClickCallback then
-							--print("[Canvas] Firing Right-Click Context Menu")
 							self._onRightClickCallback(Vector2.new(input.Position.X, input.Position.Y))
 						end
 					end
 				end
 			end)
 		elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
-			--print("[Canvas] Left click detected inside canvas")
-			if self._onLeftClickCallback then
-				self._onLeftClickCallback()
-			end
+			-- Begin potential box-selection
+			boxStartPos = input.Position
+			boxSelecting = false
+			
+			local moveConn
+			local endConn
+			
+			moveConn = self._group.InputChanged:Connect(function(moveInput)
+				if moveInput.UserInputType ~= Enum.UserInputType.MouseMovement then return end
+				local delta = moveInput.Position - boxStartPos
+				if not boxSelecting and delta.Magnitude >= BOX_DRAG_THRESHOLD then
+					-- Commit to box-selection (only if no node was hit — caller controls this via isBoxSelecting)
+					if not self._suppressBoxSelect then
+						boxSelecting = true
+						self.isBoxSelecting = true
+						createSelectionBox()
+					end
+				end
+				if boxSelecting then
+					updateSelectionBox(moveInput.Position)
+				end
+			end)
+			
+			endConn = input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					if moveConn then moveConn:Disconnect() end
+					endConn:Disconnect()
+					
+					if boxSelecting then
+						finishSelectionBox(input.Position)
+					else
+						-- It was a plain click (no drag), fire left click callback
+						self.isBoxSelecting = false
+						if self._onLeftClickCallback then
+							self._onLeftClickCallback()
+						end
+					end
+				end
+			end)
 		elseif input.UserInputType == Enum.UserInputType.Keyboard then
 			if self._onKeyDownCallback then
 				self._onKeyDownCallback(input.KeyCode)
@@ -350,6 +440,17 @@ end
 
 function Canvas:OnResetView(callback)
 	self._onResetViewCallback = callback
+end
+
+-- Called when the user finishes a box-selection drag.
+-- Callback receives a table: { minX, minY, maxX, maxY } in absolute screen coords.
+function Canvas:OnSelectionBox(callback)
+	self._onSelectionBoxCallback = callback
+end
+
+-- Set to true while a node-drag is happening so we suppress box-select.
+function Canvas:SetSuppressBoxSelect(suppress)
+	self._suppressBoxSelect = suppress
 end
 
 function Canvas:HideGrid()

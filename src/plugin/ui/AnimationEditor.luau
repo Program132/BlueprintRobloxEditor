@@ -876,14 +876,12 @@ function AnimationEditor.new(parent)
 		if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
 			self._ctrlHeld = true
 		end
-		print("[BlueprintAnim] Local UIS.InputBegan: Key =", input.KeyCode.Name, "CtrlHeld =", self._ctrlHeld, "GPE =", gameProcessedEvent)
 		self:handleKeyDown(input.KeyCode)
 	end)
 
 	UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
 		if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
 			self._ctrlHeld = false
-			print("[BlueprintAnim] Local UIS.InputEnded: Control released. self._ctrlHeld = false")
 		end
 	end)
 
@@ -894,7 +892,6 @@ function AnimationEditor.new(parent)
 			if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
 				self._ctrlHeld = true
 			end
-			print("[BlueprintAnimFrame] frame.InputBegan: Key =", input.KeyCode.Name, "CtrlHeld =", self._ctrlHeld)
 			self:handleKeyDown(input.KeyCode)
 		end
 	end)
@@ -903,17 +900,14 @@ function AnimationEditor.new(parent)
 		if input.UserInputType == Enum.UserInputType.Keyboard then
 			if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
 				self._ctrlHeld = false
-				print("[BlueprintAnimFrame] frame.InputEnded: Control released. self._ctrlHeld = false")
 			end
 		end
 	end)
 
 	keyboardCapture.Focused:Connect(function()
-		print("[BlueprintCapture] KeyboardCapture TextBox focused!")
 	end)
 
 	keyboardCapture.FocusLost:Connect(function(enterPressed)
-		print("[BlueprintCapture] KeyboardCapture TextBox focus lost! enterPressed =", enterPressed)
 		task.defer(function()
 			if not self._frame.Visible then return end
 			local focused = UserInputService:GetFocusedTextBox()
@@ -936,7 +930,6 @@ function AnimationEditor:handleKeyDown(keyCode, isCtrlHeld)
 	
 	local focusedTextBox = UserInputService:GetFocusedTextBox()
 	if focusedTextBox and focusedTextBox ~= self._keyboardCapture then
-		print("[BlueprintAnim] handleKeyDown ignored: Focused textbox is not KeyboardCapture. Focused =", focusedTextBox.Name)
 		return
 	end
 
@@ -944,24 +937,19 @@ function AnimationEditor:handleKeyDown(keyCode, isCtrlHeld)
 		self._ctrlHeld = isCtrlHeld
 	end
 
-	print("[BlueprintAnim] handleKeyDown inside AnimationEditor: Key =", keyCode.Name, "CtrlHeld =", self._ctrlHeld)
 
 	local ctrlHeld = self._ctrlHeld or UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) or UserInputService:IsKeyDown(Enum.KeyCode.RightControl)
 
 	if ctrlHeld and keyCode == Enum.KeyCode.C then
-		print("[BlueprintAnim] Ctrl+C triggered. SelectedKeyframe =", self._selectedKeyframe)
 		if self._selectedKeyframe then
 			self._copiedKeyframe = {
 				value = cloneValue(self._selectedKeyframe.value),
 				easingStyle = self._selectedKeyframe.easingStyle or "Quad",
 				easingDirection = self._selectedKeyframe.easingDirection or "Out"
 			}
-			print("[BlueprintAnim] Copy Success: Copied value =", self._copiedKeyframe.value)
 		else
-			print("[BlueprintAnim] Copy Ignored: No selected keyframe")
 		end
 	elseif ctrlHeld and keyCode == Enum.KeyCode.V then
-		print("[BlueprintAnim] Ctrl+V triggered. CopiedKeyframe =", self._copiedKeyframe, "SelectedTrack =", self._selectedTrack)
 		if self._copiedKeyframe and self._selectedTrack then
 			local track = self._selectedTrack
 			local exists = nil
@@ -977,7 +965,6 @@ function AnimationEditor:handleKeyDown(keyCode, isCtrlHeld)
 				exists.easingStyle = self._copiedKeyframe.easingStyle
 				exists.easingDirection = self._copiedKeyframe.easingDirection
 				self._selectedKeyframe = exists
-				print("[BlueprintAnim] Paste Success: Replaced existing keyframe at time =", self._currentTime)
 			else
 				local newKf = {
 					time = self._currentTime,
@@ -987,15 +974,12 @@ function AnimationEditor:handleKeyDown(keyCode, isCtrlHeld)
 				}
 				table.insert(track.keyframes, newKf)
 				self._selectedKeyframe = newKf
-				print("[BlueprintAnim] Paste Success: Created new keyframe at time =", self._currentTime)
 			end
 			self:refreshTimeline()
 			self:refreshControls()
 		else
-			print("[BlueprintAnim] Paste Ignored: Missing copied keyframe or selected track")
 		end
 	elseif keyCode == Enum.KeyCode.K then
-		print("[BlueprintAnim] Key K triggered. SelectedTrack =", self._selectedTrack)
 		if self._selectedTrack then
 			local track = self._selectedTrack
 			local exists = nil
@@ -1031,22 +1015,18 @@ function AnimationEditor:handleKeyDown(keyCode, isCtrlHeld)
 				}
 				table.insert(track.keyframes, kf)
 				self._selectedKeyframe = kf
-				print("[BlueprintAnim] Added keyframe via K at time =", self._currentTime)
 				self:refreshTimeline()
 				self:refreshControls()
 			else
-				print("[BlueprintAnim] Keyframe already exists at time =", self._currentTime)
 			end
 		end
 	elseif keyCode == Enum.KeyCode.Delete or keyCode == Enum.KeyCode.Backspace then
-		print("[BlueprintAnim] Delete/Backspace triggered. SelectedTrack =", self._selectedTrack, "SelectedKeyframe =", self._selectedKeyframe)
 		if self._selectedTrack and self._selectedKeyframe then
 			local track = self._selectedTrack
 			local deleted = false
 			for idx, kf in ipairs(track.keyframes) do
 				if kf == self._selectedKeyframe then
 					table.remove(track.keyframes, idx)
-					print("[BlueprintAnim] Delete Success: Removed keyframe at index =", idx)
 					deleted = true
 					break
 				end
@@ -1057,10 +1037,8 @@ function AnimationEditor:handleKeyDown(keyCode, isCtrlHeld)
 				self:refreshControls()
 				self:refreshViewport()
 			else
-				print("[BlueprintAnim] Delete Ignored: Selected keyframe not found in selected track")
 			end
 		else
-			print("[BlueprintAnim] Delete Ignored: Missing selected track or selected keyframe")
 		end
 	elseif keyCode == Enum.KeyCode.Space then
 		if self._activeAnimation then

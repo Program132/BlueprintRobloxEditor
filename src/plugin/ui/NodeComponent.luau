@@ -524,12 +524,29 @@ function NodeComponent:_makeDraggable()
 	local dragging = false
 	local dragStart = nil
 	local startPos = nil
+	-- Stores starting positions of ALL co-selected nodes during a multi-drag
+	local coStartPositions = {}
 
 	self.header.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			dragging = true
 			dragStart = input.Position
 			startPos = self.frame.Position
+			
+			-- Suppress canvas box-select while we are node-dragging
+			if self._canvas then
+				self._canvas:SetSuppressBoxSelect(true)
+			end
+			
+			-- Snapshot start positions of all selected nodes for multi-drag
+			coStartPositions = {}
+			if self._getSelectedNodes then
+				for _, vn in ipairs(self._getSelectedNodes()) do
+					coStartPositions[vn] = vn.frame.Position
+				end
+			end
+			-- Always include self
+			coStartPositions[self] = startPos
 			
 			self:Select()
 			self.OnSelect:Fire()
@@ -540,11 +557,16 @@ function NodeComponent:_makeDraggable()
 			endConn = input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then
 					dragging = false
+					coStartPositions = {}
 					if dragConn then
 						dragConn:Disconnect()
 						dragConn = nil
 					end
 					endConn:Disconnect()
+					-- Re-enable canvas box-select
+					if self._canvas then
+						self._canvas:SetSuppressBoxSelect(false)
+					end
 				end
 			end)
 			
@@ -559,15 +581,28 @@ function NodeComponent:_makeDraggable()
 						end
 
 						local delta = moveInput.Position - dragStart
-						local newX = startPos.X.Offset + (delta.X / zoom)
-						local newY = startPos.Y.Offset + (delta.Y / zoom)
-						self.frame.Position = UDim2.new(0, newX, 0, newY)
-						self.nodeData:editPosition(Vector2.new(newX, newY))
+						local dx = delta.X / zoom
+						local dy = delta.Y / zoom
+						
+						-- Move all co-selected nodes
+						for vn, sPos in pairs(coStartPositions) do
+							local newX = sPos.X.Offset + dx
+							local newY = sPos.Y.Offset + dy
+							vn.frame.Position = UDim2.new(0, newX, 0, newY)
+							vn.nodeData:editPosition(Vector2.new(newX, newY))
+						end
 					end
 				end)
 			end
 		end
 	end)
+end
+
+-- Inject a callback returning all currently selected NodeComponent instances,
+-- and a reference to the Canvas object (for box-select suppression).
+function NodeComponent:SetMultiSelectContext(getSelectedNodesFn, canvasObj)
+	self._getSelectedNodes = getSelectedNodesFn
+	self._canvas = canvasObj
 end
 
 function NodeComponent:GetPins()
