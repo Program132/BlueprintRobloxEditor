@@ -64,26 +64,38 @@ function Canvas.new(parent)
 	uiScale.Parent = self._nodeContainer
 	self._uiScale = uiScale
 
-	-- Floating Control Bar
+	-- Floating Control Bar (pill with two buttons)
 	local controlBar = Instance.new("Frame")
 	controlBar.Name = "CanvasControls"
-	controlBar.Size = UDim2.new(0, 36, 0, 36)
-	controlBar.Position = UDim2.new(1, -48, 1, -48)
+	controlBar.Size = UDim2.new(0, 80, 0, 36)
+	controlBar.Position = UDim2.new(1, -92, 1, -48)
 	controlBar.BackgroundColor3 = Color3.fromRGB(20, 26, 40)
 	controlBar.BorderSizePixel = 0
 	controlBar.ZIndex = 15
 	controlBar.Visible = false
 	controlBar.Parent = group
-	makeCorner(controlBar, 6)
+	makeCorner(controlBar, 8)
 
 	local controlStroke = Instance.new("UIStroke")
 	controlStroke.Color = Color3.fromRGB(45, 60, 90)
 	controlStroke.Thickness = 1
 	controlStroke.Parent = controlBar
 
+	-- Divider between the two buttons
+	local divider = Instance.new("Frame")
+	divider.Name = "Divider"
+	divider.Size = UDim2.new(0, 1, 0, 20)
+	divider.Position = UDim2.new(0.5, 0, 0.5, -10)
+	divider.BackgroundColor3 = Color3.fromRGB(45, 60, 90)
+	divider.BorderSizePixel = 0
+	divider.ZIndex = 16
+	divider.Parent = controlBar
+
+	-- Reset-view button (left half)
 	local resetBtn = Instance.new("TextButton")
 	resetBtn.Name = "ResetViewBtn"
-	resetBtn.Size = UDim2.new(1, 0, 1, 0)
+	resetBtn.Size = UDim2.new(0.5, -1, 1, 0)
+	resetBtn.Position = UDim2.new(0, 0, 0, 0)
 	resetBtn.BackgroundTransparency = 1
 	resetBtn.Text = "🎯"
 	resetBtn.TextSize = 16
@@ -92,20 +104,62 @@ function Canvas.new(parent)
 	resetBtn.Parent = controlBar
 
 	resetBtn.MouseEnter:Connect(function()
-		controlBar.BackgroundColor3 = Color3.fromRGB(30, 40, 60)
-		controlStroke.Color = Color3.fromRGB(56, 125, 255)
 		resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 	end)
 	resetBtn.MouseLeave:Connect(function()
-		controlBar.BackgroundColor3 = Color3.fromRGB(20, 26, 40)
-		controlStroke.Color = Color3.fromRGB(45, 60, 90)
 		resetBtn.TextColor3 = Color3.fromRGB(150, 180, 240)
 	end)
-
 	resetBtn.MouseButton1Click:Connect(function()
 		if self._onResetViewCallback then
 			self._onResetViewCallback()
 		end
+	end)
+
+	-- Snap toggle button (right half)
+	self._snapEnabled = false
+
+	local snapBtn = Instance.new("TextButton")
+	snapBtn.Name = "SnapBtn"
+	snapBtn.Size = UDim2.new(0.5, -1, 1, 0)
+	snapBtn.Position = UDim2.new(0.5, 1, 0, 0)
+	snapBtn.BackgroundTransparency = 1
+	snapBtn.BackgroundColor3 = Color3.fromRGB(30, 140, 80)
+	snapBtn.Text = "🧲"
+	snapBtn.TextSize = 16
+	snapBtn.TextColor3 = Color3.fromRGB(100, 120, 160) -- dimmed = off
+	snapBtn.ZIndex = 16
+	snapBtn.Parent = controlBar
+	makeCorner(snapBtn, 6)
+
+	local snapStroke = Instance.new("UIStroke")
+	snapStroke.Color = Color3.fromRGB(50, 200, 110)
+	snapStroke.Thickness = 0
+	snapStroke.Parent = snapBtn
+
+	local function refreshSnapVisual()
+		if self._snapEnabled then
+			snapBtn.BackgroundTransparency = 0.3
+			snapBtn.TextColor3 = Color3.fromRGB(220, 255, 230)
+			snapStroke.Thickness = 1.5
+		else
+			snapBtn.BackgroundTransparency = 1
+			snapBtn.TextColor3 = Color3.fromRGB(100, 120, 160)
+			snapStroke.Thickness = 0
+		end
+	end
+
+	snapBtn.MouseEnter:Connect(function()
+		if not self._snapEnabled then
+			snapBtn.BackgroundTransparency = 0.85
+			snapBtn.TextColor3 = Color3.fromRGB(160, 210, 180)
+		end
+	end)
+	snapBtn.MouseLeave:Connect(function()
+		refreshSnapVisual()
+	end)
+	snapBtn.MouseButton1Click:Connect(function()
+		self._snapEnabled = not self._snapEnabled
+		refreshSnapVisual()
 	end)
 
 	self._controlBar = controlBar
@@ -451,6 +505,16 @@ end
 -- Set to true while a node-drag is happening so we suppress box-select.
 function Canvas:SetSuppressBoxSelect(suppress)
 	self._suppressBoxSelect = suppress
+end
+
+-- Returns true when node-snap is active.
+function Canvas:IsSnapEnabled()
+	return self._snapEnabled == true
+end
+
+-- Returns the snap grid size in canvas units (matches DOT_SPACING).
+function Canvas:GetSnapSize()
+	return DOT_SPACING
 end
 
 function Canvas:HideGrid()

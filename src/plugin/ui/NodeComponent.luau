@@ -584,10 +584,19 @@ function NodeComponent:_makeDraggable()
 						local dx = delta.X / zoom
 						local dy = delta.Y / zoom
 						
+						-- Snap helper: round to nearest grid multiple
+						local snapSize = self._canvas and self._canvas:IsSnapEnabled() and self._canvas:GetSnapSize() or nil
+						local function snapVal(v)
+							if snapSize then
+								return math.round(v / snapSize) * snapSize
+							end
+							return v
+						end
+						
 						-- Move all co-selected nodes
 						for vn, sPos in pairs(coStartPositions) do
-							local newX = sPos.X.Offset + dx
-							local newY = sPos.Y.Offset + dy
+							local newX = snapVal(sPos.X.Offset + dx)
+							local newY = snapVal(sPos.Y.Offset + dy)
 							vn.frame.Position = UDim2.new(0, newX, 0, newY)
 							vn.nodeData:editPosition(Vector2.new(newX, newY))
 						end
