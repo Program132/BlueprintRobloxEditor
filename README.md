@@ -11,7 +11,7 @@ The project uses Rojo, a VS Code extension for managing Roblox projects.
 
 **DevForum post**: https://devforum.roblox.com/t/v11-blueprint-roblox-editor-visual-programming-tools-for-luau/4058664?u=ptitloup132
 
-**Latest release**: https://github.com/Program132/BlueprintRobloxEditor/releases/tag/V2.3
+**Latest release**: https://github.com/Program132/BlueprintRobloxEditor/releases/tag/V2.4
 
 <img alt="image" src="https://i.imgur.com/bWJH1un.png" />
 <img alt="image" src="https://i.imgur.com/0IkOuSQ.png" />
@@ -65,6 +65,8 @@ Roblox plugins have limited access to your local file system, so project managem
 | **Delete Node** | Hover over a node and press `Delete` or `Backspace`. |
 | **Pan Canvas** | Right-click or Middle-click and drag the background. |
 | **Zoom** | Use the Mouse Wheel to zoom in/out. |
+| **Comments** | Drag left-click to select multiple nodes, then press `C` to wrap them in a comment box. Double-click the comment label to edit its title. |
+
 
 # Creating Custom Nodes
 
