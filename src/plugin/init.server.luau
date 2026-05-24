@@ -25,6 +25,7 @@ local UiDesigner  = require(UI.UiDesigner)
 local AnimationEditor = require(UI.AnimationEditor)
 local NodeMenu = require(UI.NodeMenu)
 local NodeComponent = require(UI.NodeComponent)
+local NodeComment = require(UI.NodeComment)
 local FunctionEntry = require(Shared.nodes.FunctionEntry)
 local FunctionReturn = require(Shared.nodes.FunctionReturn)
 local FunctionCall = require(Shared.nodes.FunctionCall)
@@ -367,6 +368,17 @@ local currentScriptHandle = nil
 -- Multi-selection state
 local selectedNodes = {} -- set: { [NodeComponent] = true }
 
+-- Comment boxes
+local visualComments = {} -- array of NodeComment
+local hoveredComment = nil
+local setupCommentEvents = nil
+
+local function deselectAllComments()
+	for _, c in ipairs(visualComments) do
+		c:Deselect()
+	end
+end
+
 local function getSelectedNodesList()
 	local list = {}
 	for vn in pairs(selectedNodes) do
@@ -384,6 +396,7 @@ local function _selectNode(vNode, addToSelection)
 			end
 		end
 		selectedNodes = {}
+		deselectAllComments()
 	end
 	vNode:Select()
 	selectedNodes[vNode] = true
@@ -394,6 +407,7 @@ local function deselectAll()
 		vn:Deselect()
 	end
 	selectedNodes = {}
+	deselectAllComments()
 end
 
 local UserInputService = game:GetService("UserInputService")
@@ -412,6 +426,17 @@ local function handleKeyDown(keyCode)
 		return
 	end
 	
+	if keyCode == Enum.KeyCode.C then
+		-- Create a comment box around all selected nodes
+		local selList = getSelectedNodesList()
+		if #selList >= 1 then
+			local comment = NodeComment.new(selList, canvas:GetNodeContainer(), canvas)
+			table.insert(visualComments, comment)
+			setupCommentEvents(comment)
+		end
+		return
+	end
+
 	if (keyCode == Enum.KeyCode.Delete or keyCode == Enum.KeyCode.Backspace) then
 		-- Collect nodes to delete: prefer selected nodes, fallback to hovered
 		local nodesToDelete = {}
@@ -462,6 +487,16 @@ local function handleKeyDown(keyCode)
 				if hoveredNode == nodeToDelete then hoveredNode = nil end
 			end
 			selectedNodes = {}
+		elseif hoveredComment then
+			-- Delete the comment box (keep the nodes)
+			for i, c in ipairs(visualComments) do
+				if c == hoveredComment then
+					table.remove(visualComments, i)
+					break
+				end
+			end
+			hoveredComment:Destroy()
+			hoveredComment = nil
 		elseif hoveredWire then
 			-- Deleting a connection
 			-- 1. Remove from Graph
@@ -492,6 +527,41 @@ local function handleKeyDown(keyCode)
 			hoveredWire = nil
 		end
 	end
+end
+
+setupCommentEvents = function(comment)
+	comment.frame.MouseEnter:Connect(function()
+		hoveredComment = comment
+	end)
+	comment.frame.MouseLeave:Connect(function()
+		if hoveredComment == comment then hoveredComment = nil end
+	end)
+	comment.OnSelect.Event:Connect(function()
+		-- Deselect all other comments
+		for _, c in ipairs(visualComments) do
+			if c ~= comment then c:Deselect() end
+		end
+	end)
+	comment.OnKeyDown.Event:Connect(function(kc)
+		handleKeyDown(kc)
+	end)
+end
+
+local function serializeComments()
+	local serialized = {}
+	for _, comment in ipairs(visualComments) do
+		local nodeIds = {}
+		for _, vn in ipairs(comment:GetContainedNodes()) do
+			if vn.nodeData and vn.nodeData.Id then
+				table.insert(nodeIds, vn.nodeData.Id)
+			end
+		end
+		table.insert(serialized, {
+			label = comment:GetLabel(),
+			nodes = nodeIds,
+		})
+	end
+	return serialized
 end
 
 -- ── Wires Global State ────────────────────────────────────────────────────────
@@ -568,8 +638,14 @@ local function clearCanvas()
 		if wire.hbConn then wire.hbConn:Disconnect() end
 	end
 	visualWires = {}
+
+	for _, comment in ipairs(visualComments) do
+		comment:Destroy()
+	end
+	visualComments = {}
 	
 	hoveredNode = nil
+	hoveredComment = nil
 	selectedNodes = {}
 end
 
@@ -769,6 +845,7 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 			else
 				visualNode:Select()
 				selectedNodes[visualNode] = true
+				deselectAllComments()
 			end
 		else
 			-- Plain click: select only this node
@@ -778,6 +855,7 @@ local function hookUpNodeEvents(visualNode, nodeInstance)
 				end
 			end
 			selectedNodes = { [visualNode] = true }
+			deselectAllComments()
 		end
 	end)
 	
@@ -1089,6 +1167,27 @@ local function renderGraph(graph)
 	end
 	
 	renderWiresOnly(graph)
+
+	-- Reconstruct comments
+	if currentScriptHandle and currentScriptHandle.data and currentScriptHandle.data.comments then
+		for _, commentData in ipairs(currentScriptHandle.data.comments) do
+			local matchingNodeComponents = {}
+			for _, nodeId in ipairs(commentData.nodes) do
+				for _, vn in ipairs(visualNodes) do
+					if vn.nodeData and vn.nodeData.Id == nodeId then
+						table.insert(matchingNodeComponents, vn)
+						break
+					end
+				end
+			end
+			
+			if #matchingNodeComponents > 0 then
+				local comment = NodeComment.new(matchingNodeComponents, canvas:GetNodeContainer(), canvas, commentData.label)
+				table.insert(visualComments, comment)
+				setupCommentEvents(comment)
+			end
+		end
+	end
 end
 
 
@@ -1211,6 +1310,7 @@ local function switchScript(handle)
 			if animationEditor then animationEditor:SaveState() end
 		end
 		currentScriptHandle.data.graph = currentGraph:serialize()
+		currentScriptHandle.data.comments = serializeComments()
 		currentScriptHandle.data.variables = sidebar:GetVariables()
 		currentScriptHandle:Deselect()
 	end
@@ -1345,6 +1445,7 @@ local function gatherProjectData()
 			if animationEditor then animationEditor:SaveState() end
 		end
 		currentScriptHandle.data.graph = currentGraph:serialize()
+		currentScriptHandle.data.comments = serializeComments()
 		currentScriptHandle.data.variables = sidebar:GetVariables()
 	end
 	
@@ -1963,6 +2064,7 @@ exportBtn:OnClick(function()
 	
 	-- Save current state first
 	currentScriptHandle.data.graph = currentGraph:serialize()
+	currentScriptHandle.data.comments = serializeComments()
 	
 	performExport(currentScriptHandle.data, sidebar:GetVariables(), function(inst)
 		canvas:SetPlaceholder("Exported '" .. inst.Name .. "' to workspace.__BlueprintExport")
@@ -1976,6 +2078,7 @@ exportAllBtn:OnClick(function()
 	-- Save current state first
 	if currentScriptHandle then
 		currentScriptHandle.data.graph = currentGraph:serialize()
+		currentScriptHandle.data.comments = serializeComments()
 	end
 	
 	local allScripts = sidebar:GetScripts()

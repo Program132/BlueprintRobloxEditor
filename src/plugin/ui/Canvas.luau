@@ -123,7 +123,7 @@ function Canvas.new(parent)
 	snapBtn.Size = UDim2.new(0.5, -1, 1, 0)
 	snapBtn.Position = UDim2.new(0.5, 1, 0, 0)
 	snapBtn.BackgroundTransparency = 1
-	snapBtn.BackgroundColor3 = Color3.fromRGB(30, 140, 80)
+	snapBtn.BackgroundColor3 = Color3.fromRGB(65, 78, 105)
 	snapBtn.Text = "🧲"
 	snapBtn.TextSize = 16
 	snapBtn.TextColor3 = Color3.fromRGB(100, 120, 160) -- dimmed = off
@@ -132,14 +132,14 @@ function Canvas.new(parent)
 	makeCorner(snapBtn, 6)
 
 	local snapStroke = Instance.new("UIStroke")
-	snapStroke.Color = Color3.fromRGB(50, 200, 110)
+	snapStroke.Color = Color3.fromRGB(90, 110, 150)
 	snapStroke.Thickness = 0
 	snapStroke.Parent = snapBtn
 
 	local function refreshSnapVisual()
 		if self._snapEnabled then
-			snapBtn.BackgroundTransparency = 0.3
-			snapBtn.TextColor3 = Color3.fromRGB(220, 255, 230)
+			snapBtn.BackgroundTransparency = 0.25
+			snapBtn.TextColor3 = Color3.fromRGB(200, 220, 255)
 			snapStroke.Thickness = 1.5
 		else
 			snapBtn.BackgroundTransparency = 1
