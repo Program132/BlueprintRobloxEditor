@@ -22,6 +22,7 @@ local ScriptModal = require(UI.ScriptModal)
 local ChoiceModal = require(UI.ChoiceModal)
 local ImportModal = require(UI.ImportModal)
 local UiDesigner  = require(UI.UiDesigner)
+local AnimationEditor = require(UI.AnimationEditor)
 local NodeMenu = require(UI.NodeMenu)
 local NodeComponent = require(UI.NodeComponent)
 local FunctionEntry = require(Shared.nodes.FunctionEntry)
@@ -182,6 +183,7 @@ local Nodes = {
 	["Concat"] = require(Shared.nodes.string:WaitForChild("Concat")),
 	["TweenInfo new"] = require(Shared.nodes.tween:WaitForChild("TweenInfoNew")),
 	["Simple Tween"] = require(Shared.nodes.tween:WaitForChild("SimpleTween")),
+	["Play UI Animation"] = require(Shared.nodes.tween:WaitForChild("PlayUIAnimation")),
 	["Instance Workspace Object"] = require(Shared.nodes.instances:WaitForChild("WorkspaceObject")),
 	["Instance new"] = require(Shared.nodes.instances:WaitForChild("New")),
 	["Get Service"] = require(Shared.nodes.instances:WaitForChild("GetService")),
@@ -326,7 +328,7 @@ local exportAllBtn   = topBar:AddButton("ExportAllBtn",   "Export All", "accent"
 exportAllBtn:GetInstance().LayoutOrder = 7
 
 -- UI Designer mode toggles (right aligned segmented toggle)
-local modeToggle = topBar:AddSegmentedToggle("ModeToggle", {"Design", "Graph"})
+local modeToggle = topBar:AddSegmentedToggle("ModeToggle", {"Design", "Graph", "Animation"})
 modeToggle:GetInstance().LayoutOrder = 1
 modeToggle:SetVisible(false)
 
@@ -344,6 +346,9 @@ uiDesigner = UiDesigner.new(widget, function(...)
 		onSwitchToGraph(...)
 	end
 end)
+
+local animationEditor = nil
+animationEditor = AnimationEditor.new(widget)
 
 -- Initialise services
 local fm           = FileManager.new(plugin)
@@ -955,7 +960,7 @@ local function spawnNode(nodeId, screenPosition, configFunc)
 	else
 		local nodeClass = Nodes[nodeId]
 		if not nodeClass then return end
-		nodeInstance = nodeClass.new()
+		nodeInstance = nodeClass.new(nil, { script = currentScriptHandle and currentScriptHandle.data, projectScripts = sidebar:GetScripts() })
 	end
 	
 	nodeInstance.Class = nodeId
@@ -1018,10 +1023,27 @@ setEditorMode = function(mode)
 	if editorMode == "Design" then
 		sidebar:GetInstance().Visible = false
 		canvas:GetInstance().Visible = false
+		if animationEditor then
+			animationEditor:GetInstance().Visible = false
+			animationEditor:SaveState()
+		end
 		if uiDesigner then
 			uiDesigner:GetInstance().Visible = true
 			if currentScriptHandle then
 				uiDesigner:LoadScript(currentScriptHandle.data, currentGraph)
+			end
+		end
+	elseif editorMode == "Animation" then
+		sidebar:GetInstance().Visible = false
+		canvas:GetInstance().Visible = false
+		if uiDesigner then
+			uiDesigner:GetInstance().Visible = false
+			uiDesigner:SaveState()
+		end
+		if animationEditor then
+			animationEditor:GetInstance().Visible = true
+			if currentScriptHandle then
+				animationEditor:LoadScript(currentScriptHandle.data)
 			end
 		end
 	else
@@ -1031,9 +1053,28 @@ setEditorMode = function(mode)
 			uiDesigner:GetInstance().Visible = false
 			uiDesigner:SaveState()
 		end
+		if animationEditor then
+			animationEditor:GetInstance().Visible = false
+			animationEditor:SaveState()
+		end
 		
 		clearCanvas()
 		if currentGraph then
+			-- Update dropdowns for Play UI Animation
+			if currentScriptHandle and currentScriptHandle.data.type == "UI" then
+				local animNames = {}
+				for _, anim in ipairs(currentScriptHandle.data.animations or {}) do
+					table.insert(animNames, anim.name)
+				end
+				for _, node in pairs(currentGraph.nodes) do
+					if node.Name == "Play UI Animation" then
+						local animInput = node:getInput("AnimationName")
+						if animInput then
+							animInput.Choices = animNames
+						end
+					end
+				end
+			end
 			renderGraph(currentGraph)
 		end
 	end
@@ -1087,8 +1128,9 @@ local function switchScript(handle)
 	
 	-- 1. Save current state to the old handle
 	if currentScriptHandle then
-		if currentScriptHandle.data.type == "UI" and uiDesigner then
-			uiDesigner:SaveState()
+		if currentScriptHandle.data.type == "UI" then
+			if uiDesigner then uiDesigner:SaveState() end
+			if animationEditor then animationEditor:SaveState() end
 		end
 		currentScriptHandle.data.graph = currentGraph:serialize()
 		currentScriptHandle.data.variables = sidebar:GetVariables()
@@ -1220,8 +1262,9 @@ end
 local function gatherProjectData()
 	-- Save active graph and variables
 	if currentScriptHandle then
-		if currentScriptHandle.data.type == "UI" and uiDesigner then
-			uiDesigner:SaveState()
+		if currentScriptHandle.data.type == "UI" then
+			if uiDesigner then uiDesigner:SaveState() end
+			if animationEditor then animationEditor:SaveState() end
 		end
 		currentScriptHandle.data.graph = currentGraph:serialize()
 		currentScriptHandle.data.variables = sidebar:GetVariables()
@@ -1323,6 +1366,97 @@ importBtn:OnClick(function()
 end)
 
 -- ── Export Logic ──────────────────────────────────────────────────────────────
+
+local function serializeValue(val, propertyName)
+	if typeof(val) == "table" then
+		if propertyName == "CornerRadius" or propertyName == "PaddingTop" or propertyName == "PaddingBottom" or propertyName == "PaddingLeft" or propertyName == "PaddingRight" or propertyName == "Padding" then
+			return "UDim.new(" .. table.concat(val, ", ") .. ")"
+		elseif #val == 4 then
+			return "UDim2.new(" .. table.concat(val, ", ") .. ")"
+		elseif #val == 2 then
+			return "Vector2.new(" .. table.concat(val, ", ") .. ")"
+		elseif #val == 3 then
+			return "Color3.fromRGB(" .. val[1] .. ", " .. val[2] .. ", " .. val[3] .. ")"
+		end
+	elseif typeof(val) == "boolean" or typeof(val) == "number" then
+		return tostring(val)
+	elseif typeof(val) == "string" then
+		local HttpService = game:GetService("HttpService")
+		local ENUM_MAPPINGS = {
+			MajorAxis = "TableMajorAxis",
+			DragStyle = "DragDetectorDragStyle",
+			ResponseStyle = "DragDetectorResponseStyle",
+			FlexMode = "UIFlexMode",
+		}
+		local UI_ENUM_TYPES = {
+			Font = true, TextXAlignment = true, TextYAlignment = true,
+			FillDirection = true, HorizontalAlignment = true, VerticalAlignment = true,
+			SortOrder = true, ApplyStrokeMode = true, LineJoinMode = true,
+			AspectType = true, DominantAxis = true, DragDetectorDragStyle = true,
+			DragDetectorResponseStyle = true, UIFlexMode = true, EasingDirection = true,
+			EasingStyle = true, TableMajorAxis = true, StartCorner = true
+		}
+		local enumName = ENUM_MAPPINGS[propertyName] or propertyName
+		if UI_ENUM_TYPES[enumName] then
+			return "Enum." .. enumName .. "." .. val
+		else
+			return HttpService:JSONEncode(val)
+		end
+	end
+	return "nil"
+end
+
+local function compileAnimations(sData)
+	local anims = sData.animations or {}
+	if #anims == 0 then return "" end
+
+	local HttpService = game:GetService("HttpService")
+	local code = "-- Play Animation functions\n"
+	for _, anim in ipairs(anims) do
+		local safeAnimName = anim.name:gsub("[^%w_]", "")
+		if safeAnimName == "" then safeAnimName = "Anim" end
+		
+		code ..= "local function PlayAnimation_" .. safeAnimName .. "(customDuration)\n"
+		code ..= "\tlocal duration = customDuration or " .. (anim.duration or 1.0) .. "\n"
+		code ..= "\tlocal TweenService = game:GetService(\"TweenService\")\n\n"
+
+		for _, track in ipairs(anim.tracks or {}) do
+			if #track.keyframes > 0 then
+				code ..= "\ttask.spawn(function()\n"
+				
+				local kfs = {}
+				for _, kf in ipairs(track.keyframes) do table.insert(kfs, kf) end
+				table.sort(kfs, function(a, b) return a.time < b.time end)
+				
+				local startVal = serializeValue(kfs[1].value, track.property)
+				code ..= "\t\t" .. track.elementName .. "." .. track.property .. " = " .. startVal .. "\n"
+				
+				for i = 2, #kfs do
+					local prev = kfs[i-1]
+					local curr = kfs[i]
+					local diff = curr.time - prev.time
+					if diff > 0 then
+						local targetVal = serializeValue(curr.value, track.property)
+						local style = curr.easingStyle or "Quad"
+						local dir = curr.easingDirection or "Out"
+						
+						code ..= "\t\tlocal t" .. (i-1) .. " = TweenService:Create(" .. track.elementName 
+							.. ", TweenInfo.new(" .. diff .. " * (duration / " .. (anim.duration or 1.0) .. "), Enum.EasingStyle." .. style .. ", Enum.EasingDirection." .. dir .. "), "
+							.. "{[" .. HttpService:JSONEncode(track.property) .. "] = " .. targetVal .. "})\n"
+						code ..= "\t\tt" .. (i-1) .. ":Play()\n"
+						code ..= "\t\tt" .. (i-1) .. ".Completed:Wait()\n"
+					end
+				end
+				
+				code ..= "\tend)\n\n"
+			end
+		end
+
+		code ..= "end\n\n"
+	end
+
+	return code
+end
 
 local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 	alreadyInlined = alreadyInlined or {}
@@ -1715,7 +1849,8 @@ local function compileScriptData(sData, variables, allScripts, alreadyInlined)
 			end
 		end
 		
-		return dependenciesCode .. header .. declsCode .. creationCode .. code
+		local animCode = compileAnimations(sData)
+		return dependenciesCode .. header .. declsCode .. creationCode .. animCode .. code
 	else
 		-- Default scripts just get the dependencies + their code
 		return dependenciesCode .. code

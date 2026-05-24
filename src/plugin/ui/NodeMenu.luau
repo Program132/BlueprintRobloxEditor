@@ -130,6 +130,7 @@ function NodeMenu.prompt(parent, position, extraNodes, scriptType, onConfirm)
 		["Print"] = "Output", ["Warn"] = "Output", ["Error"] = "Output",
 		["Return"] = "Control", ["If"] = "Control", ["While"] = "Control", ["For"] = "Control",
 		["For In Pairs"] = "Control", ["For In Ipairs"] = "Control",
+		["Play UI Animation"] = "Tween",
 	}
 
 	local function getNodeInfo(key)

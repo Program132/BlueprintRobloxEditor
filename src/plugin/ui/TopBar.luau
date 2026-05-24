@@ -9,7 +9,7 @@ function SegmentedToggle.new(parent, name, options)
 
 	local container = Instance.new("Frame")
 	container.Name = name
-	container.Size = UDim2.new(0, 180, 0, 26)
+	container.Size = UDim2.new(0, 240, 0, 26)
 	container.BackgroundColor3 = Color3.fromRGB(18, 22, 34)
 	container.BorderSizePixel = 0
 	
@@ -155,8 +155,8 @@ function TopBar.new(parent)
 	-- Right container: holds right-aligned buttons (Design/Graph toggles)
 	local rightInner = Instance.new("Frame")
 	rightInner.Name = "RightButtonRow"
-	rightInner.Size = UDim2.new(0, 240, 1, 0)
-	rightInner.Position = UDim2.new(1, -248, 0, 0)
+	rightInner.Size = UDim2.new(0, 300, 1, 0)
+	rightInner.Position = UDim2.new(1, -308, 0, 0)
 	rightInner.BackgroundTransparency = 1
 	rightInner.Parent = wrapper
 
