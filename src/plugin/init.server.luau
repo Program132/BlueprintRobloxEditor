@@ -366,8 +366,20 @@ local currentScriptHandle = nil
 
 local UserInputService = game:GetService("UserInputService")
 
+local ctrlHeld = false
+
 local function handleKeyDown(keyCode)
-	if UserInputService:GetFocusedTextBox() then return end
+	local focused = UserInputService:GetFocusedTextBox()
+	if focused and focused.Name ~= "KeyboardCapture" then return end
+	
+	print("[BlueprintGlobal] handleKeyDown: Key =", keyCode.Name, "CtrlHeld =", ctrlHeld)
+	
+	if editorMode == "Animation" then
+		if animationEditor and animationEditor.handleKeyDown then
+			animationEditor:handleKeyDown(keyCode, ctrlHeld)
+		end
+		return
+	end
 	
 	if (keyCode == Enum.KeyCode.Delete or keyCode == Enum.KeyCode.Backspace) then
 		if hoveredNode then
@@ -1970,8 +1982,19 @@ canvas:OnResetView(centerOnFirstNode)
 
 -- ── Keyboard Shortcuts ────────────────────────────────────────────────────────
 UserInputService.InputBegan:Connect(function(input, gpe)
+	if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
+		ctrlHeld = true
+	end
+	print("[BlueprintGlobal] UIS.InputBegan: Key =", input.KeyCode.Name, "CtrlHeld =", ctrlHeld, "GPE =", gpe)
 	-- Fallback global listener
 	handleKeyDown(input.KeyCode)
+end)
+
+UserInputService.InputEnded:Connect(function(input, gpe)
+	if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
+		ctrlHeld = false
+	end
+	print("[BlueprintGlobal] UIS.InputEnded: Key =", input.KeyCode.Name, "CtrlHeld =", ctrlHeld, "GPE =", gpe)
 end)
 
 -- We now use OnPinDragEnd instead of UserInputService.InputEnded for robustness

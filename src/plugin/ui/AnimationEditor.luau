@@ -142,6 +142,17 @@ local function lerpValue(v1, v2, alpha, prop)
 	return v2
 end
 
+local function cloneValue(v)
+	if typeof(v) == "table" then
+		local c = {}
+		for k, val in pairs(v) do
+			c[k] = val
+		end
+		return c
+	end
+	return v
+end
+
 local function evaluateTrack(track, time)
 	local keyframes = track.keyframes
 	if not keyframes or #keyframes == 0 then return nil end
@@ -353,6 +364,34 @@ function AnimationEditor.new(parent)
 	mainFrame.Visible = false
 	mainFrame.Parent = parent
 	self._frame = mainFrame
+
+	-- Hidden TextBox to capture keyboard focus for shortcuts
+	local keyboardCapture = Instance.new("TextBox")
+	keyboardCapture.Name = "KeyboardCapture"
+	keyboardCapture.Size = UDim2.fromOffset(1, 1)
+	keyboardCapture.Position = UDim2.new(0, -10, 0, -10) -- offscreen
+	keyboardCapture.BackgroundTransparency = 1
+	keyboardCapture.Text = ""
+	keyboardCapture.PlaceholderText = ""
+	keyboardCapture.ClearTextOnFocus = false
+	keyboardCapture.Parent = mainFrame
+	self._keyboardCapture = keyboardCapture
+
+	-- When text changes, clear it so it doesn't build up
+	keyboardCapture:GetPropertyChangedSignal("Text"):Connect(function()
+		if keyboardCapture.Text ~= "" then
+			keyboardCapture.Text = ""
+		end
+	end)
+
+	mainFrame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
+			local focused = UserInputService:GetFocusedTextBox()
+			if not focused or (focused ~= keyboardCapture and (focused.Parent.Name ~= "RightPanel" and focused.Parent.Parent.Name ~= "RightPanel")) then
+				keyboardCapture:CaptureFocus()
+			end
+		end
+	end)
 
 	-- Grid layout structure
 	-- ── Left Panel (Hierarchy) ────────────────────────────────────────────────
@@ -832,89 +871,56 @@ function AnimationEditor.new(parent)
 		end
 	end)
 
-	-- Keyboard shortcuts (Space to play, K to keyframe, Delete to delete keyframe)
+	-- Keyboard shortcuts local fallback listener
 	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-		if gameProcessedEvent then return end
-		if not mainFrame.Visible then return end
-		if UserInputService:GetFocusedTextBox() then return end
+		if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
+			self._ctrlHeld = true
+		end
+		print("[BlueprintAnim] Local UIS.InputBegan: Key =", input.KeyCode.Name, "CtrlHeld =", self._ctrlHeld, "GPE =", gameProcessedEvent)
+		self:handleKeyDown(input.KeyCode)
+	end)
 
-		if input.KeyCode == Enum.KeyCode.K then
-			if self._selectedTrack then
-				local track = self._selectedTrack
-				local exists = nil
-				for _, kf in ipairs(track.keyframes) do
-					if math.abs(kf.time - self._currentTime) < 0.01 then
-						exists = kf
-						break
-					end
-				end
+	UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
+		if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
+			self._ctrlHeld = false
+			print("[BlueprintAnim] Local UIS.InputEnded: Control released. self._ctrlHeld = false")
+		end
+	end)
 
-				if not exists then
-					local capVal = nil
-					local el = nil
-					local function findEl(elements)
-						for _, e in ipairs(elements) do
-							if e.name == track.elementName then el = e; break end
-							if e.children then findEl(e.children) end
-						end
-					end
-					findEl(self._uiElements)
-
-					if el then
-						capVal = getElementProperty(el, track.property)
-					else
-						capVal = 0
-					end
-
-					local kf = {
-						time = self._currentTime,
-						value = capVal,
-						easingStyle = "Quad",
-						easingDirection = "Out"
-					}
-					table.insert(track.keyframes, kf)
-					self._selectedKeyframe = kf
-					self:refreshTimeline()
-					self:refreshControls()
-				end
+	-- Local frame keyboard capture (substitute for parent widget events)
+	mainFrame.Active = true
+	mainFrame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.Keyboard then
+			if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
+				self._ctrlHeld = true
 			end
-		elseif input.KeyCode == Enum.KeyCode.Delete or input.KeyCode == Enum.KeyCode.Backspace then
-			if self._selectedTrack and self._selectedKeyframe then
-				local track = self._selectedTrack
-				for idx, kf in ipairs(track.keyframes) do
-					if kf == self._selectedKeyframe then
-						table.remove(track.keyframes, idx)
-						break
-					end
-				end
-				self._selectedKeyframe = nil
-				self:refreshTimeline()
-				self:refreshControls()
-			end
-		elseif input.KeyCode == Enum.KeyCode.Space then
-			if self._activeAnimation then
-				if self._playing then
-					self._playing = false
-				else
-					self._playing = true
-					task.spawn(function()
-						local lastTime = os.clock()
-						while self._playing do
-							RunService.Heartbeat:Wait()
-							local now = os.clock()
-							local dt = now - lastTime
-							lastTime = now
-							
-							self._currentTime = self._currentTime + dt
-							if self._currentTime >= self._activeAnimation.duration then
-								self._currentTime = 0
-							end
-							self:updatePlayheadAndScrub()
-						end
-					end)
-				end
+			print("[BlueprintAnimFrame] frame.InputBegan: Key =", input.KeyCode.Name, "CtrlHeld =", self._ctrlHeld)
+			self:handleKeyDown(input.KeyCode)
+		end
+	end)
+
+	mainFrame.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.Keyboard then
+			if input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
+				self._ctrlHeld = false
+				print("[BlueprintAnimFrame] frame.InputEnded: Control released. self._ctrlHeld = false")
 			end
 		end
+	end)
+
+	keyboardCapture.Focused:Connect(function()
+		print("[BlueprintCapture] KeyboardCapture TextBox focused!")
+	end)
+
+	keyboardCapture.FocusLost:Connect(function(enterPressed)
+		print("[BlueprintCapture] KeyboardCapture TextBox focus lost! enterPressed =", enterPressed)
+		task.defer(function()
+			if not self._frame.Visible then return end
+			local focused = UserInputService:GetFocusedTextBox()
+			if not focused then
+				keyboardCapture:CaptureFocus()
+			end
+		end)
 	end)
 
 	return self
@@ -922,6 +928,164 @@ end
 
 function AnimationEditor:GetInstance()
 	return self._frame
+end
+
+function AnimationEditor:handleKeyDown(keyCode, isCtrlHeld)
+	if not self._frame.Visible then return end
+	if not self._sData or self._sData.type ~= "UI" then return end
+	
+	local focusedTextBox = UserInputService:GetFocusedTextBox()
+	if focusedTextBox and focusedTextBox ~= self._keyboardCapture then
+		print("[BlueprintAnim] handleKeyDown ignored: Focused textbox is not KeyboardCapture. Focused =", focusedTextBox.Name)
+		return
+	end
+
+	if isCtrlHeld ~= nil then
+		self._ctrlHeld = isCtrlHeld
+	end
+
+	print("[BlueprintAnim] handleKeyDown inside AnimationEditor: Key =", keyCode.Name, "CtrlHeld =", self._ctrlHeld)
+
+	local ctrlHeld = self._ctrlHeld or UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) or UserInputService:IsKeyDown(Enum.KeyCode.RightControl)
+
+	if ctrlHeld and keyCode == Enum.KeyCode.C then
+		print("[BlueprintAnim] Ctrl+C triggered. SelectedKeyframe =", self._selectedKeyframe)
+		if self._selectedKeyframe then
+			self._copiedKeyframe = {
+				value = cloneValue(self._selectedKeyframe.value),
+				easingStyle = self._selectedKeyframe.easingStyle or "Quad",
+				easingDirection = self._selectedKeyframe.easingDirection or "Out"
+			}
+			print("[BlueprintAnim] Copy Success: Copied value =", self._copiedKeyframe.value)
+		else
+			print("[BlueprintAnim] Copy Ignored: No selected keyframe")
+		end
+	elseif ctrlHeld and keyCode == Enum.KeyCode.V then
+		print("[BlueprintAnim] Ctrl+V triggered. CopiedKeyframe =", self._copiedKeyframe, "SelectedTrack =", self._selectedTrack)
+		if self._copiedKeyframe and self._selectedTrack then
+			local track = self._selectedTrack
+			local exists = nil
+			for _, kf in ipairs(track.keyframes) do
+				if math.abs(kf.time - self._currentTime) < 0.01 then
+					exists = kf
+					break
+				end
+			end
+
+			if exists then
+				exists.value = cloneValue(self._copiedKeyframe.value)
+				exists.easingStyle = self._copiedKeyframe.easingStyle
+				exists.easingDirection = self._copiedKeyframe.easingDirection
+				self._selectedKeyframe = exists
+				print("[BlueprintAnim] Paste Success: Replaced existing keyframe at time =", self._currentTime)
+			else
+				local newKf = {
+					time = self._currentTime,
+					value = cloneValue(self._copiedKeyframe.value),
+					easingStyle = self._copiedKeyframe.easingStyle,
+					easingDirection = self._copiedKeyframe.easingDirection
+				}
+				table.insert(track.keyframes, newKf)
+				self._selectedKeyframe = newKf
+				print("[BlueprintAnim] Paste Success: Created new keyframe at time =", self._currentTime)
+			end
+			self:refreshTimeline()
+			self:refreshControls()
+		else
+			print("[BlueprintAnim] Paste Ignored: Missing copied keyframe or selected track")
+		end
+	elseif keyCode == Enum.KeyCode.K then
+		print("[BlueprintAnim] Key K triggered. SelectedTrack =", self._selectedTrack)
+		if self._selectedTrack then
+			local track = self._selectedTrack
+			local exists = nil
+			for _, kf in ipairs(track.keyframes) do
+				if math.abs(kf.time - self._currentTime) < 0.01 then
+					exists = kf
+					break
+				end
+			end
+
+			if not exists then
+				local capVal = nil
+				local el = nil
+				local function findEl(elements)
+					for _, e in ipairs(elements) do
+						if e.name == track.elementName then el = e; break end
+						if e.children then findEl(e.children) end
+					end
+				end
+				findEl(self._uiElements)
+
+				if el then
+					capVal = getElementProperty(el, track.property)
+				else
+					capVal = 0
+				end
+
+				local kf = {
+					time = self._currentTime,
+					value = capVal,
+					easingStyle = "Quad",
+					easingDirection = "Out"
+				}
+				table.insert(track.keyframes, kf)
+				self._selectedKeyframe = kf
+				print("[BlueprintAnim] Added keyframe via K at time =", self._currentTime)
+				self:refreshTimeline()
+				self:refreshControls()
+			else
+				print("[BlueprintAnim] Keyframe already exists at time =", self._currentTime)
+			end
+		end
+	elseif keyCode == Enum.KeyCode.Delete or keyCode == Enum.KeyCode.Backspace then
+		print("[BlueprintAnim] Delete/Backspace triggered. SelectedTrack =", self._selectedTrack, "SelectedKeyframe =", self._selectedKeyframe)
+		if self._selectedTrack and self._selectedKeyframe then
+			local track = self._selectedTrack
+			local deleted = false
+			for idx, kf in ipairs(track.keyframes) do
+				if kf == self._selectedKeyframe then
+					table.remove(track.keyframes, idx)
+					print("[BlueprintAnim] Delete Success: Removed keyframe at index =", idx)
+					deleted = true
+					break
+				end
+			end
+			if deleted then
+				self._selectedKeyframe = nil
+				self:refreshTimeline()
+				self:refreshControls()
+				self:refreshViewport()
+			else
+				print("[BlueprintAnim] Delete Ignored: Selected keyframe not found in selected track")
+			end
+		else
+			print("[BlueprintAnim] Delete Ignored: Missing selected track or selected keyframe")
+		end
+	elseif keyCode == Enum.KeyCode.Space then
+		if self._activeAnimation then
+			if self._playing then
+				self._playing = false
+			else
+				self._playing = true
+				task.spawn(function()
+					local lastTime = os.clock()
+					while self._playing do
+						RunService.Heartbeat:Wait()
+						local now = os.clock()
+						local dt = now - lastTime
+						lastTime = now
+						
+						self._currentTime = self._currentTime + dt
+						if self._currentTime >= self._activeAnimation.duration then
+							self._currentTime = 0
+						end
+						self:updatePlayheadAndScrub()
+					end
+				end)
+			end
+		end
+	end
 end
 
 function AnimationEditor:LoadScript(sData)
@@ -1006,6 +1170,7 @@ function AnimationEditor:refreshHierarchy()
 		nameBtn.Parent = row
 
 		nameBtn.MouseButton1Click:Connect(function()
+			self._keyboardCapture:CaptureFocus()
 			self._selectedElement = item.el
 			self:refreshHierarchy()
 			self:refreshViewport()
@@ -1238,6 +1403,7 @@ function AnimationEditor:updateSelectionOutline()
 
 			handle.InputBegan:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					self._keyboardCapture:CaptureFocus()
 					self._isResizing = true
 					self._resizedElement = el
 					self._resizedInstance = inst
@@ -1278,6 +1444,7 @@ end
 function AnimationEditor:hookUpHitbox(el, hitbox, inst)
 	hitbox.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			self._keyboardCapture:CaptureFocus()
 			self._selectedElement = el
 			self:refreshHierarchy()
 			self:updateSelectionOutline()
@@ -1375,6 +1542,7 @@ function AnimationEditor:refreshTimeline()
 
 	headerButton.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			self._keyboardCapture:CaptureFocus()
 			processScrub(input.Position.X)
 			local conn
 			conn = input.Changed:Connect(function()
@@ -1451,6 +1619,7 @@ function AnimationEditor:refreshTimeline()
 		trackBtn.Parent = row
 
 		trackBtn.MouseButton1Click:Connect(function()
+			self._keyboardCapture:CaptureFocus()
 			self._selectedTrack = track
 			self._selectedKeyframe = nil
 			self:refreshTimeline()
@@ -1479,6 +1648,7 @@ function AnimationEditor:refreshTimeline()
 
 		lane.InputBegan:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				self._keyboardCapture:CaptureFocus()
 				self._selectedTrack = track
 				self:refreshTimeline()
 				self:refreshControls()
@@ -1506,6 +1676,7 @@ function AnimationEditor:refreshTimeline()
 			end
 
 			diamond.MouseButton1Click:Connect(function()
+				self._keyboardCapture:CaptureFocus()
 				self._selectedTrack = track
 				self._selectedKeyframe = kf
 				self:refreshTimeline()
@@ -1515,6 +1686,7 @@ function AnimationEditor:refreshTimeline()
 			-- Draggable keyframe functionality
 			diamond.InputBegan:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					self._keyboardCapture:CaptureFocus()
 					local dragConn
 					dragConn = self._frame.InputChanged:Connect(function(moveInput)
 						if moveInput.UserInputType == Enum.UserInputType.MouseMovement then
@@ -1818,16 +1990,16 @@ function AnimationEditor:buildControls()
 	kfHeader.LayoutOrder = 7
 	kfHeader.Parent = rScroll
 
-	-- Keyframe Action Buttons
+	-- Keyframe Action Buttons (arranged in a 2x2 grid)
 	local kfActionsRow = Instance.new("Frame")
-	kfActionsRow.Size = UDim2.new(1, 0, 0, 28)
+	kfActionsRow.Size = UDim2.new(1, 0, 0, 60)
 	kfActionsRow.BackgroundTransparency = 1
 	kfActionsRow.LayoutOrder = 8
 	kfActionsRow.Parent = rScroll
 
 	local kfGrid = Instance.new("UIGridLayout")
-	kfGrid.CellSize = UDim2.new(0.5, -4, 1, 0)
-	kfGrid.CellPadding = UDim2.fromOffset(8, 0)
+	kfGrid.CellSize = UDim2.new(0.5, -4, 0, 26)
+	kfGrid.CellPadding = UDim2.fromOffset(8, 4)
 	kfGrid.Parent = kfActionsRow
 
 	local addKf = Instance.new("TextButton")
@@ -1901,6 +2073,65 @@ function AnimationEditor:buildControls()
 		self._selectedKeyframe = nil
 		self:refreshTimeline()
 		self:refreshControls()
+	end)
+
+	local copyKf = Instance.new("TextButton")
+	copyKf.BackgroundColor3 = Color3.fromRGB(40, 50, 75)
+	copyKf.Text = "Copy Keyframe"
+	copyKf.TextColor3 = Color3.fromRGB(200, 220, 255)
+	copyKf.TextSize = 10
+	copyKf.Font = Enum.Font.GothamBold
+	copyKf.Parent = kfActionsRow
+	makeCorner(copyKf, 4)
+
+	copyKf.MouseButton1Click:Connect(function()
+		if self._selectedKeyframe then
+			self._copiedKeyframe = {
+				value = cloneValue(self._selectedKeyframe.value),
+				easingStyle = self._selectedKeyframe.easingStyle or "Quad",
+				easingDirection = self._selectedKeyframe.easingDirection or "Out"
+			}
+		end
+	end)
+
+	local pasteKf = Instance.new("TextButton")
+	pasteKf.BackgroundColor3 = Color3.fromRGB(45, 80, 60)
+	pasteKf.Text = "Paste Keyframe"
+	pasteKf.TextColor3 = Color3.fromRGB(200, 255, 220)
+	pasteKf.TextSize = 10
+	pasteKf.Font = Enum.Font.GothamBold
+	pasteKf.Parent = kfActionsRow
+	makeCorner(pasteKf, 4)
+
+	pasteKf.MouseButton1Click:Connect(function()
+		if self._copiedKeyframe and self._selectedTrack then
+			local track = self._selectedTrack
+			local exists = nil
+			for _, kf in ipairs(track.keyframes) do
+				if math.abs(kf.time - self._currentTime) < 0.01 then
+					exists = kf
+					break
+				end
+			end
+
+			if exists then
+				exists.value = cloneValue(self._copiedKeyframe.value)
+				exists.easingStyle = self._copiedKeyframe.easingStyle
+				exists.easingDirection = self._copiedKeyframe.easingDirection
+				self._selectedKeyframe = exists
+			else
+				local newKf = {
+					time = self._currentTime,
+					value = cloneValue(self._copiedKeyframe.value),
+					easingStyle = self._copiedKeyframe.easingStyle,
+					easingDirection = self._copiedKeyframe.easingDirection
+				}
+				table.insert(track.keyframes, newKf)
+				self._selectedKeyframe = newKf
+			end
+			self:refreshTimeline()
+			self:refreshControls()
+		end
 	end)
 
 	local kfDetailsFrame = Instance.new("Frame")
